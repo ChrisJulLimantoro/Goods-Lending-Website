@@ -7,7 +7,7 @@
     $row = $stmt->fetchcolumn();
     $_SESSION['profile'] = $row;
 ?>
-
+<!-- ini php buat ngefilter by ajax -->
 <?php
     if(isset($_POST['loc'])){
         if($_POST['loc'] == ''){
