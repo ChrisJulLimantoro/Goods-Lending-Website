@@ -1,15 +1,3 @@
-<?php
-    include "connection.php";
-    if(isset($_REQUEST['user'])){
-        $sql = "SELECT COUNT(*) FROM `user` WHERE `username` = :username";
-        $user = $_REQUEST['user'];
-        $stmt = $conn->prepare($sql);
-        $stmt->execute(['username' => $user]);
-        $row = $stmt->fetchcolumn();
-        echo $row;
-        exit;
-    }
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,16 +20,17 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
+        
         $(document).ready(function(){
             let passStatus = false;
             let reStatus = false;
             let userStatus = false;
-            $("#defaultProfile").on("click",function(e){
-                e.preventDefault();
+
+            $('#setDefault').on('dblclick',function(){
                 $("#profile").attr("src","profile/profileDefault.jpg");
                 $("#submitFile").val("");
                 console.log("kepencet");
-            })
+            });
 
             $("#submitFile").on("change",function(){
                 read_file(this);
@@ -54,7 +43,7 @@
 
             $("#inputUsername").on("change",function(){
                 $("#inputUsername").removeClass("shaking");
-                // console.log( $("#inputUsername").val());
+                console.log( $("#inputUsername").val());
                 if($("#inputUsername").val().length != 0){
                 $.ajax({
                     type: "post",
@@ -209,23 +198,34 @@
         #profile:hover{
             box-shadow: 0px 1px 25px -12px rgba(0,0,0,0.80);
         }
-        #defaultProfile{
+
+        #profileAndDelete {
+            position: relative;
+        }
+
+        #profile {
+            border-radius:50pt; 
+            cursor:pointer;
+        }
+
+        #setDefault {
             background-color : white;
             border : 0px;
-            border-radius:50%;
+            border-radius:50pt;
             padding : 0px;
-            margin : 0px;
-            right:45px;
+            left: 120px;
             bottom:0px;
+            position: absolute;
             transition:all 0.6s ease-in-out;
         }
-        #defaultProfile:hover{
+        #setDefault:hover{
             transform : scale(1.15) rotate(90deg);
             box-shadow : 0px 1px 25px -12px rgba(0,0,0,0.80);
         }
         .shaking{
             animation : shake 0.3s;
         }
+        
         @keyframes shake {
             0% {
                 transform : translate(1px,1px) rotate(0deg); 
@@ -271,12 +271,14 @@
                 <h4 class="subtitle-login text-center" style="color:red; border-bottom:1px solid black;line-height:0.1em;"><span style="background-color:white; padding:0px 6px">Sign-Up</span></h4>
                 <form action="insertUser.php" method="post" enctype="multipart/form-data" style="margin-top : 20px;">
                     <div class="row" style="height:auto;">
-                        <div class="col-6 col-sm-4 position-relative">
-                            <input type="file" class="form-control" accept=".jpg,.jpeg,.png,.svg" id="submitFile" name="submitFile" style="display:none;" value="C:\xampp\htdocs\TekWeb\Proyek\assets\profileDefault.jpg">
-                            <img id="profile" src="profile/profileDefault.jpg" width="155px" height="155px" style="border-radius:50pt; margin-left:18%;cursor:pointer;">
-                            <button class="btn btn-danger position-absolute" id="defaultProfile"><img src="assets/wrong.png" width="30px" height="30px"></button>
+                        <div class="col-md-6 col-sm-12 d-flex justify-content-center position-relative">
+                            <div id="profileAndDelete">
+                                <input type="file" class="form-control" accept=".jpg,.jpeg,.png,.svg" id="submitFile" name="submitFile" style="display:none;" value="C:\xampp\htdocs\TekWeb\Proyek\assets\profileDefault.jpg">
+                                <img id="profile" src="profile/profileDefault.jpg" width="155px" height="155px">
+                                <button class="btn btn-danger position-absolute" id="setDefault"><img src="assets/wrong.png" width="30px" height="30px"></button>
+                            </div>
                         </div>
-                        <div class="col-6 col-sm-8">
+                        <div class="col-md-6 col-sm-12">
                             <div class="row">
                                 <div class="col-12">
                                     <label for="inputFirstName" class="form-label">First Name:</label>
