@@ -126,23 +126,23 @@
                     <div class="col-6 d-flex justify-content-end align-items-center">
                         <li class="nav-item dropdown mt-2" style="list-style: none">
                             <a class="nav-link dropdown-toggle mb-2 position-relative dropdown-menu-end" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="<?php // echo $_SESSION['profile'] ?>" alt=""  id="userImg">
+                                <img src="<?php echo $_SESSION['profile'] ?>" alt=""  id="userImg">
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end bg-dark text-white mt-3 px-3" aria-labelledby="navbarDropdown" style=" width: 15em;">
                                 <h6 class="card-title mb-2">User ID:</h6>
                                 <h6 class="card-title mb-1">
                                     <?php
-                                        //  echo $_SESSION['user'] 
+                                         echo $_SESSION['user'] 
                                     ?>
                                 </h6>
                                 <h6 class="card-title mb-2">Nama:</h6>
                                 <h6 class="card-title mb-1">
                                     <?php 
-                                    // $sqlName = "SELECT CONCAT(first_name,' ',last_name) AS name FROM `user` WHERE `username` = :user";
-                                        // $stmtName = $conn->prepare($sqlName);
-                                        // $stmtName->execute(['user' => $_SESSION['user']]);
-                                        // $rowName = $stmtName->fetchcolumn(); 
-                                        // echo $rowName;
+                                    $sqlName = "SELECT CONCAT(first_name,' ',last_name) AS name FROM `user` WHERE `username` = :user";
+                                        $stmtName = $conn->prepare($sqlName);
+                                        $stmtName->execute(['user' => $_SESSION['user']]);
+                                        $rowName = $stmtName->fetchcolumn(); 
+                                        echo $rowName;
                                     ?>
                                 </h6>
                                 <li><hr class="dropdown-divider"></li>
