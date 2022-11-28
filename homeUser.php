@@ -25,10 +25,10 @@
                         ':nama' => $s['Nama_Barang']
                     ));
                     $row2 = $stmt2->fetchColumn();
-                    echo '<div class="col mt-5">';
-                    echo '<div class="card" style="width: 15rem; height: 24rem;">';
+                    echo '<div class="col mt-5 contCard">';
+                    echo '<div class="card" style="width: 18rem; height: 24rem;" >';
                     echo '<div class="text-center">';
-                    echo '<img src="'.$s['image'].'" class="card-img-top" alt="" style="width: 10em; height: 10em;"></div>';
+                    echo '<img src="'.$s['image'].'" class="card-img-top" alt="" style="width: 12em; height: 10em;"></div>';
                     echo '<div class="card-details">';
                     echo '<p class="text-title">'.$s['Nama_Barang'].'</p>';
                     echo '<p class="text-title">Quantity : '.$row2.'</p>';
@@ -54,9 +54,9 @@
                     ));
                     $row2 = $stmt2->fetchColumn();
                     echo '<div class="col mt-5">';
-                    echo '<div class="card" style="width: 15rem; height: 24rem;">';
+                    echo '<div class="card" style="width: 18rem; height: 24rem;">';
                     echo '<div class="text-center">';
-                    echo '<img src="'.$s['image'].'" class="card-img-top" alt="" style="width: 10em; height: 10em;"></div>';
+                    echo '<img src="'.$s['image'].'" class="card-img-top" alt="" style="width: 12em; height: 10em;"></div>';
                     echo '<div class="card-details">';
                     echo '<p class="text-title">'.$s['Nama_Barang'].'</p>';
                     echo '<p class="text-title">Quantity : '.$row2.'</p>';
@@ -78,8 +78,137 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         $(document).ready(function(){
+            AOS.init();
+            var width = $(window).width();
+                if (width<576){
+                    
+                    $("#viewItem").addClass("mx-4");
+                }
+                if (width>=576){
+                    $("#viewItem").removeClass("mx-4");
+                }
+                if (width >= 850){
+                    $(".kiri").css("display", "inline");
+                    $("#inputSearch").css("display","inline");
+                    $("#judul").css("font-size","24px");
+                    $("#searchButton").css("display","none");
+                    $("#inputSearch").css("width", "75%");
+                    $("#inputSearch").css("height", "2em");
+                    $("#inputSearch").css("background-color","#fff");
+                    $(".containerInput").css("margin-left","0em");
+                    $(".keranjang").css("display", "inline");
+                    $(".user").css("display", "inline");
+                    $(".kanan").css("display", "inline");
+                }
+                if (width < 550 && width > 350){
+                    $("#keranjang").css("width", "1.2em");
+                    $("#keranjang").css("height", "1.2em");
+                    $("#userImg").css("width", "1.5em");
+                    $("#userImg").css("height", "1.5em");
+                    $("#searchImg").css("width", "1.5em");
+                    $("#searchImg").css("height", "1.5em");
+                    $("#judul").css("font-size","12px");
+                }
+                if(width < 350){
+                    $("#judul").css("font-size","6px");
+                }
+                if (width < 850 && width >= 551){
+                    $("#keranjang").css("width", "2em");
+                    $("#keranjang").css("height", "2em");
+                    $("#userImg").css("width", "2em");
+                    $("#userImg").css("height", "2em");
+                    $("#searchImg").css("width", "2em");
+                    $("#searchImg").css("height", "2em");
+                    $("#judul").css("font-size","20px");
+                }
+                if(width < 750){
+                    $("#searchButton").css("display","inline");
+                    $(".kiri").css("display", "none");
+                    $("#inputSearch").css("background-color","#212529");
+                    $("#inputSearch").css("width","0.000001px");
+                    $("#inputSearch").css("height","0.000001px");
+                }
+            $(window).resize(function() {
+                var width = $(window).width();
+                if (width<576){
+                    
+                    $("#viewItem").addClass("mx-4");
+                }
+                if (width>=576){
+                    $("#viewItem").removeClass("mx-4");
+                }
+                if (width >= 850){
+                    $(".kiri").css("display", "inline");
+                    $("#inputSearch").css("display","inline");
+                    $("#judul").css("font-size","24px");
+                    $("#searchButton").css("display","none");
+                    $("#inputSearch").css("width", "75%");
+                    $("#inputSearch").css("height", "2em");
+                    $("#inputSearch").css("background-color","#fff");
+                    $(".containerInput").css("margin-left","0em");
+                    $(".keranjang").css("display", "inline");
+                    $(".user").css("display", "inline");
+                    $(".kanan").css("display", "inline");
+                }
+                if (width < 550 && width > 350){
+                    $("#keranjang").css("width", "1.5em");
+                    $("#keranjang").css("height", "1.5em");
+                    $("#userImg").css("width", "1.5em");
+                    $("#userImg").css("height", "1.5em");
+                    $("#searchImg").css("width", "1.5em");
+                    $("#searchImg").css("height", "1.5em");
+                    $("#judul").css("font-size","12px");
+                }
+                if(width < 350){
+                    $("#judul").css("font-size","6px");
+                }
+                if (width < 850 && width >= 551){
+                    $("#keranjang").css("width", "2em");
+                    $("#keranjang").css("height", "2em");
+                    $("#userImg").css("width", "2em");
+                    $("#userImg").css("height", "2em");
+                    $("#searchImg").css("width", "2em");
+                    $("#searchImg").css("height", "2em");
+                    $("#judul").css("font-size","20px");
+                }
+                if(width < 750){
+                    $("#searchButton").css("display","inline");
+                    $(".kiri").css("display", "none");
+                    $("#inputSearch").css("background-color","#212529");
+                    $("#inputSearch").css("width","0.000001px");
+                    $("#inputSearch").css("height","0.000001px");
+                }
+            });
+
+            $("#searchButton").click(function(){
+
+                $("#inputSearch").css("background-color","#fff");
+                $("#searchButton").css("display", "none");
+                $("#inputSearch").css("width", "100%");
+                $("#inputSearch").css("height", "2em");
+                $(".keranjang").css("display", "none");
+                $(".user").css("display", "none");
+                $(".kanan").css("display", "none");
+                $(".containerInput").css("margin-left", "4em");
+                $("#inputSearch").val("")
+
+            });
+
+            $("#inputSearch").on("change", function(){
+                $(".containerInput").css("margin-left", "0em");
+                $("#searchButton").css("display","inline");
+                $("#inputSearch").css("background-color","#212529");
+                $("#inputSearch").css("width","0.000001px");
+                $("#inputSearch").css("height","0.000001px");
+                $(".keranjang").css("display", "inline");
+                $(".user").css("display", "inline");
+                $(".kanan").css("display", "inline");
+                $("#inputSearch").val("");
+            })
             let count = 0;
             let status = false;
             let filter = "";
@@ -177,8 +306,10 @@
             #inputSearch{
                 border: solid;
                 width: 75%;
-                height:3em;
+                height:2em;
+                margin-top: 0.5em;
                 border-radius: 20pt;
+                transition: all 0.5s ease;
             }
             .header{
                 height: 4em;
@@ -187,7 +318,7 @@
                 z-index: 1;
             }
 
-            #notifImg, #keranjang, #userImg{
+            #notifImg, #keranjang, #userImg, #searchImg{
                 width: 2em;
                 height: 2em;
                 top:10px;
@@ -203,6 +334,7 @@
                 width: 150px;
                 height: 150px;
                 border-radius: 50%;
+                z-index : 10;
             }
             .filter-prop{
                 position: absolute;
@@ -310,6 +442,10 @@
                 color: white;
                 text-align: center;
             }
+
+            #inputSearch::placeholder{
+                font-size: 11px;
+            }
     </style>
 </head>
 <body>
@@ -317,36 +453,34 @@
 <!-- NAVBAR -->
 <div class="container-fluid bg-dark text-white header">
     <div class="row">
-        <div class="col-3 pt-3">
+        <div class="col-4 pt-3 left">
             <h4>
-                <a class="navbar-brand" href="homeUser.php">PEMINJAMAN BARANG</a>
+                <a class="navbar-brand" id= "judul" href="homeUser.php">PEMINJAMAN BARANG</a>
             </h4>   
         </div>
-        <div class="col-6 pt-2 d-flex justify-content-center">
+        <div class="col-4 pt-2 d-flex justify-content-center containerInput">
+            <button class="bg-dark" style="border:none; width: 2em; height: 2em; margin-top: 10px; display: none;" id="searchButton"><img src="assets/search.png" alt="" id="searchImg" style=""></button>
             <input type="text" class="form-control" id="inputSearch" placeholder="Search Product">
         </div>
-        <div class="col-3 pt-3">
+        <div class="col-4 pt-3 kanan">
             <div class="row">
-                <div class="col-2">
+                <div class="col-4 kiri">
 
                 </div>
-                <div class="col-auto">
+                <!-- <div class="col-auto">
                     <button type="button" class="btn btn-dark position-relative mb-2">
                         <img src="assets/notif.png" alt=""  id="notifImg">
                         <span class="position-absolute start-100 translate-middle badge rounded-pill bg-danger">
                         99+
                         </span>
                     </button>
-                </div>
-                <div class="col-auto">
+                </div> -->
+                <div class="col-4 keranjang">
                     <button type="button" class="btn btn-dark position-relative mb-2">
                         <img src="assets/keranjang.png" alt=""  id="keranjang">
                     </button>
                 </div>
-                <div class="col-auto">
-                    <!-- <button type="button" class="btn btn-dark position-relative mb-2" id="buttonUser">
-                        <img src="" alt=""  id="userImg">
-                    </button> -->
+                <div class="col-4 user">
                     <li class="nav-item dropdown mt-2" style="list-style: none">
                         <a class="nav-link dropdown-toggle mb-2 position-relative" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="<?php echo $_SESSION['profile'] ?>" alt=""  id="userImg">
@@ -374,7 +508,7 @@
     </div>
 </div>
 <!-- filter -->
-<div class="bg-dark" id="filter">
+<div  id="filter" style="background-color: #7C9CAB; z-index: 10;">
     <div class="poisition-relative">
         <input id="filter" type="text" value = "0" hidden>
         <span class="filter-prop bg-light position-absolute" id="No">All</span>
@@ -409,7 +543,7 @@
 </div>
 
 <div class="container barang mt-3">
-    <div class="row row-cols-lg-4 row-cols-sm-2 row-cols-1" id="viewItem">
+    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-1" id="viewItem">
 
     </div>
 </div>
