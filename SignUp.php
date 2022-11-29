@@ -27,7 +27,7 @@
 
                 reader.onload = function(e){
                     $("#profile").attr("src",e.target.result);
-                    console.log(e.target.result);
+                    // console.log(e.target.result);
                 }
                 reader.readAsDataURL(input.files[0]);
             }
@@ -48,7 +48,7 @@
             })
             
             $("#profile").on("click",function(){
-                console.log($("#submitFile").val());
+                // console.log($("#submitFile").val());
                 $("#submitFile").click();
             })
 
@@ -272,7 +272,7 @@
                 <form action="insertUser.php" method="post" enctype="multipart/form-data" style="margin-top : 20px;">
                     <div class="row" style="height:auto;">
                         <div class="col-6 col-sm-4 position-relative">
-                            <input type="file" class="form-control" accept=".jpg,.jpeg,.png,.svg" id="submitFile" name="submitFile" style="display:none;" value="C:\xampp\htdocs\TekWeb\Proyek\assets\profileDefault.jpg">
+                            <input type="file" class="form-control" accept=".jpg,.jpeg,.png,.svg,.jfif" id="submitFile" name="submitFile" style="display:none;" value="assets\profileDefault.jpg">
                             <img id="profile" src="profile/profileDefault.jpg" width="155px" height="155px" style="border-radius:50pt; margin-left:18%;cursor:pointer;">
                             <button class="btn btn-danger position-absolute" id="defaultProfile"><img src="assets/wrong.png" width="30px" height="30px"></button>
                         </div>
