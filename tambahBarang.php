@@ -1,7 +1,22 @@
 <?php
     include "connection.php";
+    session_start();
+    $sql = 'SELECT profile FROM `admin` WHERE `username` = :user';
+    $stmt = $conn->prepare($sql);
+    $stmt->execute(['user' => $_SESSION['user']]);
+    $row = $stmt->fetchcolumn();
+    $_SESSION['profile'] = $row;
 ?>
-
+<?php
+    if(isset($_POST['loc'])){
+        $sql = "SELECT COUNT(*) FROM item WHERE Location = :loc";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['loc' => $_POST['loc']]);
+        $row = $stmt->fetchcolumn();
+        echo $row;
+        exit();
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -202,17 +217,16 @@
             <div class="row">
                 <div class="col-lg-2"></div>
                 <div class="col-lg-4 col-6">
-                    <label for="kodeBarang" class="py-2 px-1">Kode Barang <span style="color:red">*</span></label>  
-                    <input type="text" id="kode" name="kode" class="form-control" placeholder="W0001"><br>
-                </div>
-                <div class="col-lg-4 col-6">
                     <label for="lokasi" class="py-2 px-1">Lokasi <span style="color:red">*</span></label>  
                     <select class="form-select form-select-md" aria-label="Lokasi UPPK" id="lokasi" name="lokasi">
                         <option value="C" class="align-self-center" selected>UPPK C</option>
                         <option value="P" class="align-self-center">UPPK P</option>
                         <option value="T" class="align-self-center">UPPK T</option>
-                        <option value="Q" class="align-self-center">UPPK Q</option>
                     </select>
+                </div>
+                <div class="col-lg-4 col-6">
+                    <label for="kodeBarang" class="py-2 px-1">Kode Barang <span style="color:red">*</span></label>  
+                    <input type="text" id="kode" name="kode" class="form-control" placeholder="X0001" disabled><br>
                 </div>
                 <div class="col-lg-2"></div>
             </div>
@@ -262,6 +276,12 @@
                 $(this).parent().remove();
                 addBox();
             });
+            
+            $(document.body).on("change","#lokasi",function(e){
+                $loc = $("#lokasi :selected").val();
+                console.log($loc);
+                generateId($loc);
+            });
 
             // nambahin box baru buat upload foto
             window.addBox = function(prev) {
@@ -293,6 +313,25 @@
                     $(this).find("img").css("opacity", "1");
                 }
             })
+            function generateId($loc){
+                $.ajax({
+                    type : "post",
+                    data : {
+                        loc : $loc
+                    },
+                    success : function(response){
+                        if(response > 999){
+                            $("#kode").val($loc + response);
+                        }else if(response > 99){
+                            $("#kode").val($loc + "0" + response);
+                        }else if(response > 9){
+                            $("#kode").val($loc + "00" + response);
+                        }else{
+                            $("#kode").val($loc + "000" + response);
+                        }
+                    }
+                });
+            }
         });
     </script>
 </body>
