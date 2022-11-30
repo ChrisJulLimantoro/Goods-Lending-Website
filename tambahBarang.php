@@ -1,15 +1,15 @@
 <?php
     include "connection.php";
     session_start();
-    if(isset($_SESSION['user']) == false){
-        session_destroy();
-        header('Location: login.php');
-    }
-    $sql = 'SELECT profile FROM `admin` WHERE `username` = :user';
-    $stmt = $conn->prepare($sql);
-    $stmt->execute(['user' => $_SESSION['user']]);
-    $row = $stmt->fetchcolumn();
-    $_SESSION['profile'] = $row;
+    // if(isset($_SESSION['user']) == false){
+    //     session_destroy();
+    //     header('Location: login.php');
+    // }
+    // $sql = 'SELECT profile FROM `admin` WHERE `username` = :user';
+    // $stmt = $conn->prepare($sql);
+    // $stmt->execute(['user' => $_SESSION['user']]);
+    // $row = $stmt->fetchcolumn();
+    // $_SESSION['profile'] = $row;
 ?>
 <?php
     if(isset($_POST['loc'])){
@@ -135,6 +135,7 @@
                 reader.readAsDataURL(input.files[0]);
                 $(input).parent().next().css("opacity","1");
                 $(input).parent().next().find("input").removeAttr("disabled");
+                $(input).parent().next().css("height", "100%");
             }
         };
 
@@ -146,12 +147,14 @@
                 e.preventDefault();
                 console.log("bisa del");
                 $(this).parent().find('input').val("");
-                $(this).parent().find("img").attr("src", "assets/no-image.png");
+                $(this).parent().find("img").attr("src", "");
                 $(this).parent().find("label").removeClass("hidden");
                 $(this).parent().find("img").css("display","none");
+
                 $(this).parent().next().css("opacity","0");
                 $(this).parent().next().find("input").attr("disabled","true");
-                read_file(this);
+                $(this).parent().next().css("height", "0");
+                // read_file(this);
             });
             
             $(document.body).on("change","#lokasi",function(e){
@@ -162,18 +165,16 @@
 
             // munculin tombol buat delete foto
             $(document.body).on("mouseenter", ".uploadFoto", function() {
-                if (($(this).next().find("img").attr("src") == "assets/no-image.png" && $(this).find("img").attr("src") != "assets/no-image.png") 
-                    || ($(this).attr("id") == "up4" && $(this).find("img").attr("src") != "assets/no-image.png")) {
+                if (($(this).next().find("img").attr("src") == "" && $(this).find("img").attr("src") != "") 
+                    || ($(this).attr("id") == "up4" && $(this).find("img").attr("src") != "")) {
                     $(this).find("button").css("display", "block");
                     $(this).find("img").css("opacity",".85");
                 }
             });
 
             $(document.body).on("mouseleave", ".uploadFoto", function() {
-                if ($(this).find("img").attr("src") != "") {
-                    $(this).find("button").css("display", "none");
-                    $(this).find("img").css("opacity", "1");
-                }
+                $(this).find("button").css("display", "none");
+                $(this).find("img").css("opacity", "1");
             });
 
             function generateId($loc){
@@ -268,28 +269,28 @@
                 </div>
 
                 <div class="col-lg-2 col-md-6 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto">
-                    <img src="assets/no-image.png" class="fotoBarang">
+                    <img src="" class="fotoBarang">
                     <label for="submitFoto1" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
                     <input type="file" accept=".jpg, .jpeg, .png, .jfif" class="form-control hidden" multiple="false" name="submitFoto1" id="submitFoto1" onchange="read_file(this)" value="assets/no-image.png">
                     <button type="button" class="btn deleteFoto"></button>
                 </div>
 
-                <div class="col-lg-2 col-md-6 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up2" style="opacity : 0">
-                    <img src="assets/no-image.png" class="fotoBarang">
+                <div class="col-lg-2 col-md-6 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up2" style="opacity : 0; height: 0">
+                    <img src="" class="fotoBarang">
                     <label for="submitFoto2" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
                     <input type="file" accept=".jpg, .jpeg, .png, .jfif" class="form-control hidden" multiple="false" name="submitFoto2" id="submitFoto2" onchange="read_file(this)" value="assets/no-image.png" disabled>
                     <button type="button" class="btn deleteFoto"></button>
                 </div>
 
-                <div class="col-lg-2 col-md-6 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up3" style="opacity : 0">
-                    <img src="assets/no-image.png" class="fotoBarang">
+                <div class="col-lg-2 col-md-6 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up3" style="opacity : 0; height: 0">
+                    <img src="" class="fotoBarang">
                     <label for="submitFoto3" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
                     <input type="file" accept=".jpg, .jpeg, .png, .jfif" class="form-control hidden" multiple="false" name="submitFoto3" id="submitFoto3" onchange="read_file(this)" value="assets/no-image.png" disabled>
                     <button type="button" class="btn deleteFoto"></button>
                 </div>
 
-                <div class="col-lg-2 col-md-6 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up4" style="opacity : 0">
-                    <img src="assets/no-image.png" class="fotoBarang">
+                <div class="col-lg-2 col-md-6 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up4" style="opacity : 0; height: 0">
+                    <img src="" class="fotoBarang">
                     <label for="submitFoto4" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
                     <input type="file" accept=".jpg, .jpeg, .png, .jfif" class="form-control hidden" multiple="false" name="submitFoto4" id="submitFoto4" onchange="read_file(this)" value="assets/no-image.png" disabled>
                     <button type="button" class="btn deleteFoto"></button>
