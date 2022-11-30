@@ -1,7 +1,26 @@
 <?php
     include "connection.php";
+    session_start();
+    if(isset($_SESSION['user']) == false){
+        session_destroy();
+        header('Location: login.php');
+    }
+    $sql = 'SELECT profile FROM `admin` WHERE `username` = :user';
+    $stmt = $conn->prepare($sql);
+    $stmt->execute(['user' => $_SESSION['user']]);
+    $row = $stmt->fetchcolumn();
+    $_SESSION['profile'] = $row;
 ?>
-
+<?php
+    if(isset($_POST['loc'])){
+        $sql2 = "SELECT COUNT(*) FROM item WHERE Location = :loc";
+        $stmt2 = $conn->prepare($sql2);
+        $stmt2->execute(['loc' => $_POST['loc']]);
+        $row2 = $stmt2->fetchcolumn();
+        echo $row2;
+        exit();
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,7 +36,7 @@
     <!-- JS Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
@@ -62,6 +81,10 @@
         }
 
         /* Upload Foto */
+        .uploadFoto {
+            transition : all 1s ease-in-out; 
+        }
+
         .uploadFoto label {
             width: 100%;
             border: 2px dashed #222;
@@ -157,35 +180,37 @@
     
 
     <div class="container-fluid p-5 align-items-center justify-content-center">
-        <form action="tambahBarang.php" method="post" enctype="multipart/form-data" >
+        <form action="insertItem.php" method="post" enctype="multipart/form-data" >
             <div class="row text-center px-3 tempatUpload">
-                <div class="col-lg-2"></div>
+                <div class="col-lg-2 col-md-2 col-1 py-4">
+                    <a href="homeAdmin.php"><img src="assets/back.png" height="25px"></a>
+                </div>
 
-                <div class="col-lg-2 col-6 p-2 d-flex align-items-center justify-content-center uploadFoto">
-                    <img src="" id="fotoBarang">
-                    <label for="submitFile1" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
-                    <input type="file" accept=".jpg, .jpeg, .png" class="form-control hidden" multiple="false" name="foto" id="submitFile1" onchange="read_file(this)">
+                <div class="col-lg-2 col-md-2 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto">
+                    <img src="assets/no-image.png" class="fotoBarang">
+                    <label for="submitFoto1" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
+                    <input type="file" accept=".jpg, .jpeg, .png, .jfif" class="form-control hidden" multiple="false" name="submitFoto1" id="submitFoto1" onchange="read_file(this)" value="assets/no-image.png">
                     <button type="button" class="btn deleteFoto"></button>
                 </div>
 
-                <div class="col-lg-2 col-6 p-2 d-flex align-items-center justify-content-center uploadFoto">
-                    <img src="" id="fotoBarang">
-                    <label for="submitFile2" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
-                    <input type="file" accept=".jpg, .jpeg, .png" class="form-control hidden" multiple="false" name="foto" id="submitFile2" onchange="read_file(this)">
+                <div class="col-lg-2 col-md-2 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up2" style="opacity : 0">
+                    <img src="assets/no-image.png" class="fotoBarang">
+                    <label for="submitFoto2" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
+                    <input type="file" accept=".jpg, .jpeg, .png, .jfif" class="form-control hidden" multiple="false" name="submitFoto2" id="submitFoto2" onchange="read_file(this)" value="assets/no-image.png" disabled>
                     <button type="button" class="btn deleteFoto"></button>
                 </div>
 
-                <div class="col-lg-2 col-6 p-2 d-flex align-items-center justify-content-center uploadFoto">
-                    <img src="" id="fotoBarang">
-                    <label for="submitFile3" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
-                    <input type="file" accept=".jpg, .jpeg, .png" class="form-control hidden" multiple="false" name="foto" id="submitFile3" onchange="read_file(this)">
+                <div class="col-lg-2 col-md-2 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up3" style="opacity : 0">
+                    <img src="assets/no-image.png" class="fotoBarang">
+                    <label for="submitFoto3" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
+                    <input type="file" accept=".jpg, .jpeg, .png, .jfif" class="form-control hidden" multiple="false" name="submitFoto3" id="submitFoto3" onchange="read_file(this)" value="assets/no-image.png" disabled>
                     <button type="button" class="btn deleteFoto"></button>
                 </div>
 
-                <div class="col-lg-2 col-6 p-2 d-flex align-items-center justify-content-center uploadFoto">
-                    <img src="" id="fotoBarang">
-                    <label for="submitFile4" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
-                    <input type="file" accept=".jpg, .jpeg, .png" class="form-control hidden" multiple="false" name="foto" id="submitFile4" onchange="read_file(this)">
+                <div class="col-lg-2 col-md-2 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up4" style="opacity : 0">
+                    <img src="assets/no-image.png" class="fotoBarang">
+                    <label for="submitFoto4" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
+                    <input type="file" accept=".jpg, .jpeg, .png, .jfif" class="form-control hidden" multiple="false" name="submitFoto4" id="submitFoto4" onchange="read_file(this)" value="assets/no-image.png" disabled>
                     <button type="button" class="btn deleteFoto"></button>
                 </div>
             </div>
@@ -194,7 +219,7 @@
                 <div class="col-lg-2"></div>
                 <div class="col-lg-8 col-12">
                     <label for="nama" class="mt-5 pb-2 px-1">Nama Barang <span style="color:red">*</span></label>
-                    <input type="text" id="nama" name="nama" class="form-control" placeholder="Speaker Portabel"><br>
+                    <input type="text" id="nama" name="nama" class="form-control" placeholder="Speaker Portabel" required><br>
                 </div>
                 <div class="col-lg-2"></div>
             </div>
@@ -202,17 +227,16 @@
             <div class="row">
                 <div class="col-lg-2"></div>
                 <div class="col-lg-4 col-6">
-                    <label for="kodeBarang" class="py-2 px-1">Kode Barang <span style="color:red">*</span></label>  
-                    <input type="text" id="kode" name="kode" class="form-control" placeholder="W0001"><br>
-                </div>
-                <div class="col-lg-4 col-6">
                     <label for="lokasi" class="py-2 px-1">Lokasi <span style="color:red">*</span></label>  
-                    <select class="form-select form-select-md" aria-label="Lokasi UPPK" id="lokasi" name="lokasi">
+                    <select class="form-select form-select-md" aria-label="Lokasi UPPK" id="lokasi" name="lokasi" required>
                         <option value="C" class="align-self-center" selected>UPPK C</option>
                         <option value="P" class="align-self-center">UPPK P</option>
                         <option value="T" class="align-self-center">UPPK T</option>
-                        <option value="Q" class="align-self-center">UPPK Q</option>
                     </select>
+                </div>
+                <div class="col-lg-4 col-6">
+                    <label for="kodeBarang" class="py-2 px-1">Kode Barang <span style="color:red">*</span></label>  
+                    <input type="text" id="kodeBarang" name="kodeBarang" class="form-control" placeholder="X0001" readonly required><br>
                 </div>
                 <div class="col-lg-2"></div>
             </div>
@@ -221,7 +245,7 @@
                 <div class="col-lg-2"></div>
                 <div class="col-lg-8 col-12">
                     <label for="keterangan" class="py-2 px-1">Keterangan</label>
-                    <textarea class="form-control" id="keterangan" name="keterangan" rows="3"></textarea><br>
+                    <textarea class="form-control" id="keterangan" name="keterangan" rows="3" required></textarea><br>
                 </div>
                 <div class="col-lg-2"></div>
             </div>
@@ -229,7 +253,7 @@
             <div class="row">
                 <div class="col-lg-2"></div>
                 <div class="col-lg-10">
-                    <button type="submit" class="btn btn-dark">Tambah</button>
+                    <button type="submit" class="btn btn-dark" id="submit">Tambah</button>
                 </div>
             </div>
         </form>
@@ -246,53 +270,78 @@
                     image.attr("src", reader.result);
                     image.css("display", "block");
 
-                    $(input).parent().css("border", "none");
+                    // $(input).parent().css("border", "none");
                     $(input).parent().find("label").addClass("hidden");
                 }
                 reader.readAsDataURL(input.files[0]);
+                $(input).parent().next().css("opacity","1");
             }
-        }
+        };
 
         $(document).ready(function() {
             let boxMade = 4;
-
+            generateId('C');
             // delete foto
             $(document.body).on("click", ".deleteFoto", function(e) {
                 e.preventDefault();
-                $(this).parent().remove();
-                addBox();
+                console.log("bisa del");
+                $(this).parent().find('input').val("");
+                $(this).parent().find("img").attr("src", "assets/no-image.png");
+                $(this).parent().find("label").removeClass("hidden");
+                $(this).parent().find("img").css("display","none");
+                $(this).parent().next().css("opacity","0");
+                $(this).parent().next().find("input").attr("disabled","true");
+                read_file(this);
             });
-
-            // nambahin box baru buat upload foto
-            window.addBox = function(prev) {
-                let photos = $(".uploadFoto");
-
-                if (photos.length < 4) {
-                    boxMade++;
-                    $(".tempatUpload").append(
-                        "<div class='col-lg-2 col-6 p-2 d-flex align-items-center justify-content-center uploadFoto'>" + 
-                        "<img src='' id='fotoBarang' onclick='read_file(this)'>" + 
-                        "<label for='submitFile" + boxMade + "' class='d-flex align-items-center justify-content-center'>Tambah Foto</label>" +
-                        "<input type='file' accept='.jpg, .jpeg, .png' class='form-control hidden' multiple='false' name='foto' id='submitFile" + boxMade + "' onchange='read_file(this)'>" + 
-                        "<button type='button' class='btn deleteFoto'></button></div>"
-                        );
-                }
-            }
+            
+            $(document.body).on("change","#lokasi",function(e){
+                $loc = $("#lokasi :selected").val();
+                // console.log($loc);
+                generateId($loc);
+            });
+            
+            $(document.body).on("click",".uploadFoto",function(){
+                // console.log($("#submitFile").val());
+                $(this).find("input").removeAttr("disabled");
+                $(this).find("input").click();
+            });
 
             // munculin tombol buat delete foto
             $(document.body).on("mouseenter", ".uploadFoto", function() {
-                if ($(this).find("img").attr("src") != "") {
+                if (($(this).next().find("img").attr("src") == "assets/no-image.png" && $(this).find("img").attr("src") != "assets/no-image.png") 
+                    || ($(this).attr("id") == "up4" && $(this).find("img").attr("src") != "assets/no-image.png")) {
                     $(this).find("button").css("display", "block");
                     $(this).find("img").css("opacity",".85");
                 }
-            })
+            });
 
             $(document.body).on("mouseleave", ".uploadFoto", function() {
                 if ($(this).find("img").attr("src") != "") {
                     $(this).find("button").css("display", "none");
                     $(this).find("img").css("opacity", "1");
                 }
-            })
+            });
+
+            function generateId($loc){
+                $.ajax({
+                    type : "post",
+                    data : {
+                        loc : $loc
+                    },
+                    success : function(response){
+                        if(response > 999){
+                            $("#kodeBarang").val($loc + (parseInt(response)+1));
+                        }else if(response > 99){
+                            $("#kodeBarang").val($loc + "0" + (parseInt(response)+1));
+                        }else if(response > 9){
+                            $("#kodeBarang").val($loc + "00" + (parseInt(response)+1));
+                        }else{
+                            $("#kodeBarang").val($loc + "000" + (parseInt(response)+1));
+                        }
+                        console.log($("#kodeBarang").val());
+                    }
+                });
+            }
         });
     </script>
 </body>
