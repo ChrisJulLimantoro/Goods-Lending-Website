@@ -117,6 +117,87 @@
         }
 
     </style>
+
+<script>
+        // display foto
+        function read_file(input){
+            if(input.files && input.files[0]){
+                var reader = new FileReader();
+                var image = $(input).parent().find("img");
+
+                reader.onload = function(){
+                    image.attr("src", reader.result);
+                    image.css("display", "block");
+
+                    // $(input).parent().css("border", "none");
+                    $(input).parent().find("label").addClass("hidden");
+                }
+                reader.readAsDataURL(input.files[0]);
+                $(input).parent().next().css("opacity","1");
+                $(input).parent().next().find("input").removeAttr("disabled");
+            }
+        };
+
+        $(document).ready(function() {
+            let boxMade = 4;
+            generateId('C');
+            // delete foto
+            $(document.body).on("click", ".deleteFoto", function(e) {
+                e.preventDefault();
+                console.log("bisa del");
+                $(this).parent().find('input').val("");
+                $(this).parent().find("img").attr("src", "assets/no-image.png");
+                $(this).parent().find("label").removeClass("hidden");
+                $(this).parent().find("img").css("display","none");
+                $(this).parent().next().css("opacity","0");
+                $(this).parent().next().find("input").attr("disabled","true");
+                read_file(this);
+            });
+            
+            $(document.body).on("change","#lokasi",function(e){
+                $loc = $("#lokasi :selected").val();
+                // console.log($loc);
+                generateId($loc);
+            });
+
+            // munculin tombol buat delete foto
+            $(document.body).on("mouseenter", ".uploadFoto", function() {
+                if (($(this).next().find("img").attr("src") == "assets/no-image.png" && $(this).find("img").attr("src") != "assets/no-image.png") 
+                    || ($(this).attr("id") == "up4" && $(this).find("img").attr("src") != "assets/no-image.png")) {
+                    $(this).find("button").css("display", "block");
+                    $(this).find("img").css("opacity",".85");
+                }
+            });
+
+            $(document.body).on("mouseleave", ".uploadFoto", function() {
+                if ($(this).find("img").attr("src") != "") {
+                    $(this).find("button").css("display", "none");
+                    $(this).find("img").css("opacity", "1");
+                }
+            });
+
+            function generateId($loc){
+                $.ajax({
+                    type : "post",
+                    data : {
+                        loc : $loc
+                    },
+                    success : function(response){
+                        if(response > 999){
+                            $("#kodeBarang").val($loc + (parseInt(response)+1));
+                        }else if(response > 99){
+                            $("#kodeBarang").val($loc + "0" + (parseInt(response)+1));
+                        }else if(response > 9){
+                            $("#kodeBarang").val($loc + "00" + (parseInt(response)+1));
+                        }else{
+                            $("#kodeBarang").val($loc + "000" + (parseInt(response)+1));
+                        }
+                        console.log($("#kodeBarang").val());
+                    }
+                });
+            }
+        });
+    </script>
 </head>
 <body>
     <div class="container-fluid bg-dark text-white header sticky-top">
@@ -182,32 +263,32 @@
     <div class="container-fluid p-5 align-items-center justify-content-center">
         <form action="insertItem.php" method="post" enctype="multipart/form-data" >
             <div class="row text-center px-3 tempatUpload">
-                <div class="col-lg-2 col-md-2 col-1 py-4">
+                <div class="col-lg-2 col-12 py-4 d-flex align-items-start">
                     <a href="homeAdmin.php"><img src="assets/back.png" height="25px"></a>
                 </div>
 
-                <div class="col-lg-2 col-md-2 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto">
+                <div class="col-lg-2 col-md-6 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto">
                     <img src="assets/no-image.png" class="fotoBarang">
                     <label for="submitFoto1" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
                     <input type="file" accept=".jpg, .jpeg, .png, .jfif" class="form-control hidden" multiple="false" name="submitFoto1" id="submitFoto1" onchange="read_file(this)" value="assets/no-image.png">
                     <button type="button" class="btn deleteFoto"></button>
                 </div>
 
-                <div class="col-lg-2 col-md-2 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up2" style="opacity : 0">
+                <div class="col-lg-2 col-md-6 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up2" style="opacity : 0">
                     <img src="assets/no-image.png" class="fotoBarang">
                     <label for="submitFoto2" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
                     <input type="file" accept=".jpg, .jpeg, .png, .jfif" class="form-control hidden" multiple="false" name="submitFoto2" id="submitFoto2" onchange="read_file(this)" value="assets/no-image.png" disabled>
                     <button type="button" class="btn deleteFoto"></button>
                 </div>
 
-                <div class="col-lg-2 col-md-2 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up3" style="opacity : 0">
+                <div class="col-lg-2 col-md-6 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up3" style="opacity : 0">
                     <img src="assets/no-image.png" class="fotoBarang">
                     <label for="submitFoto3" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
                     <input type="file" accept=".jpg, .jpeg, .png, .jfif" class="form-control hidden" multiple="false" name="submitFoto3" id="submitFoto3" onchange="read_file(this)" value="assets/no-image.png" disabled>
                     <button type="button" class="btn deleteFoto"></button>
                 </div>
 
-                <div class="col-lg-2 col-md-2 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up4" style="opacity : 0">
+                <div class="col-lg-2 col-md-6 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up4" style="opacity : 0">
                     <img src="assets/no-image.png" class="fotoBarang">
                     <label for="submitFoto4" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
                     <input type="file" accept=".jpg, .jpeg, .png, .jfif" class="form-control hidden" multiple="false" name="submitFoto4" id="submitFoto4" onchange="read_file(this)" value="assets/no-image.png" disabled>
@@ -258,91 +339,5 @@
             </div>
         </form>
     </div>
-    
-    <script>
-        // display foto
-        function read_file(input){
-            if(input.files && input.files[0]){
-                var reader = new FileReader();
-                var image = $(input).parent().find("img");
-
-                reader.onload = function(){
-                    image.attr("src", reader.result);
-                    image.css("display", "block");
-
-                    // $(input).parent().css("border", "none");
-                    $(input).parent().find("label").addClass("hidden");
-                }
-                reader.readAsDataURL(input.files[0]);
-                $(input).parent().next().css("opacity","1");
-            }
-        };
-
-        $(document).ready(function() {
-            let boxMade = 4;
-            generateId('C');
-            // delete foto
-            $(document.body).on("click", ".deleteFoto", function(e) {
-                e.preventDefault();
-                console.log("bisa del");
-                $(this).parent().find('input').val("");
-                $(this).parent().find("img").attr("src", "assets/no-image.png");
-                $(this).parent().find("label").removeClass("hidden");
-                $(this).parent().find("img").css("display","none");
-                $(this).parent().next().css("opacity","0");
-                $(this).parent().next().find("input").attr("disabled","true");
-                read_file(this);
-            });
-            
-            $(document.body).on("change","#lokasi",function(e){
-                $loc = $("#lokasi :selected").val();
-                // console.log($loc);
-                generateId($loc);
-            });
-            
-            $(document.body).on("click",".uploadFoto",function(){
-                // console.log($("#submitFile").val());
-                $(this).find("input").removeAttr("disabled");
-                $(this).find("input").click();
-            });
-
-            // munculin tombol buat delete foto
-            $(document.body).on("mouseenter", ".uploadFoto", function() {
-                if (($(this).next().find("img").attr("src") == "assets/no-image.png" && $(this).find("img").attr("src") != "assets/no-image.png") 
-                    || ($(this).attr("id") == "up4" && $(this).find("img").attr("src") != "assets/no-image.png")) {
-                    $(this).find("button").css("display", "block");
-                    $(this).find("img").css("opacity",".85");
-                }
-            });
-
-            $(document.body).on("mouseleave", ".uploadFoto", function() {
-                if ($(this).find("img").attr("src") != "") {
-                    $(this).find("button").css("display", "none");
-                    $(this).find("img").css("opacity", "1");
-                }
-            });
-
-            function generateId($loc){
-                $.ajax({
-                    type : "post",
-                    data : {
-                        loc : $loc
-                    },
-                    success : function(response){
-                        if(response > 999){
-                            $("#kodeBarang").val($loc + (parseInt(response)+1));
-                        }else if(response > 99){
-                            $("#kodeBarang").val($loc + "0" + (parseInt(response)+1));
-                        }else if(response > 9){
-                            $("#kodeBarang").val($loc + "00" + (parseInt(response)+1));
-                        }else{
-                            $("#kodeBarang").val($loc + "000" + (parseInt(response)+1));
-                        }
-                        console.log($("#kodeBarang").val());
-                    }
-                });
-            }
-        });
-    </script>
 </body>
 </html>
