@@ -1,3 +1,6 @@
+<?php
+    session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -75,7 +78,7 @@
                         </a>
                         <ul class="dropdown-menu mt-3" style="color: white;">
                             <h5 class="dropdown-item">Username: </h5>
-                            <h5 class="dropdown-item">LeoAdmin</h5>
+                            <h5 class="dropdown-item"><?php echo $_SESSION['user'] ?></h5>
                             <!-- <li><a class="dropdown-item" href="#"></a></li>
                             <li><a class="dropdown-item" href="#">Another action</a></li> -->
                             <li><hr class="dropdown-divider"></li>
@@ -90,10 +93,10 @@
     <div class="banner-image w-100 vh-100 d-flex justify-content-center align-items-center">
         <div class="content text-center" style="z-index:10;">
             <h1 class="text-white" style="">WELCOME,</h1>
-            <h1 class="text-white" style="">CJ BLOK</h1>
+            <h1 class="text-white" style=""><?php echo $_SESSION['user'] ?></h1>
         </div>
     </div>
-    
+
     <script>
         var nav= document.querySelector('nav');
         window.addEventListener('scroll', function(){
