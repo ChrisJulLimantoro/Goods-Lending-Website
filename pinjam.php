@@ -116,9 +116,7 @@
                     <h3>Nama: </h3>
                     <h3>Walky Talky</h3>
                 </div>
-                <div class="col-6">
-                    <button type="button" class="btn btn-dark float-end mt-3" style="height:50%; width:100%; border-radius: 3em;">PINJAM</button>
-                </div>
+
             </div>
             <div class="row mt-3">
                 <div class="col-12">
