@@ -3,7 +3,7 @@
     session_start();
     if(isset($_SESSION['user']) == false){
         session_destroy();
-        header('location : login.php');
+        header('Location: login.php');
     }
     $sql = 'SELECT profile FROM `admin` WHERE `username` = :user';
     $stmt = $conn->prepare($sql);
@@ -297,10 +297,10 @@
                 generateId($loc);
             });
             
-            $(".fotoBarang").on("click",function(){
+            $(".uploadFoto").on("click",function(){
                 // console.log($("#submitFile").val());
-                $(this).parent().find("input").removeAttr("disabled");
-                $(this).parent().find("input").click();
+                $(this).find("input").removeAttr("disabled");
+                $(this).find("input").click();
             });
 
             // munculin tombol buat delete foto
