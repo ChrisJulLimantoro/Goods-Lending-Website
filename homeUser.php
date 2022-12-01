@@ -537,8 +537,40 @@
 </div>
 
 <div class="container barang mt-3">
-    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-1" id="viewItem">
-
+ <div class="row row-cols-lg-3 row-cols-md-2 row-cols-1" id="viewItem">
+   <div class="col mt-5 contCard">
+        <div class="card" style="width: 18rem; height: 24rem;">
+            <div class="text-center">
+                <div id="carouselExampleControlsNoTouching" class="carousel slide" data-bs-touch="false" data-bs-interval="false">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img src="item/mic.jfif" class="d-block w-100" alt="...">
+                        </div>
+                        <div class="carousel-item">
+                            <img src="item/speaker.jfif" class="d-block w-100" alt="...">
+                        </div>
+                        <div class="carousel-item">
+                            <img src="item/WT.jfif" class="d-block w-100" alt="...">
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+            <div class="card-details">
+                <p class="text-title">Random</p>
+                <p class="text-title">Quantity : 5</p>
+                <p class="text-body" style="padding-left : 10px;">Blablabla</p>
+            </div>
+            <button class="card-button">Pinjam!</button>
+        </div>
     </div>
+  </div>
 </div>
 </body>
