@@ -1,6 +1,5 @@
 <?php 
-    include "connection.php";
-    session_start()
+    include "user_authen.php";
 ?>
 
 <!DOCTYPE html>
