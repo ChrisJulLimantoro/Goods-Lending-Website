@@ -1,6 +1,5 @@
 <?php
-    include "connection.php";
-    session_start();
+    include "admin_authen.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -96,15 +95,15 @@
                 <div style="width: 5em;" class="user">
                     <li class="nav-item dropdown" style="list-style: none; width: 3em;">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="profile/profileDefault.jpg" alt="" style="width: 3em; height: 3em;border-radius: 30px">
+                            <img src="<?php echo $_SESSION['profile'] ?>" alt="" style="width: 3em; height: 3em; border-radius: 50%">
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end mt-3" style="color: white;">
                             <h5 class="dropdown-item">Username: </h5>
-                            <h5 class="dropdown-item"><?php echo $_SESSION['user'] ?></h5>
+                            <h5 class="dropdown-item"><?php echo $_SESSION['admin'] ?></h5>
                             <!-- <li><a class="dropdown-item" href="#"></a></li>
                             <li><a class="dropdown-item" href="#">Another action</a></li> -->
                             <li><hr class="dropdown-divider"></li>
-                            <li><button class="btn btn-primary mx-2">Log out</button></li>
+                            <li><a href="logout.php"><button class="btn btn-primary mx-2" >Log out</button></a></li>
                         </ul>
                     </li>
                 </div>
@@ -115,7 +114,7 @@
     <div class="banner-image w-100 vh-100 d-flex justify-content-center align-items-center">
         <div class="content text-center" style="z-index:10;" id="text">
             <h1 class="text-white" style="" id="welcome">WELCOME,</h1>
-            <h1 class="text-white" style="" id="nama"><?php echo $_SESSION['user'] ?></h1>
+            <h1 class="text-white" style="" id="nama"><?php echo $_SESSION['admin'] ?></h1>
         </div>
     </div>
 
