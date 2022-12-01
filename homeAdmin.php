@@ -82,10 +82,10 @@
                             <a class="nav-link active" aria-current="page" href="#">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="terimaPeminjaman.php">Transaksi</a>
+                            <a class="nav-link active" aria-current="page" href="terimaPeminjaman.php">Terima Peminjaman</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="tambahBarang.php">Tarik Tunai</a>
+                            <a class="nav-link active" aria-current="page" href="tambahBarang.php">Tambah Barang</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="#">Setor Tunai</a>
