@@ -1,11 +1,5 @@
 <?php
-    include "connection.php";
-    session_start();
-    $sql = 'SELECT profile FROM `user` WHERE `username` = :user';
-    $stmt = $conn->prepare($sql);
-    $stmt->execute(['user' => $_SESSION['user']]);
-    $row = $stmt->fetchcolumn();
-    $_SESSION['profile'] = $row;
+    include "user_authen.php";
 ?>
 <!-- ini php buat ngefilter by ajax -->
 <?php
@@ -498,7 +492,7 @@
                                 ?>
                             </h6>
                             <li><hr class="dropdown-divider"></li>
-                            <a href="login.php"><button type="button" class="btn btn-light">LOGOUT</button></a>
+                            <a href="logout.php"><button type="button" class="btn btn-light">LOGOUT</button></a>
                         </ul>
                     </li>
 

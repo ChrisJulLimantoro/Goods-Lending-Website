@@ -1,15 +1,5 @@
 <?php
-    include "connection.php";
-    session_start();
-    // if(isset($_SESSION['user']) == false){
-    //     session_destroy();
-    //     header('Location: login.php');
-    // }
-    // $sql = 'SELECT profile FROM `admin` WHERE `username` = :user';
-    // $stmt = $conn->prepare($sql);
-    // $stmt->execute(['user' => $_SESSION['user']]);
-    // $row = $stmt->fetchcolumn();
-    // $_SESSION['profile'] = $row;
+    include "admin_authen.php";
 ?>
 <?php
     if(isset($_POST['loc'])){
