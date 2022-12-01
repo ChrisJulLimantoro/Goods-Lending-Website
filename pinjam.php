@@ -116,9 +116,7 @@
                     <h3>Nama: </h3>
                     <h3>Walky Talky</h3>
                 </div>
-                <div class="col-6">
-                    <button type="button" class="btn btn-dark float-end mt-3" style="height:50%; width:100%; border-radius: 3em;">PINJAM</button>
-                </div>
+
             </div>
             <div class="row mt-3">
                 <div class="col-12">
@@ -137,7 +135,117 @@
 
 
     <div class="row mt-5 start-50 justify-content-center mx-5 px-5" >
-        <table class="table">
+            <div class="accordion" id="accordionPanelsStayOpenExample">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#acor1" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                             PINJAM 1
+                        </button>
+                    </h2>
+                    <div id="acor1" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
+                        <div class="accordion-body" style="overflow: auto;">
+                            <table class="table">
+                                <thead>
+                                    <tr class="table-dark text-center">
+                                        <th scope="col">TANGGAL DIPINJAM</th>
+                                        <th scope="col">TANGGAL PENGEMBALIAN</th>
+                                        <th scope="col">TENGGAT PENGEMBALIAN</th>
+                                        <th scope="col">NAMA PIHAK PEMINJAM</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="text-center">
+                                        <td>11 - 02 - 2021</td>
+                                        <td>15 - 02 - 2021</td>
+                                        <td>16 - 02 - 2021</td>
+                                        <td>Budi</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="row mt-3">
+                                <div class="col-12 justify-content-center d-flex">
+                                    <button type="button" class="btn btn-primary" style="border-radius: 3em; width: 15em;">PINJAM</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#acor2" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                             PINJAM 2
+                        </button>
+                    </h2>
+                    <div id="acor2" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                        <div class="accordion-body" style="overflow: auto;">
+                            <table class="table">
+                                <thead>
+                                    <tr class="table-dark text-center">
+                                        <th scope="col">TANGGAL DIPINJAM</th>
+                                        <th scope="col">TANGGAL PENGEMBALIAN</th>
+                                        <th scope="col">TENGGAT PENGEMBALIAN</th>
+                                        <th scope="col">NAMA PIHAK PEMINJAM</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="text-center">
+                                        <td>11 - 02 - 2021</td>
+                                        <td>15 - 02 - 2021</td>
+                                        <td>16 - 02 - 2021</td>
+                                        <td>Budi</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="row mt-3">
+                                <div class="col-12 justify-content-center d-flex">
+                                    <button type="button" class="btn btn-primary" style="border-radius: 3em; width: 15em;">PINJAM</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="panelsStayOpen-heading3">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#acor3" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                             PINJAM 3
+                        </button>
+                    </h2>
+                    <div id="acor3" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading3">
+                        <div class="accordion-body" style="overflow: auto;">
+                            <table class="table">
+                                <thead>
+                                    <tr class="table-dark text-center">
+                                        <th scope="col">TANGGAL DIPINJAM</th>
+                                        <th scope="col">TANGGAL PENGEMBALIAN</th>
+                                        <th scope="col">TENGGAT PENGEMBALIAN</th>
+                                        <th scope="col">NAMA PIHAK PEMINJAM</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="text-center">
+                                        <td>11 - 02 - 2021</td>
+                                        <td>15 - 02 - 2021</td>
+                                        <td>16 - 02 - 2021</td>
+                                        <td>Budi</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="row mt-3">
+                                <div class="col-12 justify-content-center d-flex">
+                                    <button type="button" class="btn btn-primary" style="border-radius: 3em; width: 15em;">PINJAM</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+        </div>
+        <!-- <table class="table">
             <thead>
                 <tr class="table-dark text-center">
                     <th scope="col">TANGGAL DIPINJAM</th>
@@ -154,7 +262,7 @@
                     <td>Budi</td>
                 </tr>
             </tbody>
-        </table>
+        </table> -->
     </div>
 </body>
 </html>
