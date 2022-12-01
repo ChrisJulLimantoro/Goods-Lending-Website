@@ -82,13 +82,13 @@
                             <a class="nav-link active" aria-current="page" href="#">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="terimaPeminjaman.php">Verifikasi</a>
+                            <a class="nav-link active" aria-current="page" href="terimaPeminjaman.php">Transaksi</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="tambahBarang.php">Tambah Barang</a>
+                            <a class="nav-link active" aria-current="page" href="tambahBarang.php">Tarik Tunai</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Tabel Peminjaman</a>
+                            <a class="nav-link active" aria-current="page" href="#">Setor Tunai</a>
                         </li>
                         
                 </div>
