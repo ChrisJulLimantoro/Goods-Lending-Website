@@ -1,15 +1,5 @@
 <?php
-    include "connection.php";
-    session_start();
-    if(isset($_SESSION['user']) == false){
-        session_destroy();
-        header('location : login.php');
-    }
-    $sql = 'SELECT profile FROM `admin` WHERE `username` = :user';
-    $stmt = $conn->prepare($sql);
-    $stmt->execute(['user' => $_SESSION['user']]);
-    $row = $stmt->fetchcolumn();
-    $_SESSION['profile'] = $row;
+    include "admin_authen.php";
 ?>
 <?php
     if(isset($_POST['loc'])){
@@ -36,7 +26,7 @@
     <!-- JS Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
@@ -182,30 +172,32 @@
     <div class="container-fluid p-5 align-items-center justify-content-center">
         <form action="insertItem.php" method="post" enctype="multipart/form-data" >
             <div class="row text-center px-3 tempatUpload">
-                <div class="col-lg-2"></div>
+                <div class="col-lg-2 col-md-2 col-1 py-4">
+                    <a href="homeAdmin.php"><img src="assets/back.png" height="25px"></a>
+                </div>
 
-                <div class="col-lg-2 col-6 p-2 d-flex align-items-center justify-content-center uploadFoto">
+                <div class="col-lg-2 col-md-2 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto">
                     <img src="assets/no-image.png" class="fotoBarang">
                     <label for="submitFoto1" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
                     <input type="file" accept=".jpg, .jpeg, .png, .jfif" class="form-control hidden" multiple="false" name="submitFoto1" id="submitFoto1" onchange="read_file(this)" value="assets/no-image.png">
                     <button type="button" class="btn deleteFoto"></button>
                 </div>
 
-                <div class="col-lg-2 col-6 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up2" style="opacity : 0">
+                <div class="col-lg-2 col-md-2 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up2" style="opacity : 0">
                     <img src="assets/no-image.png" class="fotoBarang">
                     <label for="submitFoto2" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
                     <input type="file" accept=".jpg, .jpeg, .png, .jfif" class="form-control hidden" multiple="false" name="submitFoto2" id="submitFoto2" onchange="read_file(this)" value="assets/no-image.png" disabled>
                     <button type="button" class="btn deleteFoto"></button>
                 </div>
 
-                <div class="col-lg-2 col-6 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up3" style="opacity : 0">
+                <div class="col-lg-2 col-md-2 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up3" style="opacity : 0">
                     <img src="assets/no-image.png" class="fotoBarang">
                     <label for="submitFoto3" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
                     <input type="file" accept=".jpg, .jpeg, .png, .jfif" class="form-control hidden" multiple="false" name="submitFoto3" id="submitFoto3" onchange="read_file(this)" value="assets/no-image.png" disabled>
                     <button type="button" class="btn deleteFoto"></button>
                 </div>
 
-                <div class="col-lg-2 col-6 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up4" style="opacity : 0">
+                <div class="col-lg-2 col-md-2 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up4" style="opacity : 0">
                     <img src="assets/no-image.png" class="fotoBarang">
                     <label for="submitFoto4" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
                     <input type="file" accept=".jpg, .jpeg, .png, .jfif" class="form-control hidden" multiple="false" name="submitFoto4" id="submitFoto4" onchange="read_file(this)" value="assets/no-image.png" disabled>
@@ -282,7 +274,8 @@
             // delete foto
             $(document.body).on("click", ".deleteFoto", function(e) {
                 e.preventDefault();
-                $(this).parent().find('input').val("assets/no-image.png");
+                console.log("bisa del");
+                $(this).parent().find('input').val("");
                 $(this).parent().find("img").attr("src", "assets/no-image.png");
                 $(this).parent().find("label").removeClass("hidden");
                 $(this).parent().find("img").css("display","none");
@@ -297,10 +290,10 @@
                 generateId($loc);
             });
             
-            $(".fotoBarang").on("click",function(){
+            $(document.body).on("click",".uploadFoto",function(){
                 // console.log($("#submitFile").val());
-                $(this).parent().find("input").removeAttr("disabled");
-                $(this).parent().find("input").click();
+                $(this).find("input").removeAttr("disabled");
+                $(this).find("input").click();
             });
 
             // munculin tombol buat delete foto

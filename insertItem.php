@@ -48,5 +48,6 @@
                 ':id' => $_POST['kodeBarang']
             ));
         }
+        header("Location: tambahBarang.php");
     }
 ?>

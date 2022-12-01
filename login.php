@@ -12,10 +12,10 @@
             if($row['total'] == 0){
                 $sql2 = "SELECT count(*) AS total FROM `user` WHERE `username` = :username";
                 $stmt2 = $conn->prepare($sql2);
-                $stmt2->execute([':username' => $user]);
+                $stmt2->execute(array(':username' => $user));
                 $row2 = $stmt2->fetch();
                 if ($row2['total'] == 1){
-                    echo "-1";
+                    echo "5";
                 }
                 else{
                     echo "0";
@@ -24,8 +24,14 @@
                 echo "1";
                 session_start();
                 $_SESSION['user'] = $user;
+                $sql5 = "SELECT profile FROM `user` WHERE `username` = :username";
+                $stmt5 = $conn->prepare($sql5);
+                $stmt5->execute(array(':username' => $_POST['user']));
+                $row5 = $stmt5->fetch();
+                // echo var_dump($row5);
+                $_SESSION['profile'] = $row5['profile'];
             }
-            exit;
+            exit();
         }else{
             $sql3 = "SELECT count(*) as total FROM `admin` WHERE `username` = :username and `password` = PASSWORD( :password )";
             $admin = $_POST['user'];
@@ -40,7 +46,7 @@
                 $stmt4->execute([':username' => $admin]);
                 $row4 = $stmt4->fetch();
                 if ($row4['total'] == 1){
-                    echo "-1";
+                    echo "6";
                 }
                 else{
                     echo "0";
@@ -48,9 +54,15 @@
             }else{
                 echo "2";
                 session_start();
-                $_SESSION['user'] = $admin;
+                $_SESSION['admin'] = $admin;
+                $sql6 = "SELECT profile FROM `admin` WHERE `Username` = :username";
+                $stmt6 = $conn->prepare($sql6);
+                $stmt6->execute(array(':username' => $_SESSION['admin']));
+                $row6 = $stmt6->fetch();
+                // echo var_dump($row6);
+                $_SESSION['profile'] = $row6['profile'];
             }
-            exit;
+            exit();
         }
     }
 ?>
@@ -116,6 +128,8 @@
         $(document).ready(function(){
             $("#signIn").on("click",function(){
                 console.log($('input[name="acc"]:checked').val());
+                console.log($("#inputPassword").val());
+                console.log($("#inputUsername").val());
                 $("#inputPassword").removeClass("shaking");
                 $("#inputUsername").removeClass("shaking");
                 $.ajax({
@@ -126,6 +140,7 @@
                             acc  : $('input[name="acc"]:checked').val()
                         },
                         success : function(response){
+                            console.log(response);
                             if(response == 0){
                                 $("#statusUser").removeAttr("hidden");
                                 $("#statusUser img").attr("src","assets/wrong.png");
@@ -174,9 +189,9 @@
                             }
                         }});
                 });
-                $("#inputPassword").on("keyup",function(){
-                    $("#inputPassword")
-                })
+                // $("#inputPassword").on("keyup",function(){
+                //     $("#inputPassword")
+                // })
             })
     </script>
 
