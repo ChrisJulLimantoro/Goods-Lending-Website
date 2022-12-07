@@ -1,7 +1,57 @@
 <?php
     include "admin_authen.php";
 ?>
-
+<?php
+    if(isset($_POST['ajax'])){
+        $sql_ajax = "SELECT * FROM borrow_detail a JOIN borrow b on a.id_borrow = b.id_borrow WHERE status_pinjam <> 0 and status = 0 ORDER BY a.id_borrow";
+        $stmt_ajax = $conn->prepare($sql_ajax);
+        $stmt_ajax->execute();
+        $row_ajax = $stmt_ajax->fetchAll();
+        $count = 1;
+        if($row_ajax){
+            foreach($row_ajax as $r){
+                echo '<tr><td class="count">'.$count.'</td>';
+                echo '<td class="kode_brg">'.$r['id_item'].'</td>';
+                echo '<td class="kode_bor" style="display:none">'.$r['id_borrow'].'</td>';
+                $sql_brg = "SELECT Nama_Barang FROM item WHERE Id = :id";
+                $stmt_brg = $conn->prepare($sql_brg);
+                $stmt_brg->execute(array(
+                    ":id" => $r['id_item']
+                ));
+                $nm_brg = $stmt_brg->fetchcolumn();
+                echo '<td class="namaBrg">'.$nm_brg.'</td>';
+                $sql_org = "SELECT CONCAT(first_name,' ',last_name) AS 'name',email FROM user WHERE username = :id";
+                $stmt_org = $conn->prepare($sql_org);
+                $stmt_org->execute(array(
+                    ":id" => $r['id_user']
+                ));
+                $nm_org = $stmt_org->fetchAll();
+                echo '<td class="peminjam">'.$nm_org[0]['name'].'</td>';
+                echo '<td class="email" style="display:none">'.$nm_org[0]['email'].'</td>';
+                echo '<td class="tglPinjam">'.$r['start_date'].'</td>';
+                echo '<td class="tglKembali">'.$r['expired_date'].'</td>';
+                echo '<td> <button type="button" class="btn btn-success btn-acc" style="width:70px">Terima</button>
+                            <button type="button" class="btn btn-danger btn-cnc" style="width:70px">Tolak</button>
+                    </td></tr>';
+                    $count++;
+            }
+        }else{
+            echo '<tr><td colspan="7" class ="text-center"><strong>Tidak ada pending request</strong></td></tr>';
+        }
+        exit();
+    }
+?>
+<?php 
+    if(isset($_POST['bor']) && isset($_POST['brg']) && isset($_POST['stu'])){
+        $sql_up = "UPDATE borrow_detail SET status = :stu WHERE id_borrow = :bor and id_item = :brg";
+        $stmt_up = $conn->prepare($sql_up);
+        $stmt_up->execute(array(
+            ":stu" => $_POST['stu'],
+            ":bor" => $_POST['bor'],
+            ":brg" => $_POST['brg']
+        ));
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,26 +116,65 @@
 
     <script>
         $(document).ready(function() {
-            let id = $("#kode").html();
-            let nama = $("#namaBrg").html();
-            let peminjam = $("#peminjam").html();
-            let tglPinjam = $("#tglPinjam").html();
-            let tglKembali = $("#tglKembali").html();
-
-            $(document.body).on("click", "#accept", function() {
-                $.ajax (
-                    
-                ));
-
-                $(this).parent().parent().remove();
+            
+            $.ajax({
+                type : "post",
+                data : {
+                    ajax : 1
+                },
+                success : function(e){
+                    $("#requests").html(e);
+                }
+            })
+            $(document.body).on("click", ".btn-acc", function() {
+                $.ajax ({
+                    type : "post",
+                    data : {
+                        brg : $(this).parent().parent().find(".kode_brg").text(),
+                        bor : $(this).parent().parent().find(".kode_bor").text(),
+                        stu : 1
+                    },
+                    success : function(){
+                        $.ajax({
+                            type : "post",
+                            data : {
+                                ajax : 1
+                            },
+                            success : function(e){
+                                $("#requests").html(e);
+                            }
+                        })
+                        // $.ajax({
+                        //     type : "post",
+                        //     data : {
+                        //         email :  $(this).parent().parent().find(".email").text(),
+                        //         text : 
+                        //     }
+                        // })
+                    }
+                });
             });
 
-            $(document.body).on("click", "#deny", function() {
+            $(document.body).on("click", ".btn-cnc", function() {
                 $.ajax ({
-                    
+                    type : "post",
+                    data : {
+                        brg : $(this).parent().parent().find(".kode_brg").text(),
+                        bor : $(this).parent().parent().find(".kode_bor").text(),
+                        stu : 2
+                    },
+                    success : function(){
+                        $.ajax({
+                            type : "post",
+                            data : {
+                                ajax : 1
+                            },
+                            success : function(e){
+                                $("#requests").html(e);
+                            }
+                        })
+                    }
                 });
-
-                $(this).parent().parent().remove();
             });
         })    
     </script>
@@ -168,7 +257,7 @@
                     <th>Aksi</th>
                 </tr>
                 <tbody class="table-group-divider" id="requests">
-                    <tr>
+                    <!-- <tr>
                         <td id="count">1</td>
                         <td id="kode">C0001</td>
                         <td id="namaBrg">Microphone Wireless</td>
@@ -179,7 +268,7 @@
                             <button type="button" class="btn btn-success" style="width:70px" id="accept">Terima</button>
                             <button type="button" class="btn btn-danger" style="width:70px" id="deny">Tolak</button>
                         </td>
-                    </tr>
+                    </tr> -->
                 </tbody>
             </table>
         </div>
