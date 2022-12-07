@@ -96,7 +96,7 @@
         <div class="row px-lg-3" style="margin: 0">
             <nav class="navbar navbar-dark navbar-expand-lg">
                 <div class="col-lg-2 col-3 d-flex justify-content-start text-center">   
-                    <a class="navbar-brand" href="homeUser.php">KERANJANG</a>
+                    <a class="navbar-brand" href="homeAdmin.php">KERANJANG</a>
                 </div>
                 
                 <div class="col-lg-8 col-5 d-flex justify-content-center">

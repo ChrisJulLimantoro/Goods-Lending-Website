@@ -1,6 +1,13 @@
 <?php
     include "user_authen.php";
 ?>
+<?php
+    if(isset($_POST['nama']) && isset($_POST['filter'])){
+        $_SESSION['nama_brg'] = $_POST['nama'];
+        $_SESSION['filter'] = $_POST['filter'];
+        exit();
+    }
+?>
 <!-- ini php buat ngefilter by ajax -->
 <?php
     if(isset($_POST['loc'])){
@@ -24,7 +31,7 @@
                     echo '<div class="text-center">';
                     echo '<img src="'.$s['image'].'" class="card-img-top" alt="" style="width: 12em; height: 10em;"></div>';
                     echo '<div class="card-details">';
-                    echo '<p class="text-title">'.$s['Nama_Barang'].'</p>';
+                    echo '<p class="text-title nama_barang">'.$s['Nama_Barang'].'</p>';
                     echo '<p class="text-title">Quantity : '.$row2.'</p>';
                     echo '<p class="text-body" style="padding-left : 10px;">'.$s['Deskripsi'].'</p></div>';
                     echo '<button class="card-button">Pinjam!</button></div></div>';
@@ -52,7 +59,7 @@
                     echo '<div class="text-center">';
                     echo '<img src="'.$s['image'].'" class="card-img-top" alt="" style="width: 12em; height: 10em;"></div>';
                     echo '<div class="card-details">';
-                    echo '<p class="text-title">'.$s['Nama_Barang'].'</p>';
+                    echo '<p class="text-title nama_barang">'.$s['Nama_Barang'].'</p>';
                     echo '<p class="text-title">Quantity : '.$row2.'</p>';
                     echo '<p class="text-body" style="padding-left : 10px;">'.$s['Deskripsi'].'</p></div>';
                     echo '<button class="card-button">Pinjam!</button></div></div>';
@@ -79,7 +86,6 @@
             AOS.init();
             var width = $(window).width();
                 if (width<576){
-                    
                     $("#viewItem").addClass("mx-4");
                 }
                 if (width>=576){
@@ -294,6 +300,22 @@
                     }
                 });
             });
+            $(document.body).on("click",".card-button",function(){
+                console.log($(this).parent().find(".nama_barang").text());
+                let nama_brang = $(this).parent().find(".nama_barang").text();
+                $.ajax({
+                    type : "post",
+                    data : {
+                        nama : nama_brang,
+                        filter  : filter
+                    },
+                    success : function(response){
+                        setTimeout(() => {
+                            $(window).attr("location","pinjam.php");
+                        },1000)
+                    }
+                })
+            })
         })
     </script>
     <style>
@@ -470,9 +492,11 @@
                     </button>
                 </div> -->
                 <div class="col-4 keranjang">
-                    <button type="button" class="btn btn-dark position-relative mb-2">
-                        <img src="assets/keranjang.png" alt=""  id="keranjang">
-                    </button>
+                    <a href="keranjang.php">
+                        <button type="button" class="btn btn-dark position-relative mb-2">
+                            <img src="assets/keranjang.png" alt=""  id="keranjang">
+                        </button>
+                    </a>
                 </div>
                 <div class="col-4 user">
                     <li class="nav-item dropdown mt-2" style="list-style: none">
@@ -537,8 +561,40 @@
 </div>
 
 <div class="container barang mt-3">
-    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-1" id="viewItem">
-
-    </div>
+ <div class="row row-cols-lg-3 row-cols-md-2 row-cols-1" id="viewItem">
+   <!-- <div class="col mt-5 contCard">
+        <div class="card" style="width: 18rem; height: 24rem;">
+            <div class="text-center">
+                <div id="carouselExampleControlsNoTouching" class="carousel slide" data-bs-touch="false" data-bs-interval="false">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img src="item/mic.jfif" class="d-block w-100" alt="...">
+                        </div>
+                        <div class="carousel-item">
+                            <img src="item/speaker.jfif" class="d-block w-100" alt="...">
+                        </div>
+                        <div class="carousel-item">
+                            <img src="item/WT.jfif" class="d-block w-100" alt="...">
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControlsNoTouching" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+            <div class="card-details">
+                <p class="text-title">Random</p>
+                <p class="text-title">Quantity : 5</p>
+                <p class="text-body" style="padding-left : 10px;">Blablabla</p>
+            </div>
+            <button class="card-button">Pinjam!</button>
+        </div>
+    </div> -->
+  </div>
 </div>
 </body>
