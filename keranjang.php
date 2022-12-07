@@ -45,6 +45,25 @@
     }
 ?>
 <?php
+    if(isset($_POST['verif'])) {
+        $sql_verif = "SELECT count(*) as total FROM `user` WHERE `username` = :username and `password` = PASSWORD( :password )";
+        $user = $_SESSION['user'];
+        $pass = $_POST['verif'];
+        $stmt = $conn->prepare($sql_verif);
+        $stmt->execute(array(':username' => $user,
+                            ':password' => $pass));
+        $row = $stmt->fetch();
+        if($row['total'] == 0){
+            echo 0;
+        }
+        else {
+            echo 1;
+        }
+        exit();
+    }
+   
+?>
+<?php
     if(isset($_POST['ajax'])){
         if(isset($_SESSION['bucket'])){
             $sql_tgl = "SELECT * FROM `borrow` WHERE `id_borrow` = :bor";
@@ -429,15 +448,61 @@
             });
             // ajax ajukan pinjaman
             $(document.body).on("click","#pinjamBarang",function(){
-                $.ajax({
-                    type : "post",
-                    data : {
-                        pinjam : 1
-                    },
-                    success : function(e){
-                        // console.log('sukses');
-                        $("#view").html(e);
+                const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: false
+                })
+                swalWithBootstrapButtons.fire({
+                    title : "Enter your password",
+                    html : "<input type='password' class='form-control' name='verif' id='verif'>",
+                    showCancelButton: true,
+                    confirmButtonText: 'Continue',
+                    cancelButtonText: 'Cancel',
+                    preConfirm: () => {
+                        const pass = $("#verif").val();
+                        if (!pass) {
+                        Swal.showValidationMessage(`Please enter a valid password!`)
+                        }
+                        return { pass: pass }
                     }
+                })
+                .then((result) => {
+                    $.ajax ({
+                        type : "post",
+                        data : {
+                            verif : `${result.value.pass}`
+                        },
+                        success : function(e) {
+                            if (e == 1) {
+                                $.ajax({
+                                    type : "post",
+                                    data : {
+                                        pinjam : 1
+                                    },
+                                    success : function(e){
+                                        // console.log('sukses');
+                                        $("#view").html(e);
+                                    }
+                                });
+                                
+                                swalWithBootstrapButtons.fire ({
+                                    icon : "success",
+                                    title : "Success!",
+                                    text : "Verification Succeed!"
+                                })
+                            }
+                            else {
+                                swalWithBootstrapButtons.fire ({
+                                    icon : "error",
+                                    title : "Failed!",
+                                    text : "Wrong Password!"
+                                })
+                            }
+                        }
+                    })
                 })
             });
         });
