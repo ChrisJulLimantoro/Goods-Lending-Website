@@ -1,5 +1,5 @@
 <?php
-    session_start();
+    include "admin_authen.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,12 +47,33 @@
             background-color: #5179d6;
             transform: scale(1.2);
         }
-        
+        #welcome{
+            overflow : hidden;
+            border-right: none;
+            animation: typing 3s steps(40, end), blink-caret .75s step-end 4;
+        }
+        #nama{
+            overflow : hidden;
+            width:0%;
+            border-right: none;
+            animation: typing 3s 3s forwards steps(40, end), blink-caret .75s 3s step-end 4;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        /* The typewriter cursor effect */
+        @keyframes blink-caret {
+            from, to { border-right: 0.15em solid transparent }
+            50% { border-right: 0.15em solid orange; }
+        }
     </style>
 </head>
 <body>
-    <nav class="navbar fixed-top navbar-expand-lg navbar-dark p-md-3">
-        <div class="container">
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark p-md-3" style="backdrop-filter : blur(3px);">
+        <div class="container-fluid justify-content-between">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -62,28 +83,28 @@
                             <a class="nav-link active" aria-current="page" href="#">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Verifikasi</a>
+                            <a class="nav-link active" aria-current="page" href="terimaPeminjaman.php">Transaksi</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Tambah Barang</a>
+                            <a class="nav-link active" aria-current="page" href="tambahBarang.php">Tarik Tunai</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Tabel Peminjaman</a>
+                            <a class="nav-link active" aria-current="page" href="#">Setor Tunai</a>
                         </li>
                         
                 </div>
-                <div style="width: 10em;" class="px-3 user">
+                <div style="width: 5em;" class="user">
                     <li class="nav-item dropdown" style="list-style: none; width: 3em;">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="profile/profileDefault.jpg" alt="" style="width: 3em; height: 3em;border-radius: 30px">
+                            <img src="<?php echo $_SESSION['profile'] ?>" alt="" style="width: 3em; height: 3em; border-radius: 50%">
                         </a>
-                        <ul class="dropdown-menu mt-3" style="color: white;">
+                        <ul class="dropdown-menu dropdown-menu-end mt-3" style="color: white;">
                             <h5 class="dropdown-item">Username: </h5>
-                            <h5 class="dropdown-item"><?php echo $_SESSION['user'] ?></h5>
+                            <h5 class="dropdown-item"><?php echo $_SESSION['admin'] ?></h5>
                             <!-- <li><a class="dropdown-item" href="#"></a></li>
                             <li><a class="dropdown-item" href="#">Another action</a></li> -->
                             <li><hr class="dropdown-divider"></li>
-                            <li><button class="btn btn-primary mx-2">Log out</button></li>
+                            <li><a href="logout.php"><button class="btn btn-primary mx-2" >Log out</button></a></li>
                         </ul>
                     </li>
                 </div>
@@ -92,9 +113,9 @@
     </nav>
 
     <div class="banner-image w-100 vh-100 d-flex justify-content-center align-items-center">
-        <div class="content text-center" style="z-index:10;">
-            <h1 class="text-white auto">WELCOME,</h1>
-            <h1 class="text-white" style=""><?php echo $_SESSION['user'] ?></h1>
+        <div class="content text-center" style="z-index:10;" id="text">
+            <h1 class="text-white" style="" id="welcome">WELCOME,</h1>
+            <h1 class="text-white" style="" id="nama"><?php echo $_SESSION['admin'] ?></h1>
         </div>
     </div>
     

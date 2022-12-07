@@ -46,7 +46,7 @@
             $("#submitFile").on("change",function(){
                 read_file(this);
             })
-            
+
             $("#profile").on("click",function(){
                 console.log($("#submitFile").val());
                 $("#submitFile").click();
