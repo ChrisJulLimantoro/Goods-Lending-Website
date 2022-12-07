@@ -515,6 +515,15 @@
                                     echo $rowName;
                                 ?>
                             </h6>
+                            <h6 class="card-title mb-2">Status: </h6>
+                            <h6 class="card-title mb-1">
+                                <?php
+                                    if($_SESSION['status'] = 0){
+                                        echo "Green";
+                                    }else{
+                                        echo "Red";
+                                    }
+                                ?></h6>
                             <li><hr class="dropdown-divider"></li>
                             <a href="logout.php"><button type="button" class="btn btn-light">LOGOUT</button></a>
                         </ul>
