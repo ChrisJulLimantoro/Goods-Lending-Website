@@ -11,6 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
     <script>
         $(document).ready(function(){
             $(window).resize(function(){
@@ -82,34 +83,32 @@
                             <a class="nav-link active" aria-current="page" href="#">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="terimaPeminjaman.php">Transaksi</a>
+                            <a class="nav-link active" aria-current="page" href="terimaPeminjaman.php">Terima Peminjaman</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="tambahBarang.php">Tarik Tunai</a>
+                            <a class="nav-link active" aria-current="page" href="tambahBarang.php">Tambah Barang</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Setor Tunai</a>
+                            <a class="nav-link active" aria-current="page" href="#">Pengembalian</a>
                         </li>
-                        
+                    </ul>
                 </div>
-                <div style="width: 5em;" class="user">
-                    <li class="nav-item dropdown" style="list-style: none; width: 3em;">
+                <div style="width: 5em; display:!important inline, position:!important absolute" class="user">
+                    <div class="dropdown" style="list-style: none; width: 3em;">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="<?php echo $_SESSION['profile'] ?>" alt="" style="width: 3em; height: 3em; border-radius: 50%">
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end mt-3" style="color: white;">
                             <h5 class="dropdown-item">Username: </h5>
                             <h5 class="dropdown-item"><?php echo $_SESSION['admin'] ?></h5>
-                            <!-- <li><a class="dropdown-item" href="#"></a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li> -->
                             <li><hr class="dropdown-divider"></li>
                             <li><a href="logout.php"><button class="btn btn-primary mx-2" >Log out</button></a></li>
                         </ul>
-                    </li>
+                    </div>
                 </div>
-            
         </div>
     </nav>
+    
 
     <div class="banner-image w-100 vh-100 d-flex justify-content-center align-items-center">
         <div class="content text-center" style="z-index:10;" id="text">
@@ -117,7 +116,7 @@
             <h1 class="text-white" style="" id="nama"><?php echo $_SESSION['admin'] ?></h1>
         </div>
     </div>
-
+    
     <script>
         var nav= document.querySelector('nav');
         window.addEventListener('scroll', function(){
@@ -127,6 +126,7 @@
             nav.classList.remove('bg-dark','shadow');
           }
         });
+
     </script>
 </body>
 </html>
