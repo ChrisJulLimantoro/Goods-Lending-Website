@@ -13,6 +13,7 @@
                 echo '<tr><td class="count">'.$count.'</td>';
                 echo '<td class="kode_brg">'.$r['id_item'].'</td>';
                 echo '<td class="kode_bor" style="display:none">'.$r['id_borrow'].'</td>';
+                echo '<td class="kode_org" style="display:none">'.$r['id_user'].'</td>';
                 $sql_brg = "SELECT Nama_Barang FROM item WHERE Id = :id";
                 $stmt_brg = $conn->prepare($sql_brg);
                 $stmt_brg->execute(array(
@@ -42,7 +43,7 @@
     }
 ?>
 <?php 
-    if(isset($_POST['bor']) && isset($_POST['brg']) && isset($_POST['stu'])){
+    if(isset($_POST['bor']) && isset($_POST['brg']) && isset($_POST['stu']) && isset($_POST['org'])){
         $sql_up = "UPDATE borrow_detail SET status = :stu WHERE id_borrow = :bor and id_item = :brg";
         $stmt_up = $conn->prepare($sql_up);
         $stmt_up->execute(array(
@@ -50,6 +51,44 @@
             ":bor" => $_POST['bor'],
             ":brg" => $_POST['brg']
         ));
+        if($_POST['stu'] == 2){
+            $sql_res = "UPDATE item SET status = 1 WHERE Id = :brg";
+            $stmt_res = $conn->prepare($sql_res);
+            $stmt_res->execute(array(
+                ":brg" => $_POST['brg']
+            ));
+            $sql_cek = "SELECT status FROM borrow_detail WHERE id_borrow = :bor";
+            $stmt_cek = $conn->prepare($sql_cek);
+            $stmt_cek->execute(array(
+                ":bor" => $_POST['bor']
+            ));
+            $row_cek = $stmt_cek->fetchAll();
+            $sql_jum = "SELECT count(*) FROM borrow_detail WHERE id_borrow = :bor";
+            $stmt_jum = $conn->prepare($sql_jum);
+            $stmt_jum->execute(array(
+                ":bor" => $_POST['bor']
+            ));
+            $row_jum = $stmt_jum->fetchColumn();
+            $checker = 0;
+            foreach($row_cek as $rc){
+                if($rc['status'] == 2){
+                    $checker += 1;
+                }
+            }
+            if($checker == $row_jum){
+                $sql_user = "UPDATE user SET status = 0 WHERE username = :user";
+                $stmt_user = $conn->prepare($sql_user);
+                $stmt_user->execute(array(
+                    ":user" => $_POST['org']
+                ));
+                $sql_bor = "UPDATE borrow SET status_pinjam = 2 WHERE id_borrow = :bor";
+                $stmt_bor = $conn->prepare($sql_bor);
+                $stmt_bor->execute(array(
+                    ":bor" => $_POST['bor']
+                ));
+            }
+        }
+        exit();
     }
 ?>
 <!DOCTYPE html>
@@ -132,7 +171,8 @@
                     data : {
                         brg : $(this).parent().parent().find(".kode_brg").text(),
                         bor : $(this).parent().parent().find(".kode_bor").text(),
-                        stu : 1
+                        stu : 1,
+                        org : $(this).parent().parent().find(".kode_org").text()
                     },
                     success : function(){
                         $.ajax({
@@ -161,7 +201,8 @@
                     data : {
                         brg : $(this).parent().parent().find(".kode_brg").text(),
                         bor : $(this).parent().parent().find(".kode_bor").text(),
-                        stu : 2
+                        stu : 2,
+                        org : $(this).parent().parent().find(".kode_org").text()
                     },
                     success : function(){
                         $.ajax({
@@ -219,7 +260,7 @@
                                 <h6 class="card-title mb-2">User ID:</h6>
                                 <h6 class="card-title mb-1">
                                     <?php
-                                         echo $_SESSION['user'] 
+                                         echo $_SESSION['admin'] 
                                     ?>
                                 </h6>
                                 <h6 class="card-title mb-2">Nama:</h6>
@@ -227,7 +268,7 @@
                                     <?php 
                                     $sqlName = "SELECT CONCAT(first_name,' ',last_name) AS name FROM `user` WHERE `username` = :user";
                                         $stmtName = $conn->prepare($sqlName);
-                                        $stmtName->execute(['user' => $_SESSION['user']]);
+                                        $stmtName->execute(['user' => $_SESSION['admin']]);
                                         $rowName = $stmtName->fetchcolumn(); 
                                         echo $rowName;
                                     ?>

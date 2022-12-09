@@ -1,7 +1,86 @@
 <?php 
     include "user_authen.php";
 ?>
-
+<?php
+    if(isset($_POST['ajax'])){
+        $sql_bor = "SELECT * FROM borrow WHERE id_user = :user ORDER BY id_borrow DESC";
+        $stmt_bor = $conn->prepare($sql_bor);
+        $stmt_bor->execute(array(
+            ":user" => $_SESSION['user']
+        ));
+        $row_bor = $stmt_bor->fetchAll();
+        $ct = 1;
+        foreach($row_bor as $rb){
+            if($rb['status_pinjam'] == 0){
+                $status = 'Draft';
+            }else if($rb['status_pinjam'] == 1){
+                $status = 'On Progress';
+            }else if($rb['status_pinjam'] == 2){
+                $status = 'Selesai';
+            }
+            echo '<div class="row mt-5 px-3 py-4 bg-dark text-light">
+                    <div class="col-12">
+                        <div class="row">
+                            <h3 class="col-md-3 col-12" id="namaItem">'.$rb['id_borrow'].'</h3>
+                            <h5 class="col-md-6 col-12" id="keteranganItem">'.$rb['start_date'].' / '.$rb['expired_date'].'</h5>
+                            <h3 class="col-md-3 col-12" id="qtyItem">'.$status.'</h3>
+                        </div>
+                    </div>
+                    <!-- Detail item -->
+                    <div class="accordion" id="detail">
+                        <div class="accordion-header mt-2" id="heading'.$ct.'">
+                            <button type="button" id="showDetail" class="collapsed detail-item-button" data-bs-toggle="collapse" data-bs-target="#collapse'.$ct.'" aria-expanded="true" aria-controls="collapse'.$ct.'">
+                                <img src="assets/more.png">
+                            </button>
+                        </div>
+                        <div id="collapse'.$ct.'" class="accordion-collapse collapse" aria-labelledby="heading'.$ct.'" data-bs-parent="#detail">
+                            <table class="table table-sm table-dark table-bordered border-light mt-3 text-center align-middle" id="tabelDetail">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nama</th>
+                                        <th>Lokasi</th>
+                                        <th>Status Barang</th>
+                                    </tr>
+                                </thead>
+                                <tbody>';
+            $sql_det = "SELECT * FROM borrow_detail WHERE id_borrow = :bor";
+            $stmt_det = $conn->prepare($sql_det);
+            $stmt_det->execute(array(
+                ":bor" => $rb['id_borrow']
+            ));
+            $row_det = $stmt_det->fetchAll();
+            foreach($row_det as $rd){
+                $sql_brg = "SELECT * FROM item WHERE Id = :item";
+                $stmt_brg = $conn->prepare($sql_brg);
+                $stmt_brg->execute(array(
+                    ":item" => $rd['id_item']
+                ));
+                $row_brg = $stmt_brg->fetchAll();
+                if($rd['status'] == 0){
+                    $status_brg = 'Menunggu Verifikasi';
+                }else if($rd['status'] == 1){
+                    $status_brg = 'Diterima';
+                }else if($rd['status'] == 2){
+                    $status_brg = 'Ditolak';
+                }else if($rd['status'] == 3){
+                    $status_brg = 'Barang di User';
+                }else if($rd['status'] == 4){
+                    $status_brg = 'Telah Dikembalikan';
+                }
+                echo    '<tr>
+                            <td class="kodeBrg">'.$rd['id_item'].'</td>
+                            <td class="namaBrg">'.$row_brg[0]['Nama_Barang'].'</td>
+                            <td class="lokasiBrg">'.$row_brg[0]['Location'].'</td>
+                            <td class="statusBrg">'.$status_brg.'</td>
+                        </tr>';
+            } 
+            echo '</tbody></table></div></div></div>';
+            $ct += 1;
+        }
+        exit();
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -117,15 +196,15 @@
 
     <script>
         $(document).ready(function() {
-            // Delete per JENIS item
-            $(document.body).on("click", "#deleteAll", function() {
-                $(this).parent().parent().remove();
-            });
-
-            // Delete per item
-            $(document.body).on("click", "#deleteOne", function() {
-                $(this).parent().parent().remove();
-            });
+            $.ajax({
+                type : "post",
+                data : {
+                    ajax : 1
+                },
+                success : function(response){
+                    $("#view").html(response);
+                }
+            })
             
             // Animasi tombol
             $(document.body).on("click", "#showDetail", function() {
@@ -203,41 +282,9 @@
     </div>
     
     <!-- Main content -->
-    <div class="container-fluid detail-box">
+    <div class="container-fluid detail-box" id="view">
         <!-- Item card -->
-        <div class="row mt-5 px-3 py-4 bg-dark text-light">
-
-            <div class="col-lg-12 col-5">
-                <div class="row">
-                    <h3 class="col-md-4 col-12" id="namaItem">ID PINJAM</h3>
-                    <h5 class="col-md-6 col-12" id="keteranganItem">22-07-2022 / 28-07-2022</h5>
-                    <h3 class="col-md-2 col-12" id="qtyItem">Status</h3>
-                </div>
-            </div>
-
-            <!-- Detail item -->
-            <div class="accordion" id="detail">
-                <div class="accordion-header mt-2" id="heading1">
-                    <button type="button" id="showDetail" class="collapsed detail-item-button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
-                        <img src="assets/more.png">
-                    </button>
-                </div>
-                <div id="collapse1" class="accordion-collapse collapse" aria-labelledby="heading1" data-bs-parent="#detail">
-                    <table class="table table-sm table-dark table-bordered border-light mt-3 text-center align-middle" id="tabelDetail">
-                        <tr>
-                            <th>ID</th>
-                            <th>Nama</th>
-                            <th>Lokasi</th>
-                        </tr>
-                        <tr>
-                            <td id="kodeBrg">C0001</td>
-                            <td id="namaBrg">MIC</td>
-                            <td id="lokasiBrg">C</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
+        
     </div>
 </body>
 </html>

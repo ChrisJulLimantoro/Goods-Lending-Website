@@ -130,6 +130,7 @@
                 echo '<button id="createBucket" class="btn btn-dark my-4 px-5" type="button" style="border-radius:20pt">Buat Keranjang Baru</button>';
             }
         }
+        // echo var_dump($_SESSION);
         exit();
     }
 ?>
