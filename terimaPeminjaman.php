@@ -184,13 +184,6 @@
                                 $("#requests").html(e);
                             }
                         })
-                        // $.ajax({
-                        //     type : "post",
-                        //     data : {
-                        //         email :  $(this).parent().parent().find(".email").text(),
-                        //         text : 
-                        //     }
-                        // })
                     }
                 });
             });
@@ -298,18 +291,7 @@
                     <th>Aksi</th>
                 </tr>
                 <tbody class="table-group-divider" id="requests">
-                    <!-- <tr>
-                        <td id="count">1</td>
-                        <td id="kode">C0001</td>
-                        <td id="namaBrg">Microphone Wireless</td>
-                        <td id="peminjam">Budi</td>
-                        <td id="tglPinjam">1/12/2022</td>
-                        <td id="tglKembali">8/12/2022</td>
-                        <td>
-                            <button type="button" class="btn btn-success" style="width:70px" id="accept">Terima</button>
-                            <button type="button" class="btn btn-danger" style="width:70px" id="deny">Tolak</button>
-                        </td>
-                    </tr> -->
+
                 </tbody>
             </table>
         </div>
