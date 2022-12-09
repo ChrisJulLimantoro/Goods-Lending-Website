@@ -2,59 +2,6 @@
     include "user_authen.php";
 ?>
 <?php
-    // if(isset($_SESSION['nama_brg']) && isset($_SESSION['filter'])){
-    //     if($_SESSION['filter'] == ''){
-    //         $sql_brg = "SELECT * FROM `item` where `Nama_Barang`= :nama and `status`= 1";
-    //         $stmt = $conn->prepare($sql_brg);
-    //         $stmt->execute(array(
-    //          ":nama" => $_SESSION['nama_brg']
-    //         ));
-    //     }else{
-    //         $sql_brg = "SELECT * FROM `item` where `Nama_Barang`= :nama and `location` = :filter and `status`= 1";
-    //         $stmt = $conn->prepare($sql_brg);
-    //         $stmt->execute(array(
-    //          ":nama" => $_SESSION['nama_brg'],
-    //          ":filter" => $_SESSION['filter']
-    //         ));
-    //     }
-    //    $row = $stmt->fetchAll();
-    //    $arr = array();
-    //    $rowcount = 0;
-    //    if($row){
-    //     foreach($row as $s){
-    //         $temp = array();
-    //         $count = 0;
-    //         $temp += ['kode' => $s['Id']];
-    //         $temp += ['nama_brg' => $s['Nama_Barang']];
-    //         $temp += ['deskripsi' => $s['Deskripsi']];
-    //         $temp += ['status' => $s['Status']];
-    //         $temp += ['loc' => $s['Location']];
-    //         if($s['image'] != 'assets/no-image.png'){
-    //             $temp += ['gambar1' => $s['image']];
-    //             $count += 1;
-    //         }
-    //         if($s['image2'] != 'assets/no-image.png'){
-    //             $temp += ['gambar2' => $s['image2']];
-    //             $count += 1;
-    //         }
-    //         if($s['image3'] != 'assets/no-image.png'){
-    //             $temp += ['gambar3' => $s['image3']];
-    //             $count += 1;
-    //         }
-    //         if($s['image4'] != 'assets/no-image.png'){
-    //             $temp += ['gambar4' => $s['image4']];
-    //             $count += 1;
-    //         }
-    //         $temp += ['jum_gambar' => $count];
-    //         $arr[$rowcount] = $temp;
-    //         $rowcount+=1;
-    //     }
-    //    }
-    // }else{
-    //     header("Location: homeUser.php");
-    // }
-?>
-<?php
     if(isset($_POST['start']) && isset($_POST['end']) && isset($_POST['barang'])){
         $sql_count = "SELECT id_borrow FROM borrow ORDER BY id_borrow DESC LIMIT 1";
         $stmt_count = $conn->prepare($sql_count);
