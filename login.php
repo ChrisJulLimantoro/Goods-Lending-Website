@@ -25,13 +25,12 @@
                 session_start();
                 $_SESSION['user'] = $user;
                 $_SESSION['timeout'] = time();
-                $sql5 = "SELECT * FROM `user` WHERE `username` = :username";
+                $sql5 = "SELECT profile,status FROM `user` WHERE `username` = :username";
                 $stmt5 = $conn->prepare($sql5);
                 $stmt5->execute(array(':username' => $_POST['user']));
-                $row5 = $stmt5->fetch();
-                // echo var_dump($row5);
-                $_SESSION['profile'] = $row5['profile'];
-                $_SESSION['status'] = $row5['status'];
+                $row5 = $stmt5->fetchAll();
+                $_SESSION['profile'] = $row5[0]['profile'];
+                $_SESSION['status'] = $row5[0]['status'];
             }
             exit();
         }else{

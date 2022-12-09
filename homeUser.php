@@ -479,26 +479,26 @@
             <input type="text" class="form-control" id="inputSearch" placeholder="Search Product">
         </div>
         <div class="col-4 pt-3 kanan">
-            <div class="row">
-                <div class="col-4 kiri">
+            <div class="row float-end">
+                <div class="col-auto kiri">
 
                 </div>
-                <!-- <div class="col-auto">
-                    <button type="button" class="btn btn-dark position-relative mb-2">
-                        <img src="assets/notif.png" alt=""  id="notifImg">
-                        <span class="position-absolute start-100 translate-middle badge rounded-pill bg-danger">
-                        99+
-                        </span>
-                    </button>
-                </div> -->
-                <div class="col-4 keranjang">
+                <div class="col-auto">
+                    <a href="status.php">
+                        <button type="button" class="btn btn-dark position-relative mb-2">
+                            <img src="assets/notif.png" alt=""  id="notifImg">
+                        </button>
+                    </a>    
+                </div>
+                <div class="col-auto keranjang">
                     <a href="keranjang.php">
                         <button type="button" class="btn btn-dark position-relative mb-2">
                             <img src="assets/keranjang.png" alt=""  id="keranjang">
                         </button>
                     </a>
                 </div>
-                <div class="col-4 user">
+
+                <div class="col-auto user">
                     <li class="nav-item dropdown mt-2" style="list-style: none">
                         <a class="nav-link dropdown-toggle mb-2 position-relative" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="<?php echo $_SESSION['profile'] ?>" alt=""  id="userImg">
@@ -515,6 +515,15 @@
                                     echo $rowName;
                                 ?>
                             </h6>
+                            <h6 class="card-title mb-2">Status: </h6>
+                            <h6 class="card-title mb-1">
+                                <?php
+                                    if($_SESSION['status'] == 0){
+                                        echo "Green";
+                                    }else{
+                                        echo "Red";
+                                    }
+                                ?></h6>
                             <li><hr class="dropdown-divider"></li>
                             <a href="logout.php"><button type="button" class="btn btn-light">LOGOUT</button></a>
                         </ul>

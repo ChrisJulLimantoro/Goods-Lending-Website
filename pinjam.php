@@ -2,59 +2,6 @@
     include "user_authen.php";
 ?>
 <?php
-    // if(isset($_SESSION['nama_brg']) && isset($_SESSION['filter'])){
-    //     if($_SESSION['filter'] == ''){
-    //         $sql_brg = "SELECT * FROM `item` where `Nama_Barang`= :nama and `status`= 1";
-    //         $stmt = $conn->prepare($sql_brg);
-    //         $stmt->execute(array(
-    //          ":nama" => $_SESSION['nama_brg']
-    //         ));
-    //     }else{
-    //         $sql_brg = "SELECT * FROM `item` where `Nama_Barang`= :nama and `location` = :filter and `status`= 1";
-    //         $stmt = $conn->prepare($sql_brg);
-    //         $stmt->execute(array(
-    //          ":nama" => $_SESSION['nama_brg'],
-    //          ":filter" => $_SESSION['filter']
-    //         ));
-    //     }
-    //    $row = $stmt->fetchAll();
-    //    $arr = array();
-    //    $rowcount = 0;
-    //    if($row){
-    //     foreach($row as $s){
-    //         $temp = array();
-    //         $count = 0;
-    //         $temp += ['kode' => $s['Id']];
-    //         $temp += ['nama_brg' => $s['Nama_Barang']];
-    //         $temp += ['deskripsi' => $s['Deskripsi']];
-    //         $temp += ['status' => $s['Status']];
-    //         $temp += ['loc' => $s['Location']];
-    //         if($s['image'] != 'assets/no-image.png'){
-    //             $temp += ['gambar1' => $s['image']];
-    //             $count += 1;
-    //         }
-    //         if($s['image2'] != 'assets/no-image.png'){
-    //             $temp += ['gambar2' => $s['image2']];
-    //             $count += 1;
-    //         }
-    //         if($s['image3'] != 'assets/no-image.png'){
-    //             $temp += ['gambar3' => $s['image3']];
-    //             $count += 1;
-    //         }
-    //         if($s['image4'] != 'assets/no-image.png'){
-    //             $temp += ['gambar4' => $s['image4']];
-    //             $count += 1;
-    //         }
-    //         $temp += ['jum_gambar' => $count];
-    //         $arr[$rowcount] = $temp;
-    //         $rowcount+=1;
-    //     }
-    //    }
-    // }else{
-    //     header("Location: homeUser.php");
-    // }
-?>
-<?php
     if(isset($_POST['start']) && isset($_POST['end']) && isset($_POST['barang'])){
         $sql_count = "SELECT id_borrow FROM borrow ORDER BY id_borrow DESC LIMIT 1";
         $stmt_count = $conn->prepare($sql_count);
@@ -131,8 +78,8 @@
                     echo '<table class="table">';
                     echo '<thead><tr class="table-dark text-center">';
                     echo '<th scope="col">TANGGAL DIPINJAM</th>';
-                    echo '<th scope="col">TANGGAL PENGEMBALIAN</th>';
                     echo '<th scope="col">TENGGAT PENGEMBALIAN</th>';
+                    echo '<th scope="col">TANGGAL PENGEMBALIAN</th>';
                     echo '<th scope="col">NAMA PIHAK PEMINJAM</th></tr></thead>';
                     $sql_tbl = "SELECT * FROM `borrow_detail` A JOIN `borrow` B ON `A`.`id_borrow` = `B`.`id_borrow` WHERE id_item = :item ORDER BY `start_date`";
                     $stmt_tbl = $conn->prepare($sql_tbl);
@@ -145,8 +92,12 @@
                         foreach($row_tbl as $r){
                             echo '<tr class="text-center">';
                             echo '<td>'.$r['start_date'].'</td>';
-                            echo '<td>'.$r['return_date'].'</td>';
                             echo '<td>'.$r['expired_date'].'</td>';
+                            if($r['status'] == 2){
+                                echo '<td>Batal</td>';
+                            }else{
+                                echo '<td>'.$r['return_date'].'</td>';
+                            }
                             $sql_name = "SELECT CONCAT(first_name,' ',last_name) as 'Nama_user' FROM `user` WHERE username = :user";
                             $stmt_name = $conn->prepare($sql_name);
                             $stmt_name->execute(array(
@@ -172,6 +123,18 @@
         }else{
             header("Location: homeUser.php");
         }
+        exit();
+    }
+?>
+<?php 
+    if(isset($_POST['id_brg'])){
+        $sql_cek = "SELECT * FROM item WHERE Id = :id";
+        $stmt_cek = $conn->prepare($sql_cek);
+        $stmt_cek->execute(array(
+            ":id" => $_POST['id_brg']
+        ));
+        $row_cek = $stmt_cek->fetchAll();
+        echo $row_cek[0]['Status'];
         exit();
     }
 ?>
@@ -257,15 +220,6 @@
     </style>
     <script>
         $(document).ready(function(){
-            $.ajax({
-                    type : "post",
-                    data : {
-                        ajax : 1
-                    },
-                    success : function(response){
-                        $("#view").html(response);
-                    }
-                });
             var bucket = '<?php 
                 if(isset($_SESSION['bucket'])){
                     echo 0;
@@ -273,6 +227,22 @@
                     echo 1;
                     }?>';
             var status = '<?php echo $_SESSION['status'] ?>';
+            $.ajax({
+                    type : "post",
+                    data : {
+                        ajax : 1
+                    },
+                    success : function(response){
+                        $("#view").html(response);
+                        status = '<?php echo $_SESSION['status'] ?>';
+                        bucket = '<?php 
+                                if(isset($_SESSION['bucket'])){
+                                    echo 0;
+                                }else{
+                                    echo 1;
+                                    }?>';
+                    }
+                });
             $(document.body).on("click",".btn-minjam",function(){
                 let barang = $(this).parent().parent().parent().parent().parent().find(".accordion-header").find(".accordion-button").text();
                 const swalWithBootstrapButtons = Swal.mixin({
@@ -282,135 +252,185 @@
                 },
                 buttonsStyling: false
                 })
-                    if(bucket == 0){
-                        swalWithBootstrapButtons.fire({
-                            title: 'Are you sure?',
-                            text: "Do you really want to add item with code "+barang+" to your bucket?",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonText: 'Yes, i do!',
-                            cancelButtonText: 'No, cancel!',
-                            reverseButtons: true
-                            }).then((result) => {
-                                // console.log(result);
-                                if(result.isConfirmed){
-                                    $.ajax({
-                                        type : "post",
-                                        data : {
-                                            commit_brg : barang
-                                        },
-                                        success:function(e){
+                
+                $.ajax({
+                    type : "post",
+                    data : {
+                        id_brg :  barang
+                    },
+                    success : function(e){
+                        console.log(e);
+                        if(e == 1){
+                            if(bucket == 0){
+                                swalWithBootstrapButtons.fire({
+                                    title: 'Are you sure?',
+                                    text: "Do you really want to add item with code "+barang+" to your bucket?",
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Yes, i do!',
+                                    cancelButtonText: 'No, cancel!',
+                                    reverseButtons: true
+                                    }).then((result) => {
+                                        // console.log(result);
+                                        if(result.isConfirmed){
                                             $.ajax({
                                                 type : "post",
                                                 data : {
-                                                    ajax : 1
+                                                    commit_brg : barang
                                                 },
-                                                success : function(response){
-                                                    console.log(parseInt($("#qty").text()));
-                                                    $("#qty").text(parseInt($("#qty").text())-1);
-                                                    $("#view").html(response);
+                                                success:function(e){
+                                                    $.ajax({
+                                                        type : "post",
+                                                        data : {
+                                                            ajax : 1
+                                                        },
+                                                        success : function(response){
+                                                            console.log(parseInt($("#qty").text()));
+                                                            $("#qty").text(parseInt($("#qty").text())-1);
+                                                            $("#view").html(response);
+                                                            status = '<?php echo $_SESSION['status'] ?>';
+                                                            bucket = '<?php 
+                                                                    if(isset($_SESSION['bucket'])){
+                                                                        echo 0;
+                                                                    }else{
+                                                                        echo 1;
+                                                                        }?>';
+                                                        }
+                                                    });
                                                 }
-                                            });
+                                            })
+                                            swalWithBootstrapButtons.fire(
+                                                'Success',
+                                                'Added 1 item to the bucket!',
+                                                'success'
+                                            )
+                                        }else{
+                                            swalWithBootstrapButtons.fire(
+                                                'Cancelled',
+                                                'Added process cancelled!!',
+                                                'error'
+                                            )
                                         }
                                     })
-                                    swalWithBootstrapButtons.fire(
-                                        'Success',
-                                        'Added 1 item to the bucket!',
-                                        'success'
-                                    )
+                            }else if(bucket == 1){
+                                console.log(status);
+                                if(status == 1){
+                                swalWithBootstrapButtons.fire(
+                                    'Error!',
+                                    'You can\'t create another bucket if you have already had one or you need to return your item first before set another request!',
+                                    'error'
+                                )
                                 }else{
-                                    swalWithBootstrapButtons.fire(
-                                        'Cancelled',
-                                        'Added process cancelled!!',
-                                        'error'
-                                    )
-                                }
-                            })
-                    }else if(bucket == 1){
-                        if(status == 1){
-                        swalWithBootstrapButtons.fire(
-                            'Error!',
-                            'You can\'t create another bucket if you have already had one or you need to return your item first before set another request!',
-                            'error'
-                        )
-                        }else{
-                            swalWithBootstrapButtons.fire({
-                            title: 'Are you sure?',
-                            text: "Your bucket is still empty do you want to create a new bucket!",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonText: 'Yes, make new bucket!',
-                            cancelButtonText: 'No, cancel!',
-                            reverseButtons: true
-                            }).then((result) => {
-                                if (result.isConfirmed) {
                                     swalWithBootstrapButtons.fire({
-                                    title: 'Creating Borrow Bucket : ',
-                                    html: `<label for="start_date" class="form-label my-2">Start Borrow Date : </label>
-                                        <input type="date" id="start_date" class="swal2_input form-control" placeholder="Borrow Date">
-                                        <label for="expired_date" class="form-label my-2">End Borrow Date : </label>
-                                        <input type="date" id="expired_date" class="swal2_input form-control" placeholder="Expiration Date">`,
+                                    title: 'Are you sure?',
+                                    text: "Your bucket is still empty do you want to create a new bucket!",
+                                    icon: 'warning',
                                     showCancelButton: true,
-                                    confirmButtonText: 'Next',
-                                    showLoaderOnConfirm: true,
-                                    preConfirm: () => {
-                                        const sd = $("#start_date").val();
-                                        const ed = $("#expired_date").val();
-                                        if (!sd || ! ed) {
-                                        Swal.showValidationMessage(`Please enter Start Date and Expired Date`)
-                                        }
-                                        return { sd: sd, ed: ed }
-                                    }
-                                }).then((result2) => {
-                                    if(`${result2.value.ed}` >= `${result2.value.sd}`){
-                                        $.ajax({
-                                            type : "post",
-                                            data : {
-                                                start : `${result2.value.sd}`,
-                                                end : `${result2.value.ed}`,
-                                                barang : barang
-                                            },
-                                            success:function(e){
+                                    confirmButtonText: 'Yes, make new bucket!',
+                                    cancelButtonText: 'No, cancel!',
+                                    reverseButtons: true
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            swalWithBootstrapButtons.fire({
+                                            title: 'Creating Borrow Bucket : ',
+                                            html: `<label for="start_date" class="form-label my-2">Start Borrow Date : </label>
+                                                <input type="date" id="start_date" class="swal2_input form-control" placeholder="Borrow Date">
+                                                <label for="expired_date" class="form-label my-2">End Borrow Date : </label>
+                                                <input type="date" id="expired_date" class="swal2_input form-control" placeholder="Expiration Date">`,
+                                            showCancelButton: true,
+                                            confirmButtonText: 'Next',
+                                            showLoaderOnConfirm: true,
+                                            preConfirm: () => {
+                                                const sd = $("#start_date").val();
+                                                const ed = $("#expired_date").val();
+                                                if (!sd || ! ed) {
+                                                Swal.showValidationMessage(`Please enter Start Date and Expired Date`)
+                                                }
+                                                return { sd: sd, ed: ed }
+                                            }
+                                        }).then((result2) => {
+                                            if(`${result2.value.ed}` >= `${result2.value.sd}`){
                                                 $.ajax({
                                                     type : "post",
                                                     data : {
-                                                        ajax : 1
+                                                        start : `${result2.value.sd}`,
+                                                        end : `${result2.value.ed}`,
+                                                        barang : barang
                                                     },
-                                                    success : function(response){
-                                                        console.log(parseInt($("#qty").text()));
-                                                        $("#qty").text(parseInt($("#qty").text())-1);
-                                                        $("#view").html(response);
+                                                    success:function(e){
+                                                        $.ajax({
+                                                            type : "post",
+                                                            data : {
+                                                                ajax : 1
+                                                            },
+                                                            success : function(response){
+                                                                // console.log(parseInt($("#qty").text()));
+                                                                $("#qty").text(parseInt($("#qty").text())-1);
+                                                                $("#view").html(response);
+                                                                status = '<?php echo $_SESSION['status'] ?>';
+                                                                bucket = '<?php 
+                                                                        if(isset($_SESSION['bucket'])){
+                                                                            echo 0;
+                                                                        }else{
+                                                                            echo 1;
+                                                                            }?>';
+                                                            }
+                                                        });
                                                     }
-                                                });
+                                                })
+
+                                                swalWithBootstrapButtons.fire(
+                                                    'Success',
+                                                    'Success creating new Borrow Bucket and added 1 item!',
+                                                    'success'
+                                                )
+                                            }else{
+                                                swalWithBootstrapButtons.fire(
+                                                    'Failed',
+                                                    'Failed creating new Borrow Bucket, input date invalid!',
+                                                    'error'
+                                                )
                                             }
                                         })
-
+                                    } else if (
+                                        /* Read more about handling dismissals below */
+                                        result.dismiss === Swal.DismissReason.cancel
+                                    ) {
                                         swalWithBootstrapButtons.fire(
-                                            'Success',
-                                            'Success creating new Borrow Bucket and added 1 item!',
-                                            'success'
-                                        )
-                                    }else{
-                                        swalWithBootstrapButtons.fire(
-                                            'Failed',
-                                            'Failed creating new Borrow Bucket, input date invalid!',
-                                            'error'
+                                        'Cancelled',
+                                        'Your action has been cancelled',
+                                        'error'
                                         )
                                     }
                                 })
-                            } else if (
-                                /* Read more about handling dismissals below */
-                                result.dismiss === Swal.DismissReason.cancel
-                            ) {
-                                swalWithBootstrapButtons.fire(
-                                'Cancelled',
-                                'Your action has been cancelled',
-                                'error'
-                                )
+                            }
+                        }
+                    }else{
+                    swalWithBootstrapButtons.fire(
+                        'Failed',                  
+                        'Barang Sudah diambil orang lain!',
+                        'error')
+                        $.ajax({
+                            type : "post",
+                            data : {
+                                ajax : 1
+                            },
+                            success : function(response){
+                                console.log(parseInt($("#qty").text()));
+                                $("#qty").text(parseInt($("#qty").text())-1);
+                                $("#view").html(response);
+                                status = '<?php echo $_SESSION['status'] ?>';
+                                bucket = '<?php 
+                                        if(isset($_SESSION['bucket'])){
+                                            echo 0;
+                                        }else{
+                                            echo 1;
+                                            }?>';
                             }
                         })
                     }
                 }
+                })
             });
             $(document.body).on("click","#toHome",function(){
                 $(window).attr("location","backToUser.php")
