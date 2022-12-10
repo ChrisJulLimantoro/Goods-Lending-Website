@@ -89,7 +89,7 @@
                             <a class="nav-link active" aria-current="page" href="tambahBarang.php">Tambah Barang</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Pengembalian</a>
+                            <a class="nav-link active" aria-current="page" href="inventory.php">Pengembalian</a>
                         </li>
                     </ul>
                 </div>
