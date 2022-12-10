@@ -7,6 +7,12 @@
         exit();
     }
 ?>
+<?php
+    if (isset($_POST['newID']) && isset($_POST['newName']) && isset($_POST['newDesc'])) {
+        echo 1;
+        exit();
+    }
+?>
 
 <!DOCTYPE html>
 <head>
@@ -86,10 +92,6 @@
         }
 
         @media screen and (max-width: 576px) {
-            #searchItem {
-                font-size: .75em;
-            }
-
             #item-list th, #item-list td, #item-list button {
                 font-size: .75em;
             }
@@ -107,6 +109,7 @@
                 }
             });
 
+            // konfirmasi pengembalian
             $(document.body).on("click", "#btn-return", function() {
                 let kode = $(this).parent().parent().find("#kode").html();
                 let parent = $(this).parent();
@@ -124,46 +127,93 @@
                         }
                     }
                 })
-            })
-        })    
+            });
+
+            // edit barang
+            $(document.body).on("click", "#btn-edit", function() {
+                let currID = $(this).parent().parent().children().eq(1).text();
+                let currName = $(this).parent().parent().children().eq(2).text();
+                let currDesc = $(this).parent().parent().children().eq(4).text();
+
+                $("#modalBody").find(".alert").remove();
+                $("#newID").val(currID);
+                $("#newName").val(currName);
+                $("#newDesc").val(currDesc);
+            });
+
+            // update detail barang
+            $(document.body).on("click", "#btn-update", function() {
+                $.ajax({
+                    type : "post",
+                    data : {
+                        newID : $("#newID").val(),
+                        newName : $("#newName").val(),
+                        newDesc : $("#newDesc").val()
+                    },
+                    success : function(e) {
+                        showResult(e)
+                    }
+                });
+
+            });
+
+            // delete barang
+            $(document.body).on("click", "#btn-del", function() {
+                $(this).parent().parent().remove();
+            });
+
+            function showResult(data) {
+                if (data == 1) {
+                    // console.log("1");
+                    $("#modalBody").prepend('<div class="col-12 alert alert-success" role="alert">Data berhasil diupdate!</div>');
+                }
+                else {
+                    // console.log("0");
+                    $("#modalBody").prepend('<div class="col-12 alert alert-danger" role="alert">Kesalahan dalam mengubah data, silahkan coba lagi</div>');
+                }    
+            }
+        });
     </script>
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar sticky-top navbar-expand-lg navbar-dark p-md-3" style="backdrop-filter : blur(3px);">
         <div class="container-fluid justify-content-between">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="homeAdmin.php">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="terimaPeminjaman.php">Terima Peminjaman</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="tambahBarang.php">Tambah Barang</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="inventory.php">Pengembalian</a>
-                        </li>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="homeAdmin.php">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="tambahBarang.php">Tambah Barang</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="terimaPeminjaman.php">Terima Peminjaman</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="inventory.php">Inventory</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="history.php">Riwayat</a>
+                    </li>
+                </ul>
+            </div>
+            <div style="width: 5em; display:!important inline, position:!important absolute" class="user">
+                <div class="dropdown" style="list-style: none; width: 3em;">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="<?php echo $_SESSION['profile'] ?>" alt="" style="width: 3em; height: 3em; border-radius: 50%">
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end mt-3" style="color: white;">
+                        <h5 class="dropdown-item">Username: </h5>
+                        <h5 class="dropdown-item"><?php echo $_SESSION['admin'] ?></h5>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a href="logout.php"><button class="btn btn-primary mx-2" >Log out</button></a></li>
                     </ul>
                 </div>
-                <div style="width: 5em; display:!important inline, position:!important absolute" class="user">
-                    <div class="dropdown" style="list-style: none; width: 3em;">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="<?php echo $_SESSION['profile'] ?>" alt="" style="width: 3em; height: 3em; border-radius: 50%">
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end mt-3" style="color: white;">
-                            <h5 class="dropdown-item">Username: </h5>
-                            <h5 class="dropdown-item"><?php echo $_SESSION['admin'] ?></h5>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a href="logout.php"><button class="btn btn-primary mx-2" >Log out</button></a></li>
-                        </ul>
-                    </div>
-                </div>
+            </div>
         </div>
     </nav>
     
@@ -187,7 +237,7 @@
                             <th>Nama Barang</th>
                             <th>Lokasi</th>
                             <th>Deskripsi</th> 
-                            <th>Edit Barang</th>
+                            <th>Aksi</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -205,7 +255,8 @@
                                 echo "<td>" . $hasil['Nama_Barang'] . "</td>";
                                 echo "<td>" . $hasil['Location'] . "</td>";
                                 echo "<td>" . $hasil['Deskripsi'] . "</td>";
-                                echo "<td><button class='btn btn-warning'><i class='fa-solid fa-pen-to-square'></i></button></td>";
+                                echo "<td><button class='btn btn-warning me-lg-3' id='btn-edit' data-bs-toggle='modal' data-bs-target='#exampleModal'><i class='fa-solid fa-pen-to-square'></i></button>";
+                                echo "<button class='btn btn-danger' id='btn-del'><i class='fa-solid fa-trash'></i></button></td>";
                                 if ($hasil['Status'] == 1) {
                                     echo "<td class='text-success'>Tersedia</td>";
                                 }
@@ -218,6 +269,39 @@
                         ?>
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Barang</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row" id="modalBody">
+                            <div class="col-12 pb-3">
+                                <label for="newName" class="form-label"><b>Kode Barang</b></label>
+                                <input type="text" id="newID" name="newID" class="form-control" required disabled>
+                            </div>
+                            <div class="col-12 pb-3">
+                                <label for="newName" class="form-label"><b>Nama Barang</b></label>
+                                <input type="text" id="newName" name="newName" class="form-control" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="newDesc" class="form-label"><b>Deskripsi</b></label>
+                                <textarea class="form-control" id="newDesc" name="newDesc" rows="3" required></textarea><br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btn-update">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
