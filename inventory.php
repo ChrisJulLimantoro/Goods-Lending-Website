@@ -2,14 +2,123 @@
     include "admin_authen.php";
 ?>
 <?php
-    if (isset($_POST['id'])) {
-        echo 1;
+    if (isset($_POST['id']) && isset($_POST['bor']) && isset($_POST['user']) && isset($_POST['aksi'])) {
+        $sql_balik = "SELECT COUNT(*) FROM borrow a JOIN borrow_detail b ON a.id_borrow = b.id_borrow WHERE a.id_user = :usr and a.id_borrow = :bor and b.id_item = :id";
+        $stmt_balik = $conn->prepare($sql_balik);
+        $stmt_balik->execute(array(
+            ":usr" => $_POST['user'],
+            ":bor" => $_POST['bor'],
+            ":id" => $_POST['id']
+        ));
+        $row = $stmt_balik->fetchColumn();
+        echo $row;
+        if($row == 1){
+            if($_POST['aksi'] == 1){ // aksi saat return barang
+                //sql buat update status borrow detail
+                $sql_update = "UPDATE borrow_detail SET status = 4 WHERE id_item = :id and id_borrow = :bor";
+                $stmt_update = $conn->prepare($sql_update);
+                $stmt_update->execute(array(
+                    ":id" => $_POST['id'],
+                    ":bor" => $_POST['bor']
+                ));
+                //sql buat update status item
+                $sql_update2 = "UPDATE item SET status = 1 WHERE Id = :id";
+                $stmt_update2 = $conn->prepare($sql_update2);
+                $stmt_update2->execute(array(
+                    ":id" => $_POST['id']
+                ));
+                //sql buat cek tiap borrow detail
+                $sql_cek = "SELECT COUNT(*) FROM borrow_detail WHERE id_borrow = :bor and status = 3";
+                $stmt_cek = $conn->prepare($sql_cek);
+                $stmt_cek->execute(array(
+                    ":bor" => $_POST['bor']
+                ));
+                $row_cek = $stmt_cek->fetchColumn();
+                if($row_cek == 0){
+                    $myDate = getDate(date("U"));
+                    $sql_update3 = "UPDATE borrow SET status_pinjam = 2,return_date = CONVERT(DATETIME,:date,103) WHERE id_borrow = :bor";
+                    $stmt_update3 = $conn->prepare($sql_update3);
+                    $stmt_update3->execute(array(
+                        ":bor" => $_POST['bor'],
+                        ":date" => $myDate['mday']."/".$myDate['mon']."/".$myDate['year']
+                    ));
+                    $sql_update4 = "UPDATE user SET status = 0 WHERE username = :usr";
+                    $stmt_update4 = $conn->prepare($sql_update4);
+                    $stmt_update4->execute(array(
+                        ":usr" => $_POST['user']
+                    ));
+                } 
+            }else if($_POST['aksi'] == 2){ // aksi saat pinjam barang
+                $sql_update = "UPDATE borrow_detail SET status = 3 WHERE id_item = :id and id_borrow = :bor";
+                $stmt_update = $conn->prepare($sql_update);
+                $stmt_update->execute(array(
+                    ":id" => $_POST['id'],
+                    ":bor" => $_POST['bor']
+                ));
+            }
+        }
         exit();
     }
 ?>
 <?php
     if (isset($_POST['newID']) && isset($_POST['newName']) && isset($_POST['newDesc'])) {
-        echo 1;
+        $sql_upBrg = "UPDATE item SET Nama_Barang = :nn, Deskripsi = :nd WHERE Id = :ni";
+        $stmt_upBrg = $conn->prepare($sql_upBrg);
+        $stmt_upBrg->execute(array(
+            ":nn" => $_POST['newName'],
+            ":nd" => $_POST['newDesc'],
+            ":ni" => $_POST['newID']
+        ));
+        echo "1";
+        exit();
+    }
+?>
+<?php
+    if (isset($_POST['delID'])) {
+        $sql_delBrg = "DELETE FROM item WHERE Id = :ni";
+        $stmt_delBrg = $conn->prepare($sql_delBrg);
+        $stmt_delBrg->execute(array(
+            ":ni" => $_POST['delID']
+        ));
+        exit();
+    }
+?>
+<?php
+    if(isset($_POST['ajax'])){
+        $sql = "SELECT * FROM item";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $res = $stmt->fetchAll();
+        $row_count = 1;
+        $arr = array();
+        foreach($res as $hasil) {
+            $temp = array();
+            array_push($temp,$row_count);
+            array_push($temp,$hasil['Id']);
+            array_push($temp,$hasil['Nama_Barang']);
+            array_push($temp,$hasil['Location']);
+            array_push($temp,$hasil['Deskripsi']);
+            if ($hasil['Status'] == 1) {
+                $status = 0;
+                $bor = 0;
+            }
+            else {
+                $sql_status = "SELECT * FROM borrow_detail WHERE id_item = :id_item ORDER BY id_borrow DESC";
+                $stmt_status = $conn->prepare($sql_status);
+                $stmt_status->execute(array(
+                    ":id_item" => $hasil['Id']
+                ));
+                $row_status = $stmt_status->fetchAll();
+                $status = $row_status[0]['status'];
+                $bor = $row_status[0]['id_borrow'];
+            }
+            array_push($temp,$status);
+            array_push($temp,$bor);
+            $row_count++;
+            array_push($arr,$temp);
+        }
+        $json = json_encode($arr);
+        echo $json;
         exit();
     }
 ?>
@@ -97,35 +206,169 @@
             }
         }
     </style>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="sweetalert2.min.css">
     <script>
         $(document).ready(function() {
-            $("#item-list").DataTable({
+            $("#table").DataTable({
                 "language": {
                     "paginate": {
                         "next": "<span class='text-light'>Next</span>",
                         "previous": "<span class='text-light'>Previous</span>"
                     }
-                }
+                },
+                ajax : {
+                    processing: true,
+                    serverSide: true,
+                    url : "inventory.php",
+                    dataSrc : "",
+                    type : "post",
+                    data : {
+                        ajax : 1
+                    }
+                },
+                columns : [
+                    {data : 0},
+                    {data : 1},
+                    {data : 2},
+                    {data : 3},
+                    {data : 4},
+                    {data : 6},
+                    {data : null,
+                    defaultContent : "<button class='btn btn-warning me-lg-3' id='btn-edit' data-bs-toggle='modal' data-bs-target='#exampleModal'><i class='fa-solid fa-pen-to-square'></i></button><button class='btn btn-danger' id='btn-del'><i class='fa-solid fa-trash'></i></button>"},
+                    {data : null,
+                    "render" : function(data,type,row){
+                        if(row[5] == 0 || row[5] == 2 || row[5] == 4){
+                            return '<i class="text-success">Tersedia</i>';
+                        }else if(row[5] == 1){
+                            return '<button class="btn btn-success" id="btn-pinjam">Pengambilan Barang</button>';
+                        }else if(row[5] == 3){
+                            return '<button class="btn btn-primary" id="btn-return">Konfirmasi Pengembalian</button>';
+                        }
+                    }}
+                ],
+                columnDefs: [
+                    {
+                        target: 5,
+                        visible: false,
+                        searchable: false,
+                    }
+                ],
             });
 
             // konfirmasi pengembalian
             $(document.body).on("click", "#btn-return", function() {
-                let kode = $(this).parent().parent().find("#kode").html();
-                let parent = $(this).parent();
+                let kode = $(this).parent().parent().children().eq(1).text();
+                let kode_bor = $(this).closest('table').DataTable().row($(this).closest('tr')).data()['6'];
                 console.log(kode);
-                $.ajax({
+                const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: false
+                })
+                swalWithBootstrapButtons.fire({
+                    title : "Enter Username Pengembali",
+                    html : "<input type='text' class='form-control' name='userBalik' id='userBalik'>",
+                    showCancelButton: true,
+                    confirmButtonText: 'Continue',
+                    cancelButtonText: 'Cancel',
+                    preConfirm: () => {
+                        const user = $("#userBalik").val();
+                        if (!user) {
+                        Swal.showValidationMessage(`Please enter a valid password!`)
+                        }
+                        return { user: user }
+                    }
+                }).then((result) => {
+                    $.ajax({
                     type : "post",
                     data : {
-                        id : kode
+                        id : kode,
+                        bor : kode_bor,
+                        user : `${result.value.user}`,
+                        aksi : 1
                     },
                     success : function(e) {
+                        console.log(kode);
+                        console.log(kode_bor);
+                        console.log(`${result.value.user}`);
+                        console.log(e);
                         if (e == 1) {
-                            console.log("tes")
-                            parent.html("Tersedia");
-                            parent.addClass("text-success")
+                            swalWithBootstrapButtons.fire ({
+                                    icon : "success",
+                                    title : "Success!",
+                                    text : "Verification Succeed! Item has been Returned!"
+                                })
+                        }else{
+                            swalWithBootstrapButtons.fire ({
+                                    icon : "error",
+                                    title : "Failed!",
+                                    text : "Something Went Wrong!"
+                                })
                         }
+                        $("#table").DataTable().ajax.reload(null,false);
                     }
+                })
+                })
+            });
+            
+            // konfirmasi pengembalian
+            $(document.body).on("click", "#btn-pinjam", function() {
+                let kode = $(this).parent().parent().children().eq(1).text();
+                let kode_bor = $(this).closest('table').DataTable().row($(this).closest('tr')).data()['6'];
+                // console.log(kode);
+                const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: false
+                })
+                swalWithBootstrapButtons.fire({
+                    title : "Enter Username Pengembali",
+                    html : "<input type='text' class='form-control' name='userBalik' id='userBalik'>",
+                    showCancelButton: true,
+                    confirmButtonText: 'Continue',
+                    cancelButtonText: 'Cancel',
+                    preConfirm: () => {
+                        const user = $("#userBalik").val();
+                        if (!user) {
+                        Swal.showValidationMessage(`Please enter your an username!`)
+                        }
+                        return { user: user }
+                    }
+                }).then((result) => {
+                    $.ajax({
+                    type : "post",
+                    data : {
+                        id : kode,
+                        bor : kode_bor,
+                        user : `${result.value.user}`,
+                        aksi : 2
+                    },
+                    success : function(e) {
+                        console.log(kode);
+                        console.log(kode_bor);
+                        console.log(`${result.value.user}`);
+                        console.log(e);
+                        if (e == 1) {
+                            swalWithBootstrapButtons.fire ({
+                                    icon : "success",
+                                    title : "Success!",
+                                    text : "Verification Succeed! Item has been Given!"
+                                })
+                        }else{
+                            swalWithBootstrapButtons.fire ({
+                                    icon : "error",
+                                    title : "Failed!",
+                                    text : "Something Went Wrong!"
+                                })
+                        }
+                        $("#table").DataTable().ajax.reload(null,false);
+                    }
+                })
                 })
             });
 
@@ -151,7 +394,10 @@
                         newDesc : $("#newDesc").val()
                     },
                     success : function(e) {
-                        showResult(e)
+                        console.log();
+                        showResult(e);
+                        $("#table").DataTable().ajax.reload(null,false);
+                        $("#exampleModal").modal('toggle');
                     }
                 });
 
@@ -159,7 +405,37 @@
 
             // delete barang
             $(document.body).on("click", "#btn-del", function() {
-                $(this).parent().parent().remove();
+                let id = $(this).parent().parent().children().eq(1).text();
+                const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: false
+                })
+                swalWithBootstrapButtons.fire({
+                    title : "Do you really want to delete item with code "+id+"?",
+                    icon : "warning",
+                    showCancelButton: true,
+                    confirmButtonText: 'Continue',
+                    cancelButtonText: 'Cancel',
+                }).then((result) => {
+                    $.ajax({
+                    type : "post",
+                    data : {
+                        delID : id
+                    },
+                    success : function(e){
+                        console.log(e);
+                        swalWithBootstrapButtons.fire({
+                            icon : "success",
+                            title : "Success!",
+                            text : "Data Deleted!"
+                        });
+                        $("#table").DataTable().ajax.reload();
+                    }
+                })
+                })
             });
 
             function showResult(data) {
@@ -229,43 +505,44 @@
             <div class="col-1"></div>
             
             <div class="col-12 table-responsive">
-                <table class="table table-dark table-striped table-bordered text-center align-middle" id="item-list">
+                <table class="table table-dark table-striped table-bordered text-center align-middle" id="table">
                     <thead>
                         <tr>
                             <th>#</th>
                             <th>Kode Barang</th>
                             <th>Nama Barang</th>
                             <th>Lokasi</th>
-                            <th>Deskripsi</th> 
+                            <th>Deskripsi</th>
+                            <th>borrow</th> 
                             <th>Aksi</th>
                             <th>Status</th>
                         </tr>
                     </thead>
                     <tbody class="table-light">
                         <?php
-                            $sql = "SELECT * FROM item";
-                            $stmt = $conn->prepare($sql);
-                            $stmt->execute();
-                            $res = $stmt->fetchAll();
-                            $row_count = 1;
-                            foreach($res as $hasil) {
-                                echo "<tr>";
-                                echo "<td>" . $row_count . "</td>";
-                                echo "<td id='kode'>" . $hasil['Id'] . "</td>";
-                                echo "<td>" . $hasil['Nama_Barang'] . "</td>";
-                                echo "<td>" . $hasil['Location'] . "</td>";
-                                echo "<td>" . $hasil['Deskripsi'] . "</td>";
-                                echo "<td><button class='btn btn-warning me-lg-3' id='btn-edit' data-bs-toggle='modal' data-bs-target='#exampleModal'><i class='fa-solid fa-pen-to-square'></i></button>";
-                                echo "<button class='btn btn-danger' id='btn-del'><i class='fa-solid fa-trash'></i></button></td>";
-                                if ($hasil['Status'] == 1) {
-                                    echo "<td class='text-success'>Tersedia</td>";
-                                }
-                                else {
-                                    echo "<td><button class='btn btn-primary' id='btn-return'>Konfirmasi Pengembalian</button></td>";
-                                }
-                                echo "</tr>";
-                                $row_count++;
-                            }
+                            // $sql = "SELECT * FROM item";
+                            // $stmt = $conn->prepare($sql);
+                            // $stmt->execute();
+                            // $res = $stmt->fetchAll();
+                            // $row_count = 1;
+                            // foreach($res as $hasil) {
+                            //     echo "<tr>";
+                            //     echo "<td>" . $row_count . "</td>";
+                            //     echo "<td id='kode'>" . $hasil['Id'] . "</td>";
+                            //     echo "<td>" . $hasil['Nama_Barang'] . "</td>";
+                            //     echo "<td>" . $hasil['Location'] . "</td>";
+                            //     echo "<td>" . $hasil['Deskripsi'] . "</td>";
+                            //     echo "<td><button class='btn btn-warning me-lg-3' id='btn-edit' data-bs-toggle='modal' data-bs-target='#exampleModal'><i class='fa-solid fa-pen-to-square'></i></button>";
+                            //     echo "<button class='btn btn-danger' id='btn-del'><i class='fa-solid fa-trash'></i></button></td>";
+                            //     if ($hasil['Status'] == 1) {
+                            //         echo "<td class='text-success'>Tersedia</td>";
+                            //     }
+                            //     else {
+                            //         echo "<td><button class='btn btn-primary' id='btn-return'>Konfirmasi Pengembalian</button></td>";
+                            //     }
+                            //     echo "</tr>";
+                            //     $row_count++;
+                            // }
                         ?>
                     </tbody>
                 </table>
@@ -285,7 +562,7 @@
                         <div class="row" id="modalBody">
                             <div class="col-12 pb-3">
                                 <label for="newName" class="form-label"><b>Kode Barang</b></label>
-                                <input type="text" id="newID" name="newID" class="form-control" required disabled>
+                                <input type="text" id="newID" name="newID" class="form-control" required readonly>
                             </div>
                             <div class="col-12 pb-3">
                                 <label for="newName" class="form-label"><b>Nama Barang</b></label>

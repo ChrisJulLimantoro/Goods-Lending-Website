@@ -13,7 +13,7 @@
     if(isset($_POST['loc'])){
         $i = 1;
         if($_POST['loc'] == ''){
-            $sql = 'SELECT DISTINCT Nama_Barang, Deskripsi, image,image2,image3,image4 FROM item WHERE status = 1 and Nama_Barang LIKE :filt';
+            $sql = 'SELECT DISTINCT Nama_Barang FROM item WHERE status = 1 and Nama_Barang LIKE :filt';
             $stmt = $conn->prepare($sql);
             $stmt->execute(array(
                 ':filt' => '%'.$_POST['filter_nama'].'%'
@@ -21,7 +21,13 @@
             $row = $stmt->fetchAll();
             if($row){
                 foreach($row as $s){
-                    $arr = array($s['image2'],$s['image3'],$s['image4']);
+                    $sql_sl = "SELECT Deskripsi,image,image2,image3,image4 FROM item WHERE Nama_Barang = :nama LIMIT 1";
+                    $stmt_sl = $conn->prepare($sql_sl);
+                    $stmt_sl->execute(array(
+                        ":nama" => $s['Nama_Barang']
+                    ));
+                    $row_sl = $stmt_sl->fetchAll();
+                    $arr = array($row_sl[0]['image2'],$row_sl[0]['image3'],$row_sl[0]['image4']);
                     $sql2 = 'SELECT COUNT(*) FROM item WHERE status = 1 and Nama_Barang = :nama';
                     $stmt2 = $conn->prepare($sql2);
                     $stmt2->execute(array(
@@ -33,7 +39,7 @@
                     echo '<div class="text-center">';
                     echo '<div id="carouselExampleControlsNoTouching'.$i.'" class="carousel slide" data-bs-touch="false" data-bs-interval="false">';
                     echo '<div class="carousel-inner">';
-                    echo '<div class="carousel-item active p-2"><img src="'.$s['image'].'" class="d-block w-100" alt="..." style ="aspect-ratio:1/1;"></div>';
+                    echo '<div class="carousel-item active p-2"><img src="'.$row_sl[0]['image'].'" class="d-block w-100" alt="..." style ="aspect-ratio:1/1;"></div>';
                     foreach($arr as $a){
                         if($a != "assets/no-image.png"){
                             echo '<div class="carousel-item p-2"><img src="'.$a.'" class="d-block w-100" alt="..." style ="aspect-ratio:1/1;"></div>';
@@ -50,13 +56,13 @@
                     echo '<div class="card-details">';
                     echo '<p class="text-title nama_barang">'.$s['Nama_Barang'].'</p>';
                     echo '<p class="text-title">Quantity : '.$row2.'</p>';
-                    echo '<p class="text-body" style="padding-left : 10px;">'.$s['Deskripsi'].'</p></div>';
+                    echo '<p class="text-body" style="padding-left : 10px;">'.$row_sl[0]['Deskripsi'].'</p></div>';
                     echo '<button class="card-button">Pinjam!</button></div></div>';
                     $i += 1;
                 }
             }
         }else{
-            $sql = 'SELECT DISTINCT Nama_Barang, Deskripsi, image,image2,image3,image4 FROM item WHERE status = 1 and location = :loc and Nama_barang LIKE :filt';
+            $sql = 'SELECT DISTINCT Nama_Barang FROM item WHERE status = 1 and location = :loc and Nama_barang LIKE :filt';
             $stmt = $conn->prepare($sql);
             $stmt->execute(array(
                 ':loc' => $_POST['loc'],
@@ -65,7 +71,14 @@
             $row = $stmt->fetchAll();
             if($row){
                 foreach($row as $s){
-                    $arr = array($s['image2'],$s['image3'],$s['image4']);
+                    $sql_sl = "SELECT Deskripsi,image,image2,image3,image4 FROM item WHERE Nama_Barang = :nama and location = :loc LIMIT 1";
+                    $stmt_sl = $conn->prepare($sql_sl);
+                    $stmt_sl->execute(array(
+                        ":nama" => $s['Nama_Barang'],
+                        ":loc" => $_POST['loc']
+                    ));
+                    $row_sl = $stmt_sl->fetchAll();
+                    $arr = array($row_sl[0]['image2'],$row_sl[0]['image3'],$row_sl[0]['image4']);
                     $sql2 = 'SELECT COUNT(*) FROM item WHERE status = 1 and Nama_Barang = :nama and location = :loc';
                     $stmt2 = $conn->prepare($sql2);
                     $stmt2->execute(array(
@@ -78,7 +91,7 @@
                     echo '<div class="text-center">';
                     echo '<div id="carouselExampleControlsNoTouching'.$i.'" class="carousel slide" data-bs-touch="false" data-bs-interval="false">';
                     echo '<div class="carousel-inner">';
-                    echo '<div class="carousel-item active p-2"><img src="'.$s['image'].'" class="d-block w-100" alt="..." style ="aspect-ratio:1/1;"></div>';
+                    echo '<div class="carousel-item active p-2"><img src="'.$row_sl[0]['image'].'" class="d-block w-100" alt="..." style ="aspect-ratio:1/1;"></div>';
                     foreach($arr as $a){
                         echo $a;
                         if($a != "assets/no-image.png"){
@@ -96,7 +109,7 @@
                     echo '<div class="card-details">';
                     echo '<p class="text-title nama_barang">'.$s['Nama_Barang'].'</p>';
                     echo '<p class="text-title">Quantity : '.$row2.'</p>';
-                    echo '<p class="text-body" style="padding-left : 10px;">'.$s['Deskripsi'].'</p></div>';
+                    echo '<p class="text-body" style="padding-left : 10px;">'.$row_sl[0]['Deskripsi'].'</p></div>';
                     echo '<button class="card-button">Pinjam!</button></div></div>';
                     $i += 1;
                 }
