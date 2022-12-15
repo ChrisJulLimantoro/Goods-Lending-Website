@@ -1,19 +1,31 @@
 <?php
     include "admin_authen.php";
 ?>
-<?php
-    if (isset($_POST['id'])) {
-        echo 1;
+<?php 
+    if(isset($_POST['ajax'])){
+        $sql = "SELECT i.Id AS IdBarang, i.Nama_Barang AS namaBarang, CONCAT(u.first_name, ' ', u.last_name) AS namaPeminjam, b.start_date, b.return_date, d.status AS status FROM borrow_detail d JOIN borrow b ON d.id_borrow = b.id_borrow JOIN item i on d.id_item = i.Id JOIN user u on b.id_user = u.username WHERE d.status <> 0 ORDER BY b.start_date DESC";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $res = $stmt->fetchAll();
+        $row_count = 1;
+        $arr = array();
+        foreach($res as $hasil) {
+            $temp = array();
+            array_push($temp,$row_count);
+            array_push($temp,$hasil['IdBarang']);
+            array_push($temp,$hasil['namaBarang']);
+            array_push($temp,$hasil['namaPeminjam']);
+            array_push($temp,$hasil['start_date']);
+            array_push($temp,$hasil['return_date']);
+            array_push($temp,$hasil['status']);
+            $row_count++;
+            array_push($arr,$temp);
+        }
+        $json = json_encode($arr);
+        echo $json;
         exit();
     }
 ?>
-<?php
-    if (isset($_POST['newID']) && isset($_POST['newName']) && isset($_POST['newDesc'])) {
-        echo 1;
-        exit();
-    }
-?>
-
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
@@ -108,72 +120,51 @@
                         "next": "<span class='text-light'>Next</span>",
                         "previous": "<span class='text-light'>Previous</span>"
                     }
-                }
-            });
-
-            // konfirmasi pengembalian
-            $(document.body).on("click", "#btn-return", function() {
-                let kode = $(this).parent().parent().find("#kode").html();
-                let parent = $(this).parent();
-                console.log(kode);
-                $.ajax({
+                },
+                ajax : {
+                    processing: true,
+                    serverSide: true,
+                    url : "history.php",
+                    dataSrc : "",
                     type : "post",
                     data : {
-                        id : kode
-                    },
-                    success : function(e) {
-                        if (e == 1) {
-                            console.log("tes")
-                            parent.html("Tersedia");
-                            parent.addClass("text-success")
+                        ajax : 1
+                    }
+                },
+                columns : [
+                    {data : 0},
+                    {data : 1},
+                    {data : 2},
+                    {data : 3},
+                    {data : 4},
+                    {data : null,
+                    "render" : function(data,type,row){
+                        if(row[6] == 2){
+                            return '<i class="text-danger">Tertolak</i>';
+                        }else if(row[6] == 3){
+                            return '<i class="text-warning">belum kembali</i>';
+                        }else if(row[6] == 4){
+                            if(row[5] == null){
+                                return '<i class="text-primary">Barang lainnya belum kembali</i>';
+                            }else{
+                                return '<i class="text-success">'+row[5]+'</i>';
+                            }
                         }
-                    }
-                })
+                    }},
+                    {data : null,
+                    "render" : function(data,type,row){
+                        if(row[6] == 1){
+                            return '<i class="text-success">Peminjaman Diterima</i>';
+                        }else if(row[6] == 2){
+                            return '<i class="text-danger">Peminjaman Ditolak</i>';
+                        }else if(row[6] == 3){
+                            return '<i class="text-primary">Barang dibawa User</i>';
+                        }else if(row[6] == 4){
+                            return '<i class="text-secondary">Barang Telah Dikembalikan</i>';
+                        }
+                    }}
+                ],  
             });
-
-            // edit barang
-            $(document.body).on("click", "#btn-edit", function() {
-                let currID = $(this).parent().parent().children().eq(1).text();
-                let currName = $(this).parent().parent().children().eq(2).text();
-                let currDesc = $(this).parent().parent().children().eq(4).text();
-
-                $("#modalBody").find(".alert").remove();
-                $("#newID").val(currID);
-                $("#newName").val(currName);
-                $("#newDesc").val(currDesc);
-            });
-
-            // update detail barang
-            $(document.body).on("click", "#btn-update", function() {
-                $.ajax({
-                    type : "post",
-                    data : {
-                        newID : $("#newID").val(),
-                        newName : $("#newName").val(),
-                        newDesc : $("#newDesc").val()
-                    },
-                    success : function(e) {
-                        showResult(e)
-                    }
-                });
-
-            });
-
-            // delete barang
-            $(document.body).on("click", "#btn-del", function() {
-                $(this).parent().parent().remove();
-            });
-
-            function showResult(data) {
-                if (data == 1) {
-                    // console.log("1");
-                    $("#modalBody").prepend('<div class="col-12 alert alert-success" role="alert">Data berhasil diupdate!</div>');
-                }
-                else {
-                    // console.log("0");
-                    $("#modalBody").prepend('<div class="col-12 alert alert-danger" role="alert">Kesalahan dalam mengubah data, silahkan coba lagi</div>');
-                }    
-            }
         });
     </script>
 </head>
@@ -244,24 +235,7 @@
                         </tr>
                     </thead>
                     <tbody class="table-light">
-                        <?php
-                            $sql = "SELECT i.Id AS IdBarang, i.Nama_Barang AS namaBarang, CONCAT(u.first_name, ' ', u.last_name) AS namaPeminjam, b.start_date, b.return_date, d.status AS status FROM borrow_detail d JOIN borrow b ON d.id_borrow = b.id_borrow JOIN item i on d.id_item = i.Id JOIN user u on b.id_user = u.username ORDER BY b.start_date DESC";
-                            $stmt = $conn->prepare($sql);
-                            $stmt->execute();
-                            $res = $stmt->fetchAll();
-                            $row_count = 1;
-                            foreach($res as $hasil) {
-                                echo "<tr>";
-                                echo "<td>" . $row_count . "</td>";
-                                echo "<td id='kode'>" . $hasil['IdBarang'] . "</td>";
-                                echo "<td>" . $hasil['namaBarang'] . "</td>";
-                                echo "<td>" . $hasil['namaPeminjam'] . "</td>";
-                                echo "<td>" . $hasil['start_date'] . "</td>";
-                                echo "<td>" . $hasil['return_date'] . "</td>";
-                                echo "<td>" . $hasil['status'] . "</td>";
-                                $row_count++;
-                            }
-                        ?>
+
                     </tbody>
                 </table>
             </div>

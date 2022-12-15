@@ -3,11 +3,12 @@
 ?>
 <?php
     if(isset($_POST['loc'])){
-        $sql2 = "SELECT COUNT(*) FROM item WHERE Location = :loc";
+        $sql2 = "SELECT Id FROM item WHERE Location = :loc ORDER BY Id DESC LIMIT 1";
         $stmt2 = $conn->prepare($sql2);
         $stmt2->execute(['loc' => $_POST['loc']]);
         $row2 = $stmt2->fetchcolumn();
-        echo $row2;
+        $hasil = (int)substr($row2,1);
+        echo $hasil;
         exit();
     }
 ?>
