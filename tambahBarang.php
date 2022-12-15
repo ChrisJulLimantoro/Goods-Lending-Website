@@ -243,7 +243,7 @@
     <!-- Main content -->
     <div class="container-fluid px-5 d-flex align-items-center justify-content-center">
         <form action="insertItem.php" method="post" enctype="multipart/form-data">
-            <div class="row p-3 tempatUpload"  style="backdrop-filter:blur(20px); border-radius:20pt">
+            <div class="row p-3 mb-5 rounded tempatUpload"  style="backdrop-filter:blur(20px)">
                 <div class="col-lg-2 mt-lg-3 col-12 py-4 d-flex align-items-start justify-content-center">
                     <a href="homeAdmin.php"><i class="fa-solid fa-2xl fa-angle-left"></i></a>
                 </div>
