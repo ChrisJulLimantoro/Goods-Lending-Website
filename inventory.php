@@ -36,19 +36,21 @@
                 $row_cek = $stmt_cek->fetchColumn();
                 if($row_cek == 0){
                     $myDate = getDate(date("U"));
-                    $sql_update3 = "UPDATE borrow SET status_pinjam = 2,return_date = CONVERT(DATETIME,:date,103) WHERE id_borrow = :bor";
+                    $sql_update3 = "UPDATE borrow SET status_pinjam = 2,return_date = :date WHERE id_borrow = :bor";
                     $stmt_update3 = $conn->prepare($sql_update3);
                     $stmt_update3->execute(array(
                         ":bor" => $_POST['bor'],
-                        ":date" => $myDate['mday']."/".$myDate['mon']."/".$myDate['year']
+                        ":date" => $myDate['year']."-".$myDate['mon']."-".$myDate['mday']
                     ));
                     $sql_update4 = "UPDATE user SET status = 0 WHERE username = :usr";
                     $stmt_update4 = $conn->prepare($sql_update4);
                     $stmt_update4->execute(array(
                         ":usr" => $_POST['user']
                     ));
+                    $_SESSION['status'] = 0;
                 } 
-            }else if($_POST['aksi'] == 2){ // aksi saat pinjam barang
+            }
+            else if($_POST['aksi'] == 2){ // aksi saat pinjam barang
                 $sql_update = "UPDATE borrow_detail SET status = 3 WHERE id_item = :id and id_borrow = :bor";
                 $stmt_update = $conn->prepare($sql_update);
                 $stmt_update->execute(array(
@@ -241,7 +243,7 @@
                         if(row[5] == 0 || row[5] == 2 || row[5] == 4){
                             return '<i class="text-success">Tersedia</i>';
                         }else if(row[5] == 1){
-                            return '<button class="btn btn-success" id="btn-pinjam">Pengambilan Barang</button>';
+                            return '<button class="btn btn-success" id="btn-ambil">Pengambilan Barang</button>';
                         }else if(row[5] == 3){
                             return '<button class="btn btn-primary" id="btn-return">Konfirmasi Pengembalian</button>';
                         }
@@ -277,7 +279,7 @@
                     preConfirm: () => {
                         const user = $("#userBalik").val();
                         if (!user) {
-                        Swal.showValidationMessage(`Please enter a valid password!`)
+                        Swal.showValidationMessage(`Please enter a valid username!`)
                         }
                         return { user: user }
                     }
@@ -314,8 +316,8 @@
                 })
             });
             
-            // konfirmasi pengembalian
-            $(document.body).on("click", "#btn-pinjam", function() {
+            // konfirmasi pengambilan
+            $(document.body).on("click", "#btn-ambil", function() {
                 let kode = $(this).parent().parent().children().eq(1).text();
                 let kode_bor = $(this).closest('table').DataTable().row($(this).closest('tr')).data()['6'];
                 // console.log(kode);
@@ -327,15 +329,15 @@
                 buttonsStyling: false
                 })
                 swalWithBootstrapButtons.fire({
-                    title : "Enter Username Pengembali",
-                    html : "<input type='text' class='form-control' name='userBalik' id='userBalik'>",
+                    title : "Enter Username Pengambil",
+                    html : "<input type='text' class='form-control' name='userAmbil' id='userAmbil'>",
                     showCancelButton: true,
                     confirmButtonText: 'Continue',
                     cancelButtonText: 'Cancel',
                     preConfirm: () => {
-                        const user = $("#userBalik").val();
+                        const user = $("#userAmbil").val();
                         if (!user) {
-                        Swal.showValidationMessage(`Please enter your an username!`)
+                        Swal.showValidationMessage(`Please enter a valid username!`)
                         }
                         return { user: user }
                     }
