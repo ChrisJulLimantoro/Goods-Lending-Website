@@ -71,7 +71,7 @@
         }
         .active:hover{
             background-color: #5179d6;
-            transform: scale(1.2);
+            transform: scale(1.07);
         }
 
         /* Main */
@@ -228,7 +228,7 @@
                 <h2 class="text-center text-light mb-lg-5 mb-3">RIWAYAT PEMINJAMAN BARANG</h2>
             </div>
             <div class="col-1"></div>
-            
+            <hr style="color: #fff">
             <div class="col-12 table-responsive">
                 <table class="table table-dark table-striped table-bordered text-center align-middle" id="item-list">
                     <thead>

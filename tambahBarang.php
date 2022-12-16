@@ -57,7 +57,7 @@
         }
         .active:hover{
             background-color: #5179d6;
-            transform: scale(1.2);
+            transform: scale(1.07);
         }
 
         .hidden {
@@ -244,10 +244,16 @@
     <!-- Main content -->
     <div class="container-fluid px-5 d-flex align-items-center justify-content-center">
         <form action="insertItem.php" method="post" enctype="multipart/form-data">
-            <div class="row p-3 mb-5 rounded tempatUpload"  style="backdrop-filter:blur(20px)">
-                <div class="col-lg-2 mt-lg-3 col-12 py-4 d-flex align-items-start justify-content-center">
+            <div class="row p-lg-5 p-3 mb-5 rounded tempatUpload"  style="backdrop-filter:blur(20px)">
+                <div class="col-1 pt-1">
                     <a href="homeAdmin.php"><i class="fa-solid fa-2xl fa-angle-left"></i></a>
                 </div>
+                <div class="col-10">
+                    <h2 class="text-center text-light mb-lg-5 mb-3">TAMBAH BARANG</h2>
+                </div>
+                <div class="col-1"></div>
+                <hr style="color: #fff">
+                <div class="col-lg-2"></div>
 
                 <div class="col-lg-2 col-md-6 col-12 mt-lg-3 p-2 d-flex align-items-center justify-content-center uploadFoto">
                     <img src="" class="fotoBarang">
