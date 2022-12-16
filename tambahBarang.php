@@ -195,7 +195,7 @@
         <div class="row px-lg-3" style="margin: 0">
             <nav class="navbar navbar-dark navbar-expand-lg">
                 <div class="col-lg-2 col-3 d-flex justify-content-start text-center">   
-                    <a class="navbar-brand animate_animated animate__fadeInUp" href="homeUser.php">UPPK</a>
+                    <a class="navbar-brand animate_animated animate__fadeInUp" href="homeAdmin.php">UPPK</a>
                 </div>
                 
                 <div class="col-lg-8 col-6 d-flex justify-content-center">
@@ -241,7 +241,7 @@
                                     ?>
                                 </h6>
                                 <li><hr class="dropdown-divider"></li>
-                                <a href="login.php"><button type="button" class="btn btn-light">LOGOUT</button></a>
+                                <a href="logout.php"><button type="button" class="btn btn-light">LOGOUT</button></a>
                             </ul>
                         </li>
                     </div>

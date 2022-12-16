@@ -152,7 +152,6 @@
                 <div class="col-lg-8 col-5 d-flex justify-content-center">
                     <input type="text" class="form-control px-4" id="inputSearch" placeholder="Search Product">
                 </div>
-
                 <div class="col-lg-2 col-4 d-flex justify-content-center">
                     <div class="col-4 d-flex justify-content-center align-items-center">
                         <button type="button" class="btn btn-dark">
