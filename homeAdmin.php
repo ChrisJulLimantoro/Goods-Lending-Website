@@ -29,7 +29,6 @@
             background-image: url('assets/gedungQ2.jpg');
             background-size: cover;
             /* filter: blur(0.5px); */
-            
         }
 
         .nav-link{
@@ -93,6 +92,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="history.php">Riwayat</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="tambahAdmin.php">Tambah Admin</a>
                         </li>
                     </ul>
                 </div>
