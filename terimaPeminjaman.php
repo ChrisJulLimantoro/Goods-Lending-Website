@@ -274,6 +274,9 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="history.php">Riwayat</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="tambahAdmin.php">Tambah Admin</a>
+                    </li>
                 </ul>
             </div>
             <div style="width: 5em; display:!important inline, position:!important absolute" class="user">
