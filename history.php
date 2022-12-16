@@ -141,14 +141,19 @@
                     "render" : function(data,type,row){
                         if(row[6] == 2){
                             return '<i class="text-danger">Tertolak</i>';
-                        }else if(row[6] == 3){
+                        }
+                        else if(row[6] == 3){
                             return '<i class="text-warning">belum kembali</i>';
-                        }else if(row[6] == 4){
+                        }
+                        else if(row[6] == 4){
                             if(row[5] == null){
                                 return '<i class="text-primary">Barang lainnya belum kembali</i>';
                             }else{
                                 return '<i class="text-success">'+row[5]+'</i>';
                             }
+                        }
+                        else {
+                            return "";
                         }
                     }},
                     {data : null,
@@ -161,6 +166,9 @@
                             return '<i class="text-primary">Barang dibawa User</i>';
                         }else if(row[6] == 4){
                             return '<i class="text-secondary">Barang Telah Dikembalikan</i>';
+                        }
+                        else {
+                            return "";
                         }
                     }}
                 ],  
