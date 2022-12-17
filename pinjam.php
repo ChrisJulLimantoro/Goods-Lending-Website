@@ -295,6 +295,7 @@
                                                                     }else{
                                                                         echo 1;
                                                                         }?>';
+                                                            $("#window").attr("Location","pinjam.php");
                                                         }
                                                     });
                                                 }
@@ -383,7 +384,9 @@
                                                     'Success',
                                                     'Success creating new Borrow Bucket and added 1 item!',
                                                     'success'
-                                                )
+                                                ).then(function(){
+                                                    location.reload(true);
+                                                })
                                             }else{
                                                 swalWithBootstrapButtons.fire(
                                                     'Failed',
