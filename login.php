@@ -34,7 +34,7 @@
             }
             exit();
         }else{
-            $sql3 = "SELECT count(*) as total FROM `admin` WHERE `username` = :username and `password` = PASSWORD( :password )";
+            $sql3 = "SELECT count(*) as total FROM `admin` WHERE `username` = :username and `password` = PASSWORD( :password )" and `status` <> 0;
             $admin = $_POST['user'];
             $pass = $_POST['pass'];
             $stmt3 = $conn->prepare($sql3);
@@ -83,6 +83,7 @@
         }
         .box{
             padding: 45px;
+            background-color:rgba(255,255,255,.95);
             box-shadow: 1px 0px 17px -5px rgba(0,0,0,0.75);
             border-radius:10px;
         }
@@ -136,6 +137,51 @@
             100% {
                 transform : translate(1px,-2px) rotate(-1deg); 
             }
+        }
+        .header {
+            position:relative;
+            background: linear-gradient(60deg, rgba(84,58,183,1) 0%, rgba(0,172,193,1) 100%);
+        }
+        .waves {
+            position:relative;
+            width: 100%;
+            height:20vh;
+            margin-bottom:-7px; /*Fix for safari gap*/
+            min-height:100px;
+            max-height:150px;
+        }
+        .parallax > use {
+            animation: move-forever 25s cubic-bezier(.55,.5,.45,.5)     infinite;
+        }
+        .parallax > use:nth-child(1) {
+            animation-delay: -2s;
+            animation-duration: 7s;
+        }
+        .parallax > use:nth-child(2) {
+            animation-delay: -3s;
+            animation-duration: 10s;
+        }
+        .parallax > use:nth-child(3) {
+            animation-delay: -4s;
+            animation-duration: 13s;
+        }
+        .parallax > use:nth-child(4) {
+            animation-delay: -5s;
+            animation-duration: 20s;
+        }
+        @keyframes move-forever {
+            0% {
+            transform: translate3d(-90px,0,0);
+            }
+            100% { 
+                transform: translate3d(85px,0,0);
+            }
+        }
+        .flex { /*Flexbox for containers*/
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
@@ -204,25 +250,23 @@
                             }
                         }});
                 });
-                // $("#inputPassword").on("keyup",function(){
-                //     $("#inputPassword")
-                // })
             })
     </script>
 
 
 </head>
 <body>
-    <div class="container-fluid d-flex align-items-center justify-content-center" style="min-height: 100vh">
+    <div class="header pt-5">
+    <!--Waves Container-->
+    <div class="container-fluid d-flex align-items-center justify-content-center pt-3">
         <div class="row" style="width: 100%">
             <div class="col-lg-4 col-md-3 col-sm-2 col-1"></div>
             <div class="col-lg-4 col-md-6 col-sm-8 col-10 box">
-                <h1 class="text-center">JUDUL</h1>
-                <h4 class="subtitle-login text-center" style="color:red; border-bottom:1px solid black;line-height:0.1em;"><span style="background-color:white; padding:0px 6px">Login</span></h4>
+                <h1 class="text-center">LOG IN</h1>
+                <h4 class="subtitle-login text-center" style="border-bottom:1px solid black;line-height:0.1em;"></h4>
                 <form action="login.php" method="post">
                     <div class="mb-3">
                         <br>
-                        <label for="inputUserName" class="form-label">User Name:</label>
                         <div class="container-fluid position-relative p-0">
                             <input type="text" class="form-control text-center" id="inputUsername" aria-describedby="userHelp" name="user" placeholder="username">
                             <span id="statusUser" hidden="hidden"><img src="assets/check.png" width="24px" height="24px" style="position:absolute;top:5.4pt;right:10.2pt;"></span>
@@ -245,7 +289,6 @@
                         <br>
                     </div>
                     <div class="mb-3">
-                        <label for="inputUserName" class="form-label">Password:</label>
                         <div class="container-fluid position-relative p-0">
                             <input type="password" class="form-control text-center" id="inputPassword" aria-describedby="passHelp" name="pass" placeholder="password">
                             <span id="statusPass" hidden="hidden"><img src="assets/check.png" width="24px" height="24px" style="position:absolute;top:5.4pt;right:10.2pt;"></span>
@@ -265,5 +308,23 @@
             </div>
         </div>
     </div>
+    <div>
+        <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+        <defs>
+        <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+        </defs>
+        <g class="parallax">
+        <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7)" />
+        <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
+        <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
+        <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
+        </g>
+        </svg>
+    </div>
+    <!--Waves end-->
+
+    </div>
+    
 </body>
 </html>

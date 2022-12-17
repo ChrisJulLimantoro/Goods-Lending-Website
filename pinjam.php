@@ -9,11 +9,11 @@
         $count = $stmt_count->fetchColumn();
         $count = (int)(substr($count,1));
         echo $count;
-        if($count > 999){
+        if($count >= 999){
             $code = "B".($count+1);
-        }else if($count > 99){
+        }else if($count >= 99){
             $code = "B0".($count+1);
-        }else if($count > 9){
+        }else if($count >= 9){
             $code = "B00".($count+1);
         }else{
             $code = "B000".($count+1);
@@ -295,6 +295,7 @@
                                                                     }else{
                                                                         echo 1;
                                                                         }?>';
+                                                            $("#window").attr("Location","pinjam.php");
                                                         }
                                                     });
                                                 }
@@ -383,7 +384,9 @@
                                                     'Success',
                                                     'Success creating new Borrow Bucket and added 1 item!',
                                                     'success'
-                                                )
+                                                ).then(function(){
+                                                    location.reload(true);
+                                                })
                                             }else{
                                                 swalWithBootstrapButtons.fire(
                                                     'Failed',

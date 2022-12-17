@@ -200,6 +200,9 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="history.php">Riwayat</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="tambahAdmin.php">Tambah Admin</a>
+                    </li>
                 </ul>
             </div>
             <div style="width: 5em; display:!important inline, position:!important absolute" class="user">
@@ -228,7 +231,7 @@
                 <h2 class="text-center text-light mb-lg-5 mb-3">RIWAYAT PEMINJAMAN BARANG</h2>
             </div>
             <div class="col-1"></div>
-            
+            <hr style="color: #fff">
             <div class="col-12 table-responsive">
                 <table class="table table-dark table-striped table-bordered text-center align-middle" id="item-list">
                     <thead>
