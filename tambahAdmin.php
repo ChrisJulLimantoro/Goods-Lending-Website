@@ -25,6 +25,53 @@
         ));
         exit();
     }
+    if(isset($_POST['ajax'])) {
+        $sql = "SELECT * FROM `admin` ORDER BY status DESC";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $res = $stmt->fetchAll();
+        $row_count = 1;
+        $arr = array();
+        foreach($res as $hasil) {
+            $temp = array();
+            array_push($temp,$row_count);
+            array_push($temp,$hasil['Username']);
+            if ($hasil['status'] == 0) {
+                array_push($temp, "Tidak aktif");
+            }
+            else {
+                array_push($temp, "Aktif");
+            }
+            array_push($arr,$temp);
+            $row_count++;
+        }
+        echo json_encode($arr);
+        exit();
+    }
+    if(isset($_POST['status']) && isset($_POST['username'])) {
+        $currStat = $_POST['status'];
+        $newStat = 0;
+        if ($currStat == "1") {
+            $newStat = 0;
+        }
+        else if ($currStat == "0") {
+            $newStat = 1;
+        }
+        try {
+            $sql = "UPDATE `admin` SET status = :status WHERE Username = :username";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute(array(
+                ":status" => $newStat,
+                ":username" => $_POST['username']
+            ));
+            echo 1;
+            exit();
+        }
+        catch(Exception $e) {
+            echo 0;
+            exit();
+        }
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,6 +93,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Sweet Alert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- DataTable -->
+    <link rel="stylesheet" href="//cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
+    <script src="//cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
 
@@ -54,6 +106,7 @@
             background-size: cover;
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
         }
 
         /* Navbar */
@@ -127,9 +180,167 @@
                 transform : translate(1px,-2px) rotate(-1deg); 
             }
         }
+
+        /* DataTable */
+        div.dataTables_filter > label > input, .dataTables_length select, .dataTables_wrapper, .paginate_button {
+            color: #fff;
+        }
+
+        div.dataTables_filter > label > input:focus, .dataTables_length select:focus {
+            outline: 1px solid #fff;
+        }
+
+        div.dataTables_filter > label  {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .dataTables_length select > option { 
+            color: #000;
+        }
+
+        @media screen and (max-width: 576px) {
+            #item-list th, #item-list td, #item-list button {
+                font-size: .75em;
+            }
+        }
     </style>
     <script>
         $(document).ready(function(){
+            $("#admin-list").DataTable({
+                "language": {
+                    "paginate": {
+                        "next": "<span class='text-light'>Next</span>",
+                        "previous": "<span class='text-light'>Previous</span>"
+                    }
+                },
+                ajax : {
+                    processing: true,
+                    serverSide: true,
+                    url : "tambahAdmin.php",
+                    dataSrc : "",
+                    type : "post",
+                    data : {
+                        ajax : 1
+                    }
+                },
+                columns : [
+                    {data : 0},
+                    {data : 1},
+                    {data : null,
+                    "render" : function(data,type,row){
+                        if(row[2] == "Aktif"){
+                            return '<i class="text-success">Aktif</i>';
+                        }else if(row[2] == "Tidak aktif"){
+                            return '<i class="text-danger">Tidak aktif</i>';
+                        }
+                        else {
+                            return "";
+                        }
+                    }},
+                    {data : null,
+                    "render" : function(data,type,row){
+                        if(row[2] == "Aktif"){
+                            return '<button class="btn btn-danger" id="changeStats" value="1">Non-aktifkan</button>';
+                        }else if(row[2] == "Tidak aktif"){
+                            return '<button class="btn btn-success" id="changeStats" value="0">Aktifkan</button>';
+                        }
+                        else {
+                            return "";
+                        }
+                    }}
+                ]
+            });
+
+            $(document.body).on("click", "#changeStats", function() {
+                let status = $("#changeStats").val();
+                let username = $(this).parent().parent().children().eq(1).text();
+                console.log(status);
+                const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: false
+                })
+
+                if (status == "1") {
+                    swalWithBootstrapButtons.fire({
+                        title : "Non aktifkan admin",
+                        icon : "warning",
+                        html : "Apakah anda yakin ingin menonaktifkan akun ini?",
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                    }).then((result => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                type: "post",
+                                data : { 
+                                    status : status,
+                                    username : username 
+                                },
+                                success : function(e) {
+                                    if (e == 1) {
+                                        swalWithBootstrapButtons.fire ({
+                                            icon : "success",
+                                            title : "Berhasil!",
+                                            text : "Akun berhasil dinonaktifkan!"
+                                        })
+                                    }
+                                    else {
+                                        swalWithBootstrapButtons.fire ({
+                                            icon : "error",
+                                            title : "Gagal!",
+                                            text : "Akun gagal dinonaktifkan!"
+                                        })
+                                    }
+                                }
+                            })
+                            $("#admin-list").DataTable().ajax.reload(null,false);
+                        }
+                    }))
+                }
+                else if (status == "0") {
+                    swalWithBootstrapButtons.fire({
+                        title : "Aktifkan admin",
+                        icon : "warning",
+                        html : "Apakah anda yakin ingin mengaktifkan kembali akun ini?",
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                    }).then((result => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                type: "post",
+                                data : { 
+                                    status : status,
+                                    username : username 
+                                },
+                                success : function(e) {
+                                    if (e == 1) {
+                                        swalWithBootstrapButtons.fire ({
+                                            icon : "success",
+                                            title : "Berhasil!",
+                                            text : "Akun berhasil diaktifkan!"
+                                        })
+                                    }
+                                    else {
+                                        swalWithBootstrapButtons.fire ({
+                                            icon : "error",
+                                            title : "Gagal!",
+                                            text : "Akun gagal diaktifkan!"
+                                        })
+                                    }
+                                }
+                            })
+                            $("#admin-list").DataTable().ajax.reload(null,false);
+                        }
+                    }))
+                }
+                
+            })
+
             let passStatus = false;
             let reStatus = false;
             let userStatus = false;
@@ -303,12 +514,14 @@
                     }
                 })
             })
+
+            
         })
     </script>
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar fixed-top navbar-expand-lg navbar-dark p-md-3" style="backdrop-filter : blur(3px);">
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark p-md-3" style="backdrop-filter : blur(3px);">
         <div class="container-fluid justify-content-between">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -352,8 +565,8 @@
     </nav>
     
     <!-- Main content -->
-    <div class="container-fluid mt-lg-3 w-100 vh-100 d-flex align-items-center justify-content-center">
-        <div class="row p-5 mb-5 rounded"  style="backdrop-filter:blur(20px)">
+    <div class="container-fluid w-100 d-flex align-items-center justify-content-center">
+        <div class="row py-5 p-lg-5 mb-5 rounded"  style="backdrop-filter:blur(20px)">
             <div class="col-1 pt-1">
                 <a href="homeAdmin.php"><i class="fa-solid fa-2xl fa-angle-left"></i></a>
             </div>
@@ -395,11 +608,33 @@
             </div>
             <div class="col-lg-2"></div>
 
-            <div class="col-lg-2"></div>
-            <div class="col-lg-8 mb-3">
+            <div class="col-lg-2 mb-5"></div>
+            <div class="col-lg-8 mb-5">
                 <button type="button" class="btn btn-dark" id="submit" style="width:100%" disabled>Tambah</button>
             </div>
+            <div class="col-lg-2 mb-5"></div>
+
+            <div class="col-1 pt-1 mt-5"></div>
+            <div class="col-10 mt-5">
+                <h2 class="text-center text-light mb-lg-5 mb-3">LIST ADMIN</h2>
+            </div>
+            <div class="col-1 mt-5"></div>
+            <hr style="color: #fff">
+            <table class="table table-dark table-striped table-bordered text-center align-middle" id="admin-list">
+                <thead>
+                    <tr>
+                        <th class="text-center">#</th>
+                        <th class="text-center">Username</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class='table-light'>
+
+                </tbody>
+            </table>
         </div>
+
     </div>
 
     <script>

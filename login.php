@@ -34,7 +34,7 @@
             }
             exit();
         }else{
-            $sql3 = "SELECT count(*) as total FROM `admin` WHERE `username` = :username and `password` = PASSWORD( :password )";
+            $sql3 = "SELECT count(*) as total FROM `admin` WHERE `username` = :username and `password` = PASSWORD( :password )" and status <> 0;
             $admin = $_POST['user'];
             $pass = $_POST['pass'];
             $stmt3 = $conn->prepare($sql3);
