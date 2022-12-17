@@ -9,7 +9,7 @@ include "user_authen.php";
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STATUS PEMINJAMAN</title>
+    <title >Peminjaman Barang</title>
 
     <!-- CSS Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
@@ -79,7 +79,7 @@ include "user_authen.php";
         }
 
         #showDetail {
-            width: 40px;
+            width: 100%;
         }
 
         #showDetail img {
@@ -91,7 +91,7 @@ include "user_authen.php";
         }
 
         tr:nth-child(even) {
-            background-color: #d3d3d3;
+            background-color: #fff;
         }
     </style>
 
@@ -106,16 +106,22 @@ include "user_authen.php";
                 else
                     $(this).find("img").css("transform", "rotate(180deg)");
             });
+
+            // Button state
+            $(document.body).on("click", "#tambahBarang", function() {
+                $(this).attr("disabled",true)
+                $(this).text("MENUNGGU KONFIRMASI...");
+            });
         });
     </script>
 </head>
 
-<body style="background-color:#D3D3D3">
+<body style = "background-color:#D3D3D3">
     <div class="container-fluid bg-warning text-white header">
         <div class="row px-lg-3">
             <nav class="navbar navbar-dark navbar-expand-lg">
                 <div class="col-3">
-                    <a class="navbar-brand text-black" href="homeUser.php">STATUS PEMINJAMAN</a>
+                    <a class="navbar-brand text-black" href="homeUser.php">PEMINJAMAN BARANG</a>
                 </div>
                 <div class="col-7">
                 </div>
@@ -168,61 +174,121 @@ include "user_authen.php";
             </nav>
         </div>
     </div>
+    
+    <div class = "container container-custom mt-4">
+        <a type="button" class="btn btn-warning" href = #>KEMBALI</a>
+    </div>
 
-    <div class="container container-custom bg-light">
-        <div class="row mt-4 px-2 py-3">
-            <div class="col-md-3">
-                <div class="row justify-content-center">
+    <div class = "container container-custom bg-light">
+        <div class="row mt-4 px-5 py-5">
+            <div class = "col-md-3">
+                <div class = "row justify-content-center">
                     <div class="col-md-11">
-                        <div class="p-2">
-                            ID PEMINJAMAN
+                        <div class = "card">
+                        <img src="https://img2.pngdownload.id/20180611/web/kisspng-cardboard-box-computer-icons-5b1e549bbe6db0.87161963152871439578.jpg"
+                                        id = "imgItem" class="card-img">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-6">
-                <div class="d-flex flex-column text-center">
-                    <div class="p-2">22-07-2022 / 28-07-2022</div>
+            <div class = "col-md-9">
+                <div class = "d-flex flex-column">
+                    <div class = "p-2">NAMA BARANG          : MIC</div>
+                </div>
+                <div class = "d-flex flex-column">
+                    <div class = "p-2">QUANTITY             : 2</div>
+                </div>
+                <div class = "d-flex flex-column">
+                    <div class = "p-2">KETERANGAN           : UNTUK MENGERASKAN SUARA ANDA</div>
                 </div>
             </div>
 
-            <div class="col-md-3">
-                <div class="p-2">
-                    <button type="button" style="float:right;" id="showDetail" class="collapsed detail-item-button bg-light" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
-                        <img src="assets/more.png">
+            <div class="accordion" id="detail">
+                <div class="accordion-header mt-2 px-2" id="heading1">
+                    <button type="button" id="showDetail" class="collapsed detail-item-button bg-warning" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+                        <div class = "p-2">
+                            <div style="float: left;margin-bottom: 7px;" class="text-black">C002</div><img src="assets/more.png" style="float:right;"></div>
                     </button>
                 </div>
-            </div>
-        </div>
-        <div id="collapse1" class="accordion-collapse collapse row mt-1 mx-2" aria-labelledby="heading1" data-bs-parent="#detail">
-            <div>
-                <div class="px-1 py-1">
-                    <table class="table table-sm table-bordered border-dark mt-2 px-1 py-1 text-center align-middle" id="tabelDetail">
-                        <trn>
-                            <th>ID</th>
-                            <th>NAMA</th>
-                            <th>LOKASI</th>
-                        </trn>
-                        <tr>
-                            <td>P001</td>
-                            <td>MIC</td>
-                            <td>P</td>
-                        </tr>
-                        <tr>
-                            <td>W001</td>
-                            <td>HT</td>
-                            <td>W</td>
-                        </tr>
-                        <tr>
-                            <td>T002</td>
-                            <td>MEJA</td>
-                            <td>T</td>
-                        </tr>
-                    </table>
+                <div id="collapse1" class="accordion-collapse collapse px-2" aria-labelledby="heading1" data-bs-parent="#detail">
+                    <div style="background-color: #D3D3D3;">
+                        <div class="px-2 py-2">
+                        <table class="table table-sm table-bordered border-dark mt-2 px-1 text-center align-middle" id="tabelDetail">
+                            <trn>
+                                <th>TANGGAL DIPINJAM</th>
+                                <th>TENGGAT PENGEMBALIAN</th>
+                                <th>TANGGAL PENGEMBALIAN</th>
+                                <th>NAMA PIHAK PEMINJAM</th>
+                            </trn>
+                            <tr>
+                                <td>####</td>
+                                <td>####</td>
+                                <td>####</td>
+                                <td>####</td>
+                            </tr>
+                            <tr>
+                                <td>####</td>
+                                <td>####</td>
+                                <td>####</td>
+                                <td>####</td>
+                            </tr>
+                            <tr>
+                                <td>####</td>
+                                <td>####</td>
+                                <td>####</td>
+                                <td>####</td>
+                            </tr>
+                        </table>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <!-- <div class="accordion" id="detail">
+                <div class="accordion-header mt-2 px-2" id="heading1">
+                    <button type="button" id="showDetail" class="collapsed detail-item-button bg-warning" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="true" aria-controls="collapse2">
+                        <div class = "p-2">
+                            <div style="float: left;margin-bottom: 7px;" class="text-black">C002</div><img src="assets/more.png" style="float:right;"></div>
+                    </button>
+                </div>
+                <div id="collapse2" class="accordion-collapse collapse px-2" aria-labelledby="heading1" data-bs-parent="#detail">
+                    <div style="background-color: #D3D3D3;">
+                        <div class="px-2 py-2">
+                        <table class="table table-sm table-bordered border-dark mt-2 px-1 text-center align-middle" id="tabelDetail">
+                            <trn>
+                                <th>TANGGAL DIPINJAM</th>
+                                <th>TENGGAT PENGEMBALIAN</th>
+                                <th>TANGGAL PENGEMBALIAN</th>
+                                <th>NAMA PIHAK PEMINJAM</th>
+                            </trn>
+                            <tr>
+                                <td>####</td>
+                                <td>####</td>
+                                <td>####</td>
+                                <td>####</td>
+                            </tr>
+                            <tr>
+                                <td>####</td>
+                                <td>####</td>
+                                <td>####</td>
+                                <td>####</td>
+                            </tr>
+                            <tr>
+                                <td>####</td>
+                                <td>####</td>
+                                <td>####</td>
+                                <td>####</td>
+                            </tr>
+                        </table>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
         </div>
+    </div>
+    <div class="container mx-auto d-block text-center">
+        <button id="tambahBarang" class="btn btn-warning my-4 px-5" type="button" style="border-radius:20pt">TAMBAH BARANG</button>
     </div>
 </body>
 
