@@ -1,7 +1,96 @@
 <?php
     include "admin_authen.php";
 ?>
-
+<?php
+    if(isset($_POST['ajax'])){
+        $sql_ajax = "SELECT * FROM borrow_detail a JOIN borrow b on a.id_borrow = b.id_borrow WHERE status_pinjam <> 0 and status = 0 ORDER BY a.id_borrow";
+        $stmt_ajax = $conn->prepare($sql_ajax);
+        $stmt_ajax->execute();
+        $row_ajax = $stmt_ajax->fetchAll();
+        $count = 1;
+        if($row_ajax){
+            foreach($row_ajax as $r){
+                echo '<tr><td class="count">'.$count.'</td>';
+                echo '<td class="kode_brg">'.$r['id_item'].'</td>';
+                echo '<td class="kode_bor" style="display:none">'.$r['id_borrow'].'</td>';
+                echo '<td class="kode_org" style="display:none">'.$r['id_user'].'</td>';
+                $sql_brg = "SELECT Nama_Barang FROM item WHERE Id = :id";
+                $stmt_brg = $conn->prepare($sql_brg);
+                $stmt_brg->execute(array(
+                    ":id" => $r['id_item']
+                ));
+                $nm_brg = $stmt_brg->fetchcolumn();
+                echo '<td class="namaBrg">'.$nm_brg.'</td>';
+                $sql_org = "SELECT CONCAT(first_name,' ',last_name) AS 'name',email FROM user WHERE username = :id";
+                $stmt_org = $conn->prepare($sql_org);
+                $stmt_org->execute(array(
+                    ":id" => $r['id_user']
+                ));
+                $nm_org = $stmt_org->fetchAll();
+                echo '<td class="peminjam">'.$nm_org[0]['name'].'</td>';
+                echo '<td class="email" style="display:none">'.$nm_org[0]['email'].'</td>';
+                echo '<td class="tglPinjam">'.$r['start_date'].'</td>';
+                echo '<td class="tglKembali">'.$r['expired_date'].'</td>';
+                echo '<td> <button type="button" class="btn btn-success btn-acc" style="width:70px">Terima</button>
+                            <button type="button" class="btn btn-danger btn-cnc" style="width:70px">Tolak</button>
+                    </td></tr>';
+                    $count++;
+            }
+        }else{
+            echo '<tr><td colspan="7" class ="text-center"><strong>Tidak ada pending request</strong></td></tr>';
+        }
+        exit();
+    }
+?>
+<?php 
+    if(isset($_POST['bor']) && isset($_POST['brg']) && isset($_POST['stu']) && isset($_POST['org'])){
+        $sql_up = "UPDATE borrow_detail SET status = :stu WHERE id_borrow = :bor and id_item = :brg";
+        $stmt_up = $conn->prepare($sql_up);
+        $stmt_up->execute(array(
+            ":stu" => $_POST['stu'],
+            ":bor" => $_POST['bor'],
+            ":brg" => $_POST['brg']
+        ));
+        if($_POST['stu'] == 2){
+            $sql_res = "UPDATE item SET status = 1 WHERE Id = :brg";
+            $stmt_res = $conn->prepare($sql_res);
+            $stmt_res->execute(array(
+                ":brg" => $_POST['brg']
+            ));
+            $sql_cek = "SELECT status FROM borrow_detail WHERE id_borrow = :bor";
+            $stmt_cek = $conn->prepare($sql_cek);
+            $stmt_cek->execute(array(
+                ":bor" => $_POST['bor']
+            ));
+            $row_cek = $stmt_cek->fetchAll();
+            $sql_jum = "SELECT count(*) FROM borrow_detail WHERE id_borrow = :bor";
+            $stmt_jum = $conn->prepare($sql_jum);
+            $stmt_jum->execute(array(
+                ":bor" => $_POST['bor']
+            ));
+            $row_jum = $stmt_jum->fetchColumn();
+            $checker = 0;
+            foreach($row_cek as $rc){
+                if($rc['status'] == 2){
+                    $checker += 1;
+                }
+            }
+            if($checker == $row_jum){
+                $sql_user = "UPDATE user SET status = 0 WHERE username = :user";
+                $stmt_user = $conn->prepare($sql_user);
+                $stmt_user->execute(array(
+                    ":user" => $_POST['org']
+                ));
+                $sql_bor = "UPDATE borrow SET status_pinjam = 2 WHERE id_borrow = :bor";
+                $stmt_bor = $conn->prepare($sql_bor);
+                $stmt_bor->execute(array(
+                    ":bor" => $_POST['bor']
+                ));
+            }
+        }
+        exit();
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,26 +155,60 @@
 
     <script>
         $(document).ready(function() {
-            let id = $("#kode").html();
-            let nama = $("#namaBrg").html();
-            let peminjam = $("#peminjam").html();
-            let tglPinjam = $("#tglPinjam").html();
-            let tglKembali = $("#tglKembali").html();
-
-            $(document.body).on("click", "#accept", function() {
-                $.ajax (
-                    
-                ));
-
-                $(this).parent().parent().remove();
+            
+            $.ajax({
+                type : "post",
+                data : {
+                    ajax : 1
+                },
+                success : function(e){
+                    $("#requests").html(e);
+                }
+            })
+            $(document.body).on("click", ".btn-acc", function() {
+                $.ajax ({
+                    type : "post",
+                    data : {
+                        brg : $(this).parent().parent().find(".kode_brg").text(),
+                        bor : $(this).parent().parent().find(".kode_bor").text(),
+                        stu : 1,
+                        org : $(this).parent().parent().find(".kode_org").text()
+                    },
+                    success : function(){
+                        $.ajax({
+                            type : "post",
+                            data : {
+                                ajax : 1
+                            },
+                            success : function(e){
+                                $("#requests").html(e);
+                            }
+                        })
+                    }
+                });
             });
 
-            $(document.body).on("click", "#deny", function() {
+            $(document.body).on("click", ".btn-cnc", function() {
                 $.ajax ({
-                    
+                    type : "post",
+                    data : {
+                        brg : $(this).parent().parent().find(".kode_brg").text(),
+                        bor : $(this).parent().parent().find(".kode_bor").text(),
+                        stu : 2,
+                        org : $(this).parent().parent().find(".kode_org").text()
+                    },
+                    success : function(){
+                        $.ajax({
+                            type : "post",
+                            data : {
+                                ajax : 1
+                            },
+                            success : function(e){
+                                $("#requests").html(e);
+                            }
+                        })
+                    }
                 });
-
-                $(this).parent().parent().remove();
             });
         })    
     </script>
@@ -96,7 +219,7 @@
         <div class="row px-lg-3" style="margin: 0">
             <nav class="navbar navbar-dark navbar-expand-lg">
                 <div class="col-lg-2 col-3 d-flex justify-content-start text-center">   
-                    <a class="navbar-brand" href="homeUser.php">KERANJANG</a>
+                    <a class="navbar-brand" href="homeAdmin.php">KERANJANG</a>
                 </div>
                 
                 <div class="col-lg-8 col-5 d-flex justify-content-center">
@@ -130,7 +253,7 @@
                                 <h6 class="card-title mb-2">User ID:</h6>
                                 <h6 class="card-title mb-1">
                                     <?php
-                                         echo $_SESSION['user'] 
+                                         echo $_SESSION['admin'] 
                                     ?>
                                 </h6>
                                 <h6 class="card-title mb-2">Nama:</h6>
@@ -138,7 +261,7 @@
                                     <?php 
                                     $sqlName = "SELECT CONCAT(first_name,' ',last_name) AS name FROM `user` WHERE `username` = :user";
                                         $stmtName = $conn->prepare($sqlName);
-                                        $stmtName->execute(['user' => $_SESSION['user']]);
+                                        $stmtName->execute(['user' => $_SESSION['admin']]);
                                         $rowName = $stmtName->fetchcolumn(); 
                                         echo $rowName;
                                     ?>
@@ -168,18 +291,7 @@
                     <th>Aksi</th>
                 </tr>
                 <tbody class="table-group-divider" id="requests">
-                    <tr>
-                        <td id="count">1</td>
-                        <td id="kode">C0001</td>
-                        <td id="namaBrg">Microphone Wireless</td>
-                        <td id="peminjam">Budi</td>
-                        <td id="tglPinjam">1/12/2022</td>
-                        <td id="tglKembali">8/12/2022</td>
-                        <td>
-                            <button type="button" class="btn btn-success" style="width:70px" id="accept">Terima</button>
-                            <button type="button" class="btn btn-danger" style="width:70px" id="deny">Tolak</button>
-                        </td>
-                    </tr>
+
                 </tbody>
             </table>
         </div>

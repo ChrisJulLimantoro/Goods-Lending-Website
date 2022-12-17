@@ -24,12 +24,13 @@
                 echo "1";
                 session_start();
                 $_SESSION['user'] = $user;
-                $sql5 = "SELECT profile FROM `user` WHERE `username` = :username";
+                $_SESSION['timeout'] = time();
+                $sql5 = "SELECT profile,status FROM `user` WHERE `username` = :username";
                 $stmt5 = $conn->prepare($sql5);
                 $stmt5->execute(array(':username' => $_POST['user']));
-                $row5 = $stmt5->fetch();
-                // echo var_dump($row5);
-                $_SESSION['profile'] = $row5['profile'];
+                $row5 = $stmt5->fetchAll();
+                $_SESSION['profile'] = $row5[0]['profile'];
+                $_SESSION['status'] = $row5[0]['status'];
             }
             exit();
         }else{
@@ -55,6 +56,7 @@
                 echo "2";
                 session_start();
                 $_SESSION['admin'] = $admin;
+                $_SESSION['timeout'] = time();
                 $sql6 = "SELECT profile FROM `admin` WHERE `Username` = :username";
                 $stmt6 = $conn->prepare($sql6);
                 $stmt6->execute(array(':username' => $_SESSION['admin']));
@@ -80,13 +82,26 @@
             box-sizing:border-box;
         }
         .box{
-            padding: 50px;
+            padding: 45px;
             box-shadow: 1px 0px 17px -5px rgba(0,0,0,0.75);
             border-radius:10px;
         }
         .shaking{
             animation : shake 0.3s;
         }
+
+        @media screen and (max-width: 576px) {
+            body {
+                font-size: .75em;
+            }
+            #inputUsername, #inputPassword {
+                font-size: 1em;
+            }
+            #signIn, #signUp {
+                font-size: 1em;
+            }
+        }
+
         @keyframes shake {
             0% {
                 transform : translate(1px,1px) rotate(0deg); 
@@ -195,16 +210,18 @@
             })
     </script>
 
+
 </head>
 <body>
-    <div class="container-fluid" style="height: 300px;" style="margin-top: 0px" >
-        <div class="row" style="margin-top:80pt;">
-            <div class="col-4"></div>
-            <div class="col-md-4 col-sm-12 col-12 box">
+    <div class="container-fluid d-flex align-items-center justify-content-center" style="min-height: 100vh">
+        <div class="row" style="width: 100%">
+            <div class="col-lg-4 col-md-3 col-sm-2 col-1"></div>
+            <div class="col-lg-4 col-md-6 col-sm-8 col-10 box">
                 <h1 class="text-center">JUDUL</h1>
                 <h4 class="subtitle-login text-center" style="color:red; border-bottom:1px solid black;line-height:0.1em;"><span style="background-color:white; padding:0px 6px">Login</span></h4>
                 <form action="login.php" method="post">
                     <div class="mb-3">
+                        <br>
                         <label for="inputUserName" class="form-label">User Name:</label>
                         <div class="container-fluid position-relative p-0">
                             <input type="text" class="form-control text-center" id="inputUsername" aria-describedby="userHelp" name="user" placeholder="username">
@@ -225,6 +242,7 @@
                                 Admin
                             </label>
                         </div>
+                        <br>
                     </div>
                     <div class="mb-3">
                         <label for="inputUserName" class="form-label">Password:</label>
@@ -241,7 +259,7 @@
                 <div>
                     <p class="text-center">You don't have an account? sign up first!</p>
                     <div class="text-center">
-                        <button type="button" class="btn btn-secondary"><a href="SignUp.php" style="text-decoration: none; color: white;">Sign Up!</a></button>
+                        <button type="button" class="btn btn-secondary" id="signUp"><a href="SignUp.php" style="text-decoration: none; color: white;">Sign Up!</a></button>
                     </div>
                 </div>
             </div>

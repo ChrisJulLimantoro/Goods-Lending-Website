@@ -73,8 +73,13 @@ INSERT INTO `borrow` (`id_borrow`, `id_user`, `start_date`, `expired_date`, `ret
 -- Triggers `borrow`
 --
 DELIMITER $$
+<<<<<<< HEAD
 CREATE TRIGGER `onDeleteBorrow` AFTER DELETE ON `borrow` FOR EACH ROW UPDATE `user`
 SET `status` = 0
+=======
+CREATE TRIGGER `onDeleteBorrow` AFTER DELETE ON `borrow` FOR EACH ROW UPDATE `user`
+SET `status` = 0
+>>>>>>> d5322e616ddbcefe9cb7e182c72af39934f994e3
 WHERE `username` = OLD.id_user
 $$
 DELIMITER ;
@@ -241,4 +246,8 @@ COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+<<<<<<< HEAD
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+=======
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+>>>>>>> d5322e616ddbcefe9cb7e182c72af39934f994e3
