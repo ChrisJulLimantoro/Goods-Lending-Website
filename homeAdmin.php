@@ -44,7 +44,7 @@
         }
         .active:hover{
             background-color: #5179d6;
-            transform: scale(1.2);
+            transform: scale(1.07);
         }
         #welcome{
             overflow : hidden;

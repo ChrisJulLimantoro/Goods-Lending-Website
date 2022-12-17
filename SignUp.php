@@ -1,6 +1,6 @@
 <?php
     include "connection.php";
-    if(isset($_REQUEST['user'])){
+    if(isset($_POST['user'])){
         $sql = "SELECT COUNT(*) FROM `user` WHERE `username` = :username";
         $user = $_REQUEST['user'];
         $stmt = $conn->prepare($sql);

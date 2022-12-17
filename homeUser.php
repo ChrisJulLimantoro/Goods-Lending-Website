@@ -93,7 +93,6 @@
                     echo '<div class="carousel-inner">';
                     echo '<div class="carousel-item active p-2"><img src="'.$row_sl[0]['image'].'" class="d-block w-100" alt="..." style ="aspect-ratio:1/1;"></div>';
                     foreach($arr as $a){
-                        echo $a;
                         if($a != "assets/no-image.png"){
                             echo '<div class="carousel-item p-2"><img src="'.$a.'" class="d-block w-100" alt="..." style ="aspect-ratio:1/1;"></div>';
                         }
