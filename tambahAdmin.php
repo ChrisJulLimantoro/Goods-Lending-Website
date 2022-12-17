@@ -17,7 +17,7 @@
 ?>
 <?php
     if(isset($_POST['usr']) && isset($_POST['pass'])){
-        $sql_in = "INSERT INTO `admin` VALUES(:usr,PASSWORD(:pass),'profile/profileDefault.jpg')";
+        $sql_in = "INSERT INTO `admin` (Username, Password, profile) VALUES(:usr,PASSWORD(:pass),'profile/profileDefault.jpg')";
         $stmt_in = $conn->prepare($sql_in);
         $stmt_in->execute(array(
             ":usr" => $_POST['usr'],
@@ -36,12 +36,7 @@
             $temp = array();
             array_push($temp,$row_count);
             array_push($temp,$hasil['Username']);
-            if ($hasil['status'] == 0) {
-                array_push($temp, "Tidak aktif");
-            }
-            else {
-                array_push($temp, "Aktif");
-            }
+            array_push($temp,$hasil['status']);
             array_push($arr,$temp);
             $row_count++;
         }
@@ -229,9 +224,9 @@
                     {data : 1},
                     {data : null,
                     "render" : function(data,type,row){
-                        if(row[2] == "Aktif"){
+                        if(row[2] == 1){
                             return '<i class="text-success">Aktif</i>';
-                        }else if(row[2] == "Tidak aktif"){
+                        }else if(row[2] == 0){
                             return '<i class="text-danger">Tidak aktif</i>';
                         }
                         else {
@@ -240,9 +235,9 @@
                     }},
                     {data : null,
                     "render" : function(data,type,row){
-                        if(row[2] == "Aktif"){
+                        if(row[2] == 1){
                             return '<button class="btn btn-danger" id="changeStats" value="1">Non-aktifkan</button>';
-                        }else if(row[2] == "Tidak aktif"){
+                        }else if(row[2] == 0){
                             return '<button class="btn btn-success" id="changeStats" value="0">Aktifkan</button>';
                         }
                         else {
@@ -253,7 +248,7 @@
             });
 
             $(document.body).on("click", "#changeStats", function() {
-                let status = $("#changeStats").val();
+                let status = $(this).val();
                 let username = $(this).parent().parent().children().eq(1).text();
                 console.log(status);
                 const swalWithBootstrapButtons = Swal.mixin({
@@ -295,9 +290,10 @@
                                             text : "Akun gagal dinonaktifkan!"
                                         })
                                     }
+                                    $("#admin-list").DataTable().ajax.reload(null,false);
                                 }
                             })
-                            $("#admin-list").DataTable().ajax.reload(null,false);
+                            
                         }
                     }))
                 }
@@ -332,9 +328,10 @@
                                             text : "Akun gagal diaktifkan!"
                                         })
                                     }
+                                    $("#admin-list").DataTable().ajax.reload(null,false);
                                 }
                             })
-                            $("#admin-list").DataTable().ajax.reload(null,false);
+                            
                         }
                     }))
                 }
