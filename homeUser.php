@@ -378,6 +378,8 @@
         body {
             font-family: 'Secular One', sans-serif !important;
             min-width: 425px;
+            top: 0;
+            left: 0;
         }
 
         .card {
@@ -502,8 +504,6 @@
 
         .header{
             height: 3.5em;
-            position : sticky;
-            top:0;
             z-index: 1;
             background-color:rgba(0, 0, 0, 0.5);
         }
@@ -632,26 +632,60 @@
             opacity: 1;
         }
 
+        .containerInput {
+            min-width: 300px;
+            transition:all 0.2s ease-in-out;
+        }
+
         @media only screen and (max-width: 991px) {
             .containerInput {
-                width: 80%;
+                margin-left: auto;
+                margin-right: auto;
+                margin-top: 15px;
+                background-color: rgba(0, 0, 0, 0.5);
+                border-radius: 35px;
+                height: 80%;
                 display: block;
+                flex: auto;
                 text-align: center;
-                display: flex;
                 flex-direction: column;
-                align-items: flex-end
+                align-items: flex-end;
+                padding: 5px;
             }
 
             .containerInput input {
-                width: auto;
-                float: right;
+                width: 94%;
+                margin: auto;
                 display: inline-block;
-                margin-left: auto;
-                margin-right: auto;
                 text-align: left;
+                background-color: white;
+                margin-bottom: 10px;
             }
         }
-        
+
+        @media screen and (min-width: 300px) {
+            .containerInput {
+                width: 300px;
+            }
+        }
+
+        @media screen and (min-width: 576px) {
+            .containerInput {
+                width: 550px;
+            }
+        }
+
+        @media screen and (min-width: 768px) {
+            .containerInput {
+                width: 720px;
+            }
+        }
+
+        @media screen and (min-width: 991px) {
+            .containerInput {
+                width: 600px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -687,7 +721,7 @@
                     ?></h6>
                 <li>
                 <hr class="dropdown-divider"></li>
-                <a href="logout.php"><button type="button" class="btn btn-light mb-1">LOGOUT</button></a>
+                <a href="logout.php"><button type="button" class="btn btn-light">LOGOUT</button></a>
             </ul>
         </li>
     </div>
@@ -719,7 +753,7 @@
         <ul class="navbar-nav">
             <!-- TOMBOL SEARCH -->
             <li class="nav-item">
-                <div class="pt-3 containerInput" style="width: 500px;">
+                <div class="pt-3 containerInput">
                     <!-- <button class="form-control bg-dark me-2" id="searchButton"><img src="assets/search.png" alt="" id="searchImg"></button> -->
                     <input type="text" class="form-control inputSearch" id="inputSearch" placeholder="Search Product">
                 </div>
