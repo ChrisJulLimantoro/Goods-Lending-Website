@@ -241,7 +241,7 @@
                                 }else{
                                     $("#statusPass").removeAttr("hidden");
                                     $("#statusPass img").attr("src","assets/wrong.png");
-                                    $("#passHelp").html("Password incorrect!!");
+                                    $("#passHelp").html("Password incorrect!!  <a href='forgotPassword.php'>Forgot your password?</a>");
                                     $("#passHelp").removeClass("text-success");
                                     $("#passHelp").addClass("text-danger");
                                     $("#inputPassword").css("background-color","#FF9494");
