@@ -29,7 +29,6 @@
             background-image: url('assets/gedungQ2.jpg');
             background-size: cover;
             /* filter: blur(0.5px); */
-            
         }
 
         .nav-link{
