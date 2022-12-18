@@ -1,5 +1,5 @@
 <?php
-    include "user_authen.php";
+include "user_authen.php";
 ?>
 <?php
     if(isset($_POST['start']) && isset($_POST['end']) && isset($_POST['barang'])){
@@ -9,11 +9,11 @@
         $count = $stmt_count->fetchColumn();
         $count = (int)(substr($count,1));
         echo $count;
-        if($count > 999){
+        if($count >= 999){
             $code = "B".($count+1);
-        }else if($count > 99){
+        }else if($count >= 99){
             $code = "B0".($count+1);
-        }else if($count > 9){
+        }else if($count >= 9){
             $code = "B00".($count+1);
         }else{
             $code = "B000".($count+1);
@@ -68,15 +68,15 @@
             $i = 1;
             if($row){
                 foreach($row as $s){
-                    echo '<div class="accordion" id="accordionPanelsStayOpenExample">';
+                    echo '<div class="col-12 accordion mt-3" id="accordionExample">';
                     echo '<div class="accordion-item">';
-                    echo '<h2 class="accordion-header" id="panelsStayOpen-heading'.$i.'">';
-                    echo '<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#acor'.$i.'" aria-expanded="true" aria-controls="panelsStayOpen-collapse'.$i.'">';
+                    echo '<h2 class="accordion-header" id="heading'.$i.'">';
+                    echo '<button class="accordion-button bg-warning" type="button" data-bs-toggle="collapse" data-bs-target="#acor'.$i.'" aria-expanded="true" aria-controls="panelsStayOpen-collapse'.$i.'">';
                     echo $s['Id'].'</button></h2>';
-                    echo '<div id="acor'.$i.'" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading'.$i.'">';
-                    echo '<div class="accordion-body" style="overflow: auto;">';
-                    echo '<table class="table">';
-                    echo '<thead><tr class="table-dark text-center">';
+                    echo '<div id="acor'.$i.'" class="accordion-collapse collapse" aria-labelledby="heading'.$i.'"  data-bs-parent="#accordionExample">';
+                    echo '<div class="accordion-body" style="overflow: auto; background-color: #d3d3d3">';
+                    echo '<table class="table table-bordered">';
+                    echo '<thead><tr class="text-center">';
                     echo '<th scope="col">TANGGAL DIPINJAM</th>';
                     echo '<th scope="col">TENGGAT PENGEMBALIAN</th>';
                     echo '<th scope="col">TANGGAL PENGEMBALIAN</th>';
@@ -138,88 +138,139 @@
         exit();
     }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Peminjaman</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <title >Peminjaman Barang</title>
+
+    <!-- CSS Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <!-- JS Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Sweet Alert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="sweetalert2.min.css">
+
     <style>
-        .card {
-        overflow: visible;
-        position: relative;
-        background: #647C90;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, .2);
-        border-radius: 1px;
+        @import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
+
+        body {
+            font-family: 'Russo One', sans-serif;
+            font-weight: 700;
+            overflow-y: scroll;
+            letter-spacing: 1px;
+            background: url(assets/gedungQ2.jpg) fixed no-repeat;
+            background-size: cover;
         }
 
-        .card:before, .card:after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border-radius: 4px;
-        background: #E2DED0;
-        transition: 0.5s;
-        z-index: -99;
+        /* Navbar style */
+        .navbar {
+            background-color: rgba(0, 0, 0, .5);
+            color: #fff;
         }
 
-        .details {
-        position: absolute;
-        left: -10px;
-        right: 0;
-        bottom: 5px;
-        height: 60px;
-        text-align: center;
-        text-transform: uppercase;
+        .fa-cart-shopping, .fa-clock-rotate-left {
+            color: #fff;
         }
 
-        /*Image*/
-        .imgbox {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        bottom: 10px;
-        right: 10px;
-        background: #E2DED0;
-        transition: 0.5s;
-        z-index: 1;
+        #inputSearch {
+            border: transparent;
+            width: 75%;
+            height: 3em;
+            border-radius: 20pt;
         }
 
-        .img {
-        background: #4C555D;
-        background-image: linear-gradient(45deg, #4158D0, #C850C0);
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        .header {
+            width: 100%;
+            top: 0;
+            z-index: 1;
         }
 
-        /*Hover*/
-        .card:hover .imgbox {
-        bottom: 80px;
+        #userImg {
+            height: 2em;
+            aspect-ratio: 1 / 1;
+            border-radius: 40%;
         }
 
-        .card:hover:before {
-        transform: rotate(20deg);
+        .dropdown-menu {
+            z-index: 1;
         }
 
-        .card:hover:after {
-        transform: rotate(10deg);
-        box-shadow: 0 2px 20px rgba(0, 0, 0, .2);
+        @media only screen and (max-width: 576px) {
+            .navbar-brand {
+                font-size: .75em;
+            }
+        }
+
+        #imgItem {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: contain;
+            height: 200px;
+        }
+
+        /* Accordion */
+        .accordion,
+        .accordion-item,
+        .detail-item-button {
+            color: #fff;
+            border: none;
+        }
+
+        /* #showDetail {
+            width: 100%;
+        }
+
+        #showDetail img {
+            width: 25px;
+        } */
+
+        th {
+            background-color: #ffc107 !important;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #ffc107;
+        }
+
+        @media screen and (max-width:576px) {
+            .table {
+                font-size: .75em;
+            }
         }
     </style>
+
     <script>
-        $(document).ready(function(){
+        $(document).ready(function() {
+            // // Animasi tombol
+            // $(document.body).on("click", "#showDetail", function() {
+            //     $(this).find("img").css("transition", "all .5s ease");
+
+            //     if ($(this).find("img").css("transform") != "none")
+            //         $(this).find("img").css("transform", "none");
+            //     else
+            //         $(this).find("img").css("transform", "rotate(180deg)");
+            // });
+
+            // // Button state
+            // $(document.body).on("click", "#tambahBarang", function() {
+            //     $(this).attr("disabled",true)
+            //     $(this).text("MENUNGGU KONFIRMASI...");
+            // });
+
             var bucket = '<?php 
                 if(isset($_SESSION['bucket'])){
                     echo 0;
@@ -295,6 +346,7 @@
                                                                     }else{
                                                                         echo 1;
                                                                         }?>';
+                                                            $("#window").attr("Location","pinjam.php");
                                                         }
                                                     });
                                                 }
@@ -383,7 +435,9 @@
                                                     'Success',
                                                     'Success creating new Borrow Bucket and added 1 item!',
                                                     'success'
-                                                )
+                                                ).then(function(){
+                                                    location.reload(true);
+                                                })
                                             }else{
                                                 swalWithBootstrapButtons.fire(
                                                     'Failed',
@@ -435,9 +489,10 @@
             $(document.body).on("click","#toHome",function(){
                 $(window).attr("location","backToUser.php")
             })
-        })
+        });
     </script>
 </head>
+
 <body>
     <?php 
         $sql_brg2 = "SELECT * FROM item WHERE Nama_Barang = :nama";
@@ -464,65 +519,94 @@
         }
         $jum = $stmt_count2->fetchColumn();
     ?>
-    <div class="container-fluid bg-dark">
-        <div class="row">
 
-            <div class="col-1">
-                <button class="bg-dark" style="border: none">
-                    <a href="homeUser.php">
-                        <img src="back.png" alt="" style="height: 2em;">
-                    </a>
-                </button>
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark px-3 px-md-5 py-md-3">
+            <a class="navbar-brand" href="homeUser.php">UPPK UK. PETRA</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 me-3 mb-lg-0">
+                    <li class="nav-item me-3">
+                        <a href='status.php' class="nav-link">
+                            <i class="fa-solid fa-clock-rotate-left fa-2xl"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item me-3">
+                        <a href="keranjang.php" class='nav-link'>
+                            <i class="fa-solid fa-cart-shopping fa-2xl"></i>
+                        </a>
+                    </li>
+                </ul>
             </div>
-
-            <div class="col-11 d-flex justify-content-center" style="padding-right: 10em;">
-                <h4 class="text-white">
-                    <a class="navbar-brand title text-white" href="backToUser.php">PEMINJAMAN BARANG</a>
-                </h4> 
+            <div style="width: 5em; display:!important inline, position:!important absolute" class="user">
+                <div class="dropdown" style="list-style: none; width: 3em;">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="<?php echo $_SESSION['profile'] ?>" alt="" style="width: 3em; height: 3em; border-radius: 50%" id='imgItem'>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end bg-warning text-white mt-3 px-3" aria-labelledby="navbarDropdown" style=" width: 15em;">
+                        <h6 class="card-title mb-1">User ID:</h6>
+                        <h6 class="card-title mb-2">
+                            <?php
+                            echo $_SESSION['user']
+                            ?>
+                        </h6>
+                        <h6 class="card-title mb-1">Nama:</h6>
+                        <h6 class="card-title mb-2">
+                            <?php
+                            $sqlName = "SELECT CONCAT(first_name,' ',last_name) AS name FROM `user` WHERE `username` = :user";
+                            $stmtName = $conn->prepare($sqlName);
+                            $stmtName->execute(['user' => $_SESSION['user']]);
+                            $rowName = $stmtName->fetchcolumn();
+                            echo $rowName;
+                            ?>
+                        </h6>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <a href="login.php"><button type="button" class="btn btn-light">LOGOUT</button></a>
+                    </ul>
+                </li>
             </div>
         </div>
+    </nav>
+
+    <h1 class='text-light mt-5 px-5'>PEMINJAMAN BARANG</h1>
+    <div class='container-fluid py-4' style='background-color:#d3d3d3; min-height: 73vh'>
+    
+    <div class = "container">
+        <a type="button" class="btn btn-warning" href = "homeUser.php">KEMBALI</a>
     </div>
 
-
-    <div class="row mt-5 start-50 justify-content-center mx-5 px-5" >
-        <div class="col-lg-3 col-12">
-            <div class="card" style="width: 16rem; height: 18rem; border:none;">
-                <div class="imgbox">
-                    <div class="img">
-                        <img src="<?php echo $img ?>" alt="" style="width: 100%; height: 100%;">
+    <div class = "container" style = "background-color:#D3D3D3">
+        <div class="row mt-4 px-5 py-5 bg-light" id=''>
+            <div class = "col-md-3">
+                <div class = "row justify-content-center">
+                    <div class="col-md-11">
+                        <div class = "card img">
+                            <img src="<?php echo $img ?>" alt="" style="width: 100%; height: 100%;">
+                        </div>
                     </div>
                 </div>
-                <div class="details">
-                    <h2 class="title text-white" style="font-size: 30px;" id="card-detail"><?php echo $_SESSION['nama_brg'] ?></h2>
+            </div>
+
+            <div class = "col-md-9">
+                <div class = "d-flex flex-column">
+                    <div class = "p-2">NAMA BARANG : <?php echo $_SESSION['nama_brg']?></div>
                 </div>
+                <div class = "d-flex flex-column">
+                    <div class = "p-2"><?php echo $desc ?></div>
+                </div>
+                <div class = "d-flex flex-column">
+                    <div class = "p-2">STOCK : <?php echo $jum?></div>
+                </div>
+                
+            </div>
+
+            <div class="row mt-3 justify-content-center text-center" id="view">
+
             </div>
         </div>
-        <div class="col-lg-7 col-12 mx-2" style="padding-left: 3em;">
-            <div class="row">
-                <div class="col-6">
-                    <h3>Nama: </h3>
-                    <h3><?php echo $_SESSION['nama_brg']?></h3>
-                </div>
-
-            </div>
-            <div class="row mt-3">
-                <div class="col-12">
-                    <h3>Quantity: </h3>
-                    <h3 id="qty"><?php echo $jum?></h3>
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col-12">
-                    <h3>Keterangan: </h3>
-                    <h3><?php echo $desc ?></h3>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="row mt-5 start-50 justify-content-center mx-5 px-5 detail-box text-center" id="view">
-
     </div>
 </body>
 </html>

@@ -9,11 +9,11 @@
         $count = $stmt_count->fetchColumn();
         $count = (int)(substr($count,1));
             echo $count;
-        if($count > 999){
+        if($count >= 999){
             $code = "B".($count+1);
-        }else if($count > 99){
+        }else if($count >= 99){
             $code = "B0".($count+1);
-        }else if($count > 9){
+        }else if($count >= 9){
             $code = "B00".($count+1);
         }else{
             $code = "B000".($count+1);
@@ -40,7 +40,7 @@
         ));
         unset($_SESSION['bucket']);
         $_SESSION['status'] = 1;
-        echo '<a href="homeUser.php"><button id="backToHome" class="btn btn-dark my-4 px-5" type="button" style="border-radius:20pt">Pesanan telah diajukan</button></a>';
+        echo '<a href="homeUser.php"><button id="backToHome" class="btn btn-dark my-4 px-5 w-100" type="button" style="border-radius:20pt">Pesanan telah diajukan</button></a>';
         exit();
     }
 ?>
@@ -72,10 +72,13 @@
                 ":bor" => $_SESSION['bucket']
             ));
             $row_tgl = $stmt_tgl->fetchAll();
-            $tgl_start = $row_tgl[0]['start_date'];
-            $tgl_end = $row_tgl[0]['expired_date'];
-            echo '<h2 class="text-center"> Start : '.$tgl_start.'</h2><br>';
-            echo '<h2 class="text-center"> Expired : '.$tgl_end.'</h2>';
+            $tgl_start = date_create($row_tgl[0]['start_date']);
+            $tgl_start = date_format($tgl_start, "d/m/Y");
+            $tgl_end = date_create($row_tgl[0]['expired_date']);
+            $tgl_end = date_format($tgl_end, "d/m/Y");
+            echo '<div class="row bg-light d-flex justify-content-center align-items-center p-4 mt-4">';
+            echo '<p> START : '.$tgl_start.'</p>';
+            echo '<p> EXPIRED : '.$tgl_end.'</p></div>';
             $sql_brg = "SELECT `Nama_Barang`,COUNT(*) as 'count',`Deskripsi`,`image` FROM `borrow_detail` JOIN `item` ON `id_item` = `Id` WHERE `id_borrow` = :bor GROUP BY `Nama_Barang`";
             $stmt_brg = $conn->prepare($sql_brg);
             $stmt_brg->execute(array(
@@ -84,22 +87,23 @@
             $row_brg = $stmt_brg->fetchAll();
             $row_count = 0;
             foreach($row_brg as $r){
-                echo '<div class="row mt-5 px-3 py-4 bg-dark text-light">';
+                echo '<div class="row mt-5 px-3 py-4 bg-light text-dark">';
                 echo '<div class="col-lg-3 col-5">';
                 echo '<img src="'.$r['image'].'" id="imgItem"></div>';
                 echo '<div class="col-lg-8 col-5">';
                 echo '<h3 id="namaItem">Nama Barang: '.$r['Nama_Barang'].'</h3>';
-                echo '<h5 id="keteranganItem">Deskripsi: '.$r['Deskripsi'].'</h5>';
+                echo '<h5 id="keteranganItem">'.$r['Deskripsi'].'</h5>';
                 echo '<h3 id="qtyItem">Quantity: '.$r['count'].'</h3></div>';
-                echo '<div class="col-1">';
-                echo '<button type="button" id="deleteAll" class="btn-close btn-close-white btn-delete-all"></button></div>';
+                echo '<div class="col-1 justify-content-end">';
+                echo '<button type="button" id="deleteAll" class="btn-close btn-delete-all"></button></div></div>';
+                echo '<div class="row">';
                 echo '<div class="accordion" id="detail">';
-                echo '<div class="accordion-header mt-2" id="heading1">';
+                echo '<div class="accordion-header" id="heading1">';
                 echo '<button type="button" id="showDetail" class="collapsed detail-item-button showDetail" data-bs-toggle="collapse" data-bs-target="#collapse'.($row_count+1).'" aria-expanded="true" aria-controls="collapse'.($row_count+1).'">';
                 echo '<img src="assets/more.png"></button></div>';
                 echo '<div id="collapse'.($row_count+1).'" class="accordion-collapse collapse" aria-labelledby="heading'.($row_count+1).'" data-bs-parent="#detail">';
-                echo '<table class="table table-sm table-dark table-bordered border-light mt-3 text-center align-middle" id="tabelDetail">';
-                echo '<tr><th>Kode</th><th>Lokasi</th><th>Aksi</th></tr>';
+                echo '<div class="table-responsive px-4"><table class="table table-bordered my-4 text-center align-middle" id="tabelDetail">';
+                echo '<thead><tr><th>Kode</th><th>Lokasi</th><th>Aksi</th></tr></thead>';
                 for($i=0;$i<$r['count'];$i++){
                     $sql_temp = "SELECT * FROM `borrow_detail` JOIN `item` ON `id_item` = `Id` WHERE `id_item` = ANY (SELECT `Id` FROM `item` WHERE `Nama_Barang` = :nm)";
                     $stmt_temp = $conn->prepare($sql_temp);
@@ -109,25 +113,25 @@
                     $row_temp = $stmt_temp->fetchAll();
                     echo '<tr><td class="kodeBrg">'.$row_temp[$i]['id_item'].'</td>';
                     echo '<td class="lokasiBrg">'.$row_temp[$i]['Location'].'</td>';
-                    echo '<td><button type="button" id="deleteOne" class="btn-close btn-close-white btn-delete-one"></button></td>';
+                    echo '<td><button type="button" id="deleteOne" class="btn-close btn-delete-one"></button></td>';
                     echo '</tr>';
                 }
-                echo '</table></div></div></div>';
+                echo '</table></div></div></div></div>';
                 $row_count += 1;
             }
             if($row_count > 0){
-                echo '<button id="pinjamBarang" class="btn btn-dark my-4 px-5" type="button" style="border-radius:20pt">Ajukan Peminjaman</button>';
+                echo '<button id="pinjamBarang" class="btn btn-dark my-4 w-100" type="button" style="border-radius:20pt">Ajukan Peminjaman</button>';
             }else{
-                echo '<a href="homeUser.php" ><button class="btn btn-dark my-4 px-5" type="button" style="border-radius:20pt">Lihat Barang</button></a>';
+                echo '<a href="homeUser.php" ><button class="btn btn-dark my-4 w-100" type="button" style="border-radius:20pt">Lihat Barang</button></a>';
             }
         }else{
             if($_SESSION['status'] == 1){
-                echo '<h1>Barang Pinjaman belum dikembalikan!</h1>';
+                echo '<h1 class="text-center mt-5">Barang Pinjaman belum dikembalikan!</h1>';
                 echo '<h2 class="text-center">Harap Kembalikan Barang pinjaman terlebih dahulu baru anda dapat membuat keranjang baru!</h2>';
-                echo '<a href="homeUser.php"><button class="btn btn-dark my-4 px-5" type="button" style="border-radius:20pt">Back to Home</button></a>';
+                echo '<a href="homeUser.php"><button class="btn btn-dark my-4 px-5 w-100" type="button" style="border-radius:20pt">Back to Home</button></a>';
             }else{
-                echo '<h1>Keranjang Masih Kosong!</h1>';
-                echo '<button id="createBucket" class="btn btn-dark my-4 px-5" type="button" style="border-radius:20pt">Buat Keranjang Baru</button>';
+                echo '<h1 class="text-center mt-5">Keranjang Masih Kosong!</h1>';
+                echo '<button id="createBucket" class="btn btn-dark my-4 px-5 w-100" type="button" style="border-radius:20pt">Buat Keranjang Baru</button>';
             }
         }
         // echo var_dump($_SESSION);
@@ -181,18 +185,34 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Sweet Alert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="sweetalert2.min.css">
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
 
         body {
-            font-family: 'League Spartan', sans-serif;
-            font-weight: 700;
+            font-family: 'Russo One', sans-serif;
+            font-weight: 400;
             overflow-y: scroll;
+            letter-spacing: 1px;
+            background: url(assets/gedungQ2.jpg) fixed no-repeat;
+            background-size: cover;
         }
 
         /* Navbar style */
+        .navbar {
+            background-color: rgba(0, 0, 0, .5);
+            color: #fff;
+        }
+
+        .fa-cart-shopping, .fa-clock-rotate-left {
+            color: #fff;
+        }
+
         #inputSearch{
             border: transparent;
             width: 75%;
@@ -226,13 +246,12 @@
         }
 
         /* Main */
-        .detail-box {
+        /* .detail-box {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             align-items: center;
-            width: 60%;
             min-height: 90vh;
         }
 
@@ -240,23 +259,14 @@
             border-radius: 20pt;
             width: 100%;
             transition: all .5s ease-in-out;
-        }
+        } */
 
-        .detail-box > div:hover {
+        /* .detail-box > div:hover {
             box-shadow: 0 0 30px #aaa;
-        }
+        } */
 
         #namaItem, #qtyItem, #keteranganItem {
             font-size: 1.25em;
-        }
-
-        @media screen and (max-width: 920px) {
-            .detail-box {
-                width: 90%;
-            }
-            #namaItem, #qtyItem, #keteranganItem, .table tr {
-                font-size: .75em;
-            }
         }
 
         #imgItem {
@@ -273,10 +283,19 @@
         }
 
         /* Accordion */
-        .accordion, .accordion-item, .detail-item-button {
-            background-color: #212529;
+        .accordion, .accordion-item {
+            background-color: #f8f9fa;
             color: #fff;
             border: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .accordion-header, .detail-item-button {
+            background-color: #ffc107;
+            border: none;
+            height: 50px;
+            width: 100%;
         }
 
         #showDetail {
@@ -285,6 +304,24 @@
 
         #showDetail img {
             width: 25px;
+        }
+
+        th {
+            background-color: #ffc107 !important;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #d3d3d3;
+        }
+
+        tr:nth-child(even) {
+            background-color: #ffc107;
+        }
+
+        @media screen and (max-width:576px) {
+            .table, #namaItem, #keteranganItem, #qtyItem {
+                font-size: .75em;
+            }
         }
     </style>
 
@@ -512,69 +549,67 @@
 <body>
     
     <!-- Navbar -->
-    <div class="container-fluid bg-dark text-white header sticky-top">
-        <div class="row px-lg-3" style="margin: 0">
-            <nav class="navbar navbar-dark navbar-expand-lg">
-                <div class="col-lg-2 col-3 d-flex justify-content-start text-center">   
-                    <a class="navbar-brand" href="homeUser.php">KERANJANG</a>
-                </div>
-                
-                <div class="col-lg-8 col-5 d-flex justify-content-center">
-                    <input type="text" class="form-control px-4" id="inputSearch" placeholder="Search Product">
-                </div>
-
-                <div class="col-lg-2 col-4 d-flex justify-content-center">
-                    <div class="col-4 d-flex justify-content-center align-items-center">
-                        <button type="button" class="btn btn-dark">
-                            <img src="assets/notif.png" alt=""  id="notifImg">
-                            <span class="position-absolute badge rounded-pill bg-danger">
-                            99+
-                            </span>
-                        </button>
-                    </div>
-                    
-                    <div class="col-4 d-flex justify-content-center align-items-center">
-                        <a href="keranjang.php">
-                            <button type="button" class="btn btn-dark">
-                                <img src="assets/keranjang.png" alt=""  id="keranjang">
-                            </button>
-                        </a>
-                    </div>
-
-                    <div class="col-4 d-flex justify-content-center align-items-center">
-                        <li class="nav-item dropdown mt-2" style="list-style: none">
-                            <a class="nav-link dropdown-toggle mb-2 position-relative dropdown-menu-end" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="<?php echo $_SESSION['profile'] ?>" alt=""  id="userImg">
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end bg-dark text-white mt-3 px-3" aria-labelledby="navbarDropdown" style=" width: 15em;">
-                                <h6 class="card-title mb-2">User ID:</h6>
-                                <h6 class="card-title mb-1">
-                                    <?php
-                                         echo $_SESSION['user'] 
-                                    ?>
-                                </h6>
-                                <h6 class="card-title mb-2">Nama:</h6>
-                                <h6 class="card-title mb-1">
-                                    <?php 
-                                    $sqlName = "SELECT CONCAT(first_name,' ',last_name) AS name FROM `user` WHERE `username` = :user";
-                                        $stmtName = $conn->prepare($sqlName);
-                                        $stmtName->execute(['user' => $_SESSION['user']]);
-                                        $rowName = $stmtName->fetchcolumn(); 
-                                        echo $rowName;
-                                    ?>
-                                </h6>
-                                <li><hr class="dropdown-divider"></li>
-                                <a href="logout.php"><button type="button" class="btn btn-light">LOGOUT</button></a>
-                            </ul>
-                        </li>
-                    </div>
-                </div>
-            </nav>
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark px-3 px-md-5 py-md-3">
+        <a class="navbar-brand" href="homeUser.php">UPPK UK. PETRA</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 me-3 mb-lg-0">
+                <li class="nav-item me-3">
+                    <a href='status.php' class="nav-link">
+                        <i class="fa-solid fa-clock-rotate-left fa-2xl"></i>
+                    </a>
+                </li>
+                <li class="nav-item me-3">
+                    <a href="keranjang.php" class='nav-link'>
+                        <i class="fa-solid fa-cart-shopping fa-2xl"></i>
+                    </a>
+                </li>
+            </ul>
         </div>
-    </div>
+        <div style="width: 5em; display:!important inline, position:!important absolute" class="user">
+            <div class="dropdown" style="list-style: none; width: 3em;">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="<?php echo $_SESSION['profile'] ?>" alt="" style="width: 3em; height: 3em; border-radius: 50%" id='imgItem'>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end bg-warning text-white mt-3 px-3" aria-labelledby="navbarDropdown" style=" width: 15em;">
+                    <h6 class="card-title mb-1">User ID:</h6>
+                    <h6 class="card-title mb-2">
+                        <?php
+                        echo $_SESSION['user']
+                        ?>
+                    </h6>
+                    <h6 class="card-title mb-1">Nama:</h6>
+                    <h6 class="card-title mb-2">
+                        <?php
+                        $sqlName = "SELECT CONCAT(first_name,' ',last_name) AS name FROM `user` WHERE `username` = :user";
+                        $stmtName = $conn->prepare($sqlName);
+                        $stmtName->execute(['user' => $_SESSION['user']]);
+                        $rowName = $stmtName->fetchcolumn();
+                        echo $rowName;
+                        ?>
+                    </h6>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <a href="login.php"><button type="button" class="btn btn-light">LOGOUT</button></a>
+                </ul>
+            </li>
+        </div>
+    </nav>
     
+    <h1 class='text-light mt-5 px-5'>KERANJANG</h1>
+    <div class='container-fluid py-4' style='background-color:#d3d3d3; min-height: 73vh'>
+    
+    <div class = "container">
+        <a type="button" class="btn btn-warning" href = "homeUser.php">KEMBALI</a>
+    </div>
+
+    <div class="container container-custom justify-content-center" id='view'>
+
     <!-- Main content -->
-    <div class="container-fluid detail-box mt-4" id="view">
+    <div class="container-fluid mt-4" id="view">
     </div>
 </body>
 </html>

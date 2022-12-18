@@ -3,11 +3,12 @@
 ?>
 <?php
     if(isset($_POST['loc'])){
-        $sql2 = "SELECT COUNT(*) FROM item WHERE Location = :loc";
+        $sql2 = "SELECT Id FROM item WHERE Location = :loc ORDER BY Id DESC LIMIT 1";
         $stmt2 = $conn->prepare($sql2);
         $stmt2->execute(['loc' => $_POST['loc']]);
         $row2 = $stmt2->fetchcolumn();
-        echo $row2;
+        $hasil = (int)substr($row2,1);
+        echo $hasil;
         exit();
     }
 ?>
@@ -27,47 +28,55 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
 
         body {
-            font-family: 'League Spartan', sans-serif;
-            font-weight: 700;
-            overflow-x: scroll;
+            /* font-family: 'League Spartan', sans-serif;
+            font-weight: 700; */
+            background: url('assets/gedungQ2.jpg') fixed no-repeat;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navbar */
+        .navbar {
+            transition: all .5s ease;
+        }
+
+        .nav-link{
+            font-weight: bold;
+        }
+
+        .active{
+            transition: all 0.5s ease;
+        }
+        .active:hover{
+            background-color: #5179d6;
+            transform: scale(1.07);
         }
 
         .hidden {
             display: none !important;
         }
 
-        /* Navbar style */
-        #inputSearch{
-            border: transparent;
-            width: 75%;
-            height: 3em;
-            border-radius: 20pt;
+        /* Main */
+        .fa-angle-left {
+            color: #fff;
+            height: 30px;
+            transition: all .3s ease;
         }
 
-        .header {
-            width: 100%;
-            top: 0;
-            z-index: 1;
-        }
-    
-        #notifImg, #keranjang, #userImg {
-            height: 2em;
-            aspect-ratio: 1 / 1;
+        .fa-angle-left:hover {
+            transform: scale(1.15);
         }
 
-        #userImg {
-            border-radius: 40%;
-        }
-
-        @media only screen and (max-width: 576px) {
-            .navbar-brand {
-                font-size: 12px;
-            }
+        form {
+            color: #fff;
         }
 
         /* Upload Foto */
@@ -77,7 +86,7 @@
 
         .uploadFoto label {
             width: 100%;
-            border: 2px dashed #222;
+            border: 2px dashed #fff;
             border-radius: 20px;
             aspect-ratio: 1 / 1;
             cursor: pointer;
@@ -191,115 +200,103 @@
     </script>
 </head>
 <body>
-    <div class="container-fluid bg-dark text-white header sticky-top">
-        <div class="row px-lg-3" style="margin: 0">
-            <nav class="navbar navbar-dark navbar-expand-lg">
-                <div class="col-lg-2 col-3 d-flex justify-content-start text-center">   
-                    <a class="navbar-brand animate_animated animate__fadeInUp" href="homeAdmin.php">UPPK</a>
+    <!-- Navbar -->
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark p-md-3" style="backdrop-filter : blur(3px);">
+        <div class="container-fluid justify-content-between">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="homeAdmin.php">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="tambahBarang.php">Tambah Barang</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="terimaPeminjaman.php">Terima Peminjaman</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="inventory.php">Inventory</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="history.php">Riwayat</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="tambahAdmin.php">Tambah Admin</a>
+                    </li>
+                </ul>
+            </div>
+            <div style="width: 5em; display:!important inline, position:!important absolute" class="user">
+                <div class="dropdown" style="list-style: none; width: 3em;">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="<?php echo $_SESSION['profile'] ?>" alt="" style="width: 3em; height: 3em; border-radius: 50%">
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end mt-3" style="color: white;">
+                        <h5 class="dropdown-item">Username: </h5>
+                        <h5 class="dropdown-item"><?php echo $_SESSION['admin'] ?></h5>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a href="logout.php"><button class="btn btn-primary mx-2" >Log out</button></a></li>
+                    </ul>
                 </div>
-                
-                <div class="col-lg-8 col-6 d-flex justify-content-center">
-                    <input type="text" class="form-control px-4" id="inputSearch" placeholder="Search Product">
-                </div>
-
-                <div class="col-lg-2 col-3 d-flex justify-content-end">
-                    <div class="col-6 d-flex justify-content-end align-items-center">
-                        <button type="button" class="btn btn-dark">
-                            <img src="assets/notif.png" alt=""  id="notifImg">
-                            <span class="position-absolute badge rounded-pill bg-danger">
-                            99+
-                            </span>
-                        </button>
-                    </div>
-                    
-                    <!-- <div class="pe-2">
-                        <button type="button" class="btn btn-dark">
-                            <img src="assets/keranjang.png" alt=""  id="keranjang">
-                        </button>
-                    </li> -->
-
-                    <div class="col-6 d-flex justify-content-end align-items-center">
-                        <li class="nav-item dropdown mt-2" style="list-style: none">
-                            <a class="nav-link dropdown-toggle mb-2 position-relative dropdown-menu-end" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="<?php echo $_SESSION['profile'] ?>" alt=""  id="userImg">
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end bg-dark text-white mt-3 px-3" aria-labelledby="navbarDropdown" style=" width: 15em;">
-                                <h6 class="card-title mb-2">User ID:</h6>
-                                <h6 class="card-title mb-1">
-                                    <?php
-                                         echo $_SESSION['user'] 
-                                    ?>
-                                </h6>
-                                <h6 class="card-title mb-2">Nama:</h6>
-                                <h6 class="card-title mb-1">
-                                    <?php 
-                                    $sqlName = "SELECT CONCAT(first_name,' ',last_name) AS name FROM `user` WHERE `username` = :user";
-                                        $stmtName = $conn->prepare($sqlName);
-                                        $stmtName->execute(['user' => $_SESSION['user']]);
-                                        $rowName = $stmtName->fetchcolumn(); 
-                                        echo $rowName;
-                                    ?>
-                                </h6>
-                                <li><hr class="dropdown-divider"></li>
-                                <a href="logout.php"><button type="button" class="btn btn-light">LOGOUT</button></a>
-                            </ul>
-                        </li>
-                    </div>
-                </div>
-            </nav>
+            </div>
         </div>
-    </div>
+    </nav>
     
-
-    <div class="container-fluid p-5 align-items-center justify-content-center">
-        <form action="insertItem.php" method="post" enctype="multipart/form-data" >
-            <div class="row text-center px-3 tempatUpload">
-                <div class="col-lg-2 col-12 py-4 d-flex align-items-start">
-                    <a href="homeAdmin.php"><img src="assets/back.png" height="25px"></a>
+    <!-- Main content -->
+    <div class="container-fluid px-5 d-flex align-items-center justify-content-center">
+        <form action="insertItem.php" method="post" enctype="multipart/form-data">
+            <div class="row p-lg-5 p-3 mb-5 rounded tempatUpload"  style="backdrop-filter:blur(20px)">
+                <div class="col-1 pt-1">
+                    <a href="homeAdmin.php"><i class="fa-solid fa-2xl fa-angle-left"></i></a>
                 </div>
+                <div class="col-10">
+                    <h2 class="text-center text-light mb-lg-5 mb-3">TAMBAH BARANG</h2>
+                </div>
+                <div class="col-1"></div>
+                <hr style="color: #fff">
+                <div class="col-lg-2"></div>
 
-                <div class="col-lg-2 col-md-6 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto">
+                <div class="col-lg-2 col-md-6 col-12 mt-lg-3 p-2 d-flex align-items-center justify-content-center uploadFoto">
                     <img src="" class="fotoBarang">
                     <label for="submitFoto1" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
                     <input type="file" accept=".jpg, .jpeg, .png, .jfif" class="form-control hidden" multiple="false" name="submitFoto1" id="submitFoto1" onchange="read_file(this)" value="assets/no-image.png">
                     <button type="button" class="btn deleteFoto"></button>
                 </div>
 
-                <div class="col-lg-2 col-md-6 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up2" style="opacity : 0; height: 0">
+                <div class="col-lg-2 col-md-6 col-12 mt-lg-3 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up2" style="opacity : 0; height: 0">
                     <img src="" class="fotoBarang">
                     <label for="submitFoto2" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
                     <input type="file" accept=".jpg, .jpeg, .png, .jfif" class="form-control hidden" multiple="false" name="submitFoto2" id="submitFoto2" onchange="read_file(this)" value="assets/no-image.png" disabled>
                     <button type="button" class="btn deleteFoto"></button>
                 </div>
 
-                <div class="col-lg-2 col-md-6 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up3" style="opacity : 0; height: 0">
+                <div class="col-lg-2 col-md-6 col-12 mt-lg-3 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up3" style="opacity : 0; height: 0">
                     <img src="" class="fotoBarang">
                     <label for="submitFoto3" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
                     <input type="file" accept=".jpg, .jpeg, .png, .jfif" class="form-control hidden" multiple="false" name="submitFoto3" id="submitFoto3" onchange="read_file(this)" value="assets/no-image.png" disabled>
                     <button type="button" class="btn deleteFoto"></button>
                 </div>
 
-                <div class="col-lg-2 col-md-6 col-12 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up4" style="opacity : 0; height: 0">
+                <div class="col-lg-2 col-md-6 col-12 mt-lg-3 p-2 d-flex align-items-center justify-content-center uploadFoto" id="up4" style="opacity : 0; height: 0">
                     <img src="" class="fotoBarang">
                     <label for="submitFoto4" class="d-flex align-items-center justify-content-center">Tambah Foto</label>
                     <input type="file" accept=".jpg, .jpeg, .png, .jfif" class="form-control hidden" multiple="false" name="submitFoto4" id="submitFoto4" onchange="read_file(this)" value="assets/no-image.png" disabled>
                     <button type="button" class="btn deleteFoto"></button>
                 </div>
-            </div>
+                <div class="col-lg-2"></div>
 
-            <div class="row">
                 <div class="col-lg-2"></div>
                 <div class="col-lg-8 col-12">
-                    <label for="nama" class="mt-5 pb-2 px-1">Nama Barang <span style="color:red">*</span></label>
+                    <label for="nama" class="mt-3 pb-1 px-1">Nama Barang <span style="color:red">*</span></label>
                     <input type="text" id="nama" name="nama" class="form-control" placeholder="Speaker Portabel" required><br>
                 </div>
                 <div class="col-lg-2"></div>
-            </div>
 
-            <div class="row">
                 <div class="col-lg-2"></div>
                 <div class="col-lg-4 col-6">
-                    <label for="lokasi" class="py-2 px-1">Lokasi <span style="color:red">*</span></label>  
+                    <label for="lokasi" class="px-1 pb-1">Lokasi <span style="color:red">*</span></label>  
                     <select class="form-select form-select-md" aria-label="Lokasi UPPK" id="lokasi" name="lokasi" required>
                         <option value="C" class="align-self-center" selected>UPPK C</option>
                         <option value="P" class="align-self-center">UPPK P</option>
@@ -307,28 +304,35 @@
                     </select>
                 </div>
                 <div class="col-lg-4 col-6">
-                    <label for="kodeBarang" class="py-2 px-1">Kode Barang <span style="color:red">*</span></label>  
+                    <label for="kodeBarang" class="px-1 pb-1">Kode Barang <span style="color:red">*</span></label>  
                     <input type="text" id="kodeBarang" name="kodeBarang" class="form-control" placeholder="X0001" readonly required><br>
                 </div>
                 <div class="col-lg-2"></div>
-            </div>
 
-            <div class="row">
                 <div class="col-lg-2"></div>
                 <div class="col-lg-8 col-12">
-                    <label for="keterangan" class="py-2 px-1">Keterangan</label>
+                    <label for="keterangan" class="px-1 pb-1">Deskripsi <span style="color:red">*</span></label>
                     <textarea class="form-control" id="keterangan" name="keterangan" rows="3" required></textarea><br>
                 </div>
                 <div class="col-lg-2"></div>
-            </div>
-                
-            <div class="row">
+
                 <div class="col-lg-2"></div>
-                <div class="col-lg-10">
-                    <button type="submit" class="btn btn-dark" id="submit">Tambah</button>
+                <div class="col-lg-8 mb-3">
+                    <button type="submit" class="btn btn-dark" id="submit" style="width:100%">Tambah</button>
                 </div>
             </div>
         </form>
     </div>
+
+    <script>
+        var nav= document.querySelector('nav');
+        window.addEventListener('scroll', function(){
+          if (window.pageYOffset > 50){
+            nav.classList.add('bg-dark', 'shadow');
+          }else{
+            nav.classList.remove('bg-dark','shadow');
+          }
+        });
+    </script>
 </body>
 </html>
