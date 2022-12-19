@@ -34,7 +34,7 @@
             }
             exit();
         }else{
-            $sql3 = "SELECT count(*) as total FROM `admin` WHERE `username` = :username and `password` = PASSWORD( :password )" and `status` <> 0;
+            $sql3 = "SELECT count(*) as total FROM `admin` WHERE `username` = :username and `password` = PASSWORD( :password ) and `status` <> 0";
             $admin = $_POST['user'];
             $pass = $_POST['pass'];
             $stmt3 = $conn->prepare($sql3);
@@ -47,7 +47,15 @@
                 $stmt4->execute([':username' => $admin]);
                 $row4 = $stmt4->fetch();
                 if ($row4['total'] == 1){
-                    echo "6";
+                    $sql5 = "SELECT status FROM admin WHERE username = :usr";
+                    $stmt5 = $conn->prepare($sql5);
+                    $stmt5->execute([':username' => $admin]);
+                    $row5 = $stmt5->fetch();
+                    if ($row5 == 1){
+                        echo"5";
+                    }else{
+                        echo"6";
+                    }
                 }
                 else{
                     echo "0";
@@ -212,8 +220,6 @@
                                 $("#inputUsername").addClass("shaking");
                                 $("#inputPassword").addClass("shaking");
                             }else{
-                                $("#statusUser").removeAttr("hidden");
-                                $("#statusUser img").attr("src","assets/check.png");
                                 $("#userHelp").html("Username valid!!");
                                 $("#userHelp").removeClass("text-danger");
                                 $("#userHelp").addClass("text-success");
@@ -221,6 +227,8 @@
                                 if(response == 1){
                                     $("#statusPass").removeAttr("hidden");
                                     $("#statusPass img").attr("src","assets/check.png");
+                                    $("#statusUser").removeAttr("hidden");
+                                    $("#statusUser img").attr("src","assets/check.png");
                                     $("#passHelp").html("Password Correct!!");
                                     $("#passHelp").removeClass("text-danger");
                                     $("#passHelp").addClass("text-success");
@@ -231,6 +239,8 @@
                                 }else if(response == 2){
                                     $("#statusPass").removeAttr("hidden");
                                     $("#statusPass img").attr("src","assets/check.png");
+                                    $("#statusUser").removeAttr("hidden");
+                                    $("#statusUser img").attr("src","assets/check.png");
                                     $("#passHelp").html("Password Correct!!");
                                     $("#passHelp").removeClass("text-danger");
                                     $("#passHelp").addClass("text-success");
@@ -238,7 +248,9 @@
                                     setTimeout(() => {
                                         $(window).attr("location","homeAdmin.php");
                                     }, 1000);
-                                }else{
+                                }else if(response == 5){
+                                    $("#statusUser").removeAttr("hidden");
+                                    $("#statusUser img").attr("src","assets/check.png");
                                     $("#statusPass").removeAttr("hidden");
                                     $("#statusPass img").attr("src","assets/wrong.png");
                                     $("#passHelp").html("Password incorrect!!  <a href='forgotPassword.php'>Forgot your password?</a>");
@@ -246,6 +258,19 @@
                                     $("#passHelp").addClass("text-danger");
                                     $("#inputPassword").css("background-color","#FF9494");
                                     $("#inputPassword").addClass("shaking");
+                                }else{
+                                    $("#statusUser").removeAttr("hidden");
+                                    $("#statusUser img").attr("src","assets/wrong.png");
+                                    $("#statusPass").removeAttr("hidden");
+                                    $("#statusPass img").attr("src","assets/wrong.png");
+                                    $("#passHelp").html("Akun sedang Nonaktif!! Hubungi supervisor anda untuk diaktifkan!!");
+                                    $("#passHelp").removeClass("text-success");
+                                    $("#passHelp").addClass("text-danger");
+                                    $("#inputPassword").css("background-color","#FF9494");
+                                    $("#inputPassword").addClass("shaking");
+                                    $("#inputUsername").css("background-color","#FF9494");
+                                    $("#inputUsername").addClass("shaking");
+                                    $("#inputPassword").addClass("shaking");  
                                 }
                             }
                         }});

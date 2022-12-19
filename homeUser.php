@@ -21,30 +21,13 @@
             $row = $stmt->fetchAll();
             if($row){
                 foreach($row as $s){
-                    // lama
-                    // $sql2 = 'SELECT COUNT(*) FROM item WHERE status = 1 and Nama_Barang = :nama';
-                    // $stmt2 = $conn->prepare($sql2);
-                    // $stmt2->execute(array(
-                    //     ':nama' => $s['Nama_Barang']
-                    // ));
-                    // $row2 = $stmt2->fetchColumn();
-                    // echo '<div class="col mt-5 contCard">';
-                    // echo '<div class="card" style="width: 18rem; height: 24rem;" >';
-                    // echo '<div class="text-center">';
-                    // echo '<img src="'.$s['image'].'" class="card-img-top" alt="" style="width: 12em; height: 10em;"></div>';
-                    // echo '<div class="card-details">';
-                    // echo '<p class="text-title nama_barang">'.$s['Nama_Barang'].'</p>';
-                    // echo '<p class="text-title">Quantity : '.$row2.'</p>';
-                    // echo '<p class="text-body" style="padding-left : 10px;">'.$s['Deskripsi'].'</p></div>';
-                    // echo '<button class="card-button">Pinjam!</button></div></div>';
-
-                    //$sql_sl = "SELECT Deskripsi,image,image2,image3,image4 FROM item WHERE Nama_Barang = :nama LIMIT 1";
-                    //$stmt_sl = $conn->prepare($sql_sl);
-                    //$stmt_sl->execute(array(
-                    //    ":nama" => $s['Nama_Barang']
-                    //));
-                    //$row_sl = $stmt_sl->fetchAll();
-                    //$arr = array($row_sl[0]['image2'],$row_sl[0]['image3'],$row_sl[0]['image4']);
+                    $sql_sl = "SELECT Deskripsi,image,image2,image3,image4 FROM item WHERE Nama_Barang = :nama LIMIT 1";
+                    $stmt_sl = $conn->prepare($sql_sl);
+                    $stmt_sl->execute(array(
+                       ":nama" => $s['Nama_Barang']
+                    ));
+                    $row_sl = $stmt_sl->fetchAll();
+                    $arr = array($row_sl[0]['image2'],$row_sl[0]['image3'],$row_sl[0]['image4']);
                     $sql2 = 'SELECT COUNT(*) FROM item WHERE status = 1 and Nama_Barang = :nama';
                     $stmt2 = $conn->prepare($sql2);
                     $stmt2->execute(array(
@@ -53,7 +36,7 @@
                     $row2 = $stmt2->fetchColumn();
 
                     echo '<div class="card my-4">
-                        <div class="card-img" style="background-image:url('.$s['image'].');">
+                        <div class="card-img" style="background-image:url('.$row_sl[0]['image'].');">
                             <div class="overlay">
                                 <div class="overlay-content" id="'.$s['Nama_Barang'].'">
                                     <button class="card-button">Pinjam!</button>
@@ -64,35 +47,10 @@
                         <div class="card-content">
                             <a href="#!">
                                 <h2 class="nama_barang">'.$s['Nama_Barang'].'</h2>
-                                <p>'.$s['Deskripsi'].'</p>
+                                <p>'.$row_sl[0]['Deskripsi'].'</p>
                             </a>
                         </div>
                     </div>';
-                    //echo '<div class="col mt-5 contCard">';
-                    //echo '<div class="card" style="width: 18rem; height: 28rem;">';
-                    //echo '<div class="text-center">';
-                    //echo '<div id="carouselExampleControlsNoTouching'.$i.'" class="carousel slide" data-bs-touch="false" data-bs-interval="false">';
-                    //echo '<div class="carousel-inner">';
-                    //echo '<div class="carousel-item active p-2"><img src="'.$row_sl[0]['image'].'" class="d-block w-100" alt="..." style ="aspect-ratio:1/1;"></div>';
-                    //foreach($arr as $a){
-                    //    if($a != "assets/no-image.png"){
-                    //        echo '<div class="carousel-item p-2"><img src="'.$a.'" class="d-block w-100" alt="..." style ="aspect-ratio:1/1;"></div>';
-                    //    }
-                    //}
-                    //echo '</div><button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControlsNoTouching'.$i.'" data-bs-slide="prev">
-                    //        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    //        <span class="visually-hidden">Previous</span>
-                    //    </button>
-                    //    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControlsNoTouching'.$i.'" data-bs-slide="next">
-                    //        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    //        <span class="visually-hidden">Next</span>
-                    //    </button></div></div>';
-                    //echo '<div class="card-details">';
-                    //echo '<p class="text-title nama_barang">'.$s['Nama_Barang'].'</p>';
-                    //echo '<p class="text-title">Quantity : '.$row2.'</p>';
-                    //echo '<p class="text-body" style="padding-left : 10px;">'.$row_sl[0]['Deskripsi'].'</p></div>';
-                    //echo '<button class="card-button">Pinjam!</button></div></div>';
-                    //$i += 1;
                 }
             }
         }else{
@@ -120,19 +78,9 @@
                         ':loc' => $_POST['loc']
                     ));
                     $row2 = $stmt2->fetchColumn();
-                    // lama
-                    // echo '<div class="col mt-5">';
-                    // echo '<div class="card" style="width: 18rem; height: 24rem;">';
-                    // echo '<div class="text-center">';
-                    // echo '<img src="'.$s['image'].'" class="card-img-top" alt="" style="width: 12em; height: 10em;"></div>';
-                    // echo '<div class="card-details">';
-                    // echo '<p class="text-title nama_barang">'.$s['Nama_Barang'].'</p>';
-                    // echo '<p class="text-title">Quantity : '.$row2.'</p>';
-                    // echo '<p class="text-body" style="padding-left : 10px;">'.$s['Deskripsi'].'</p></div>';
-                    // echo '<button class="card-button">Pinjam!</button></div></div>';
 
                     echo '<div class="card my-4">
-                        <div class="card-img" style="background-image:url('.$s['image'].');">
+                        <div class="card-img" style="background-image:url('.$row_sl[0]['image'].');">
                             <div class="overlay">
                                 <div class="overlay-content" id="'.$s['Nama_Barang'].'">
                                     <button class="card-button">Pinjam!</button>
@@ -143,37 +91,10 @@
                         <div class="card-content">
                             <a href="#!">
                                 <h2 class="nama_barang">'.$s['Nama_Barang'].'</h2>
-                                <p>'.$s['Deskripsi'].'</p>
+                                <p>'.$row_sl[0]['Deskripsi'].'</p>
                             </a>
                         </div>
                     </div>';
-
-                    //echo '<div class="col mt-5 contCard">';
-                    //echo '<div class="card" style="width: 18rem; height: 28rem;">';
-                    //echo '<div class="text-center">';
-                    //echo '<div id="carouselExampleControlsNoTouching'.$i.'" class="carousel slide" data-bs-touch="false" data-bs-interval="false">';
-                    //echo '<div class="carousel-inner">';
-                    //echo '<div class="carousel-item active p-2"><img src="'.$row_sl[0]['image'].'" class="d-block w-100" alt="..." style ="aspect-ratio:1/1;"></div>';
-                    //foreach($arr as $a){
-                    //    if($a != "assets/no-image.png"){
-                    //        echo '<div class="carousel-item p-2"><img src="'.$a.'" class="d-block w-100" alt="..." style ="aspect-ratio:1/1;"></div>';
-                    //   }
-                    //}
-                    //echo '</div><button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControlsNoTouching'.$i.'" data-bs-slide="prev">
-                    //        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    //        <span class="visually-hidden">Previous</span>
-                    //    </button>
-                    //    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControlsNoTouching'.$i.'" data-bs-slide="next">
-                    //        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    //        <span class="visually-hidden">Next</span>
-                    //   </button></div></div>';
-                    //echo '<div class="card-details">';
-                    //echo '<p class="text-title nama_barang">'.$s['Nama_Barang'].'</p>';
-                    //echo '<p class="text-title">Quantity : '.$row2.'</p>';
-                    //echo '<p class="text-body" style="padding-left : 10px;">'.$row_sl[0]['Deskripsi'].'</p></div>';
-                    //echo '<button class="card-button">Pinjam!</button></div></div>';
-                    //$i += 1;
-
                 }
             }
         }
@@ -201,108 +122,6 @@
                 $('a.hover').removeClass('hover');
                 next();
             });
-
-            // AOS.init();
-            // var width = $(window).width();
-            //     if (width<576){
-            //         $("#viewItem").addClass("mx-4");
-            //     }
-            //     if (width>=576){
-            //         $("#viewItem").removeClass("mx-4");
-            //     }
-            //     if (width >= 850){
-            //         $(".kiri").css("display", "inline");
-            //         $("#inputSearch").css("display","inline");
-            //         $("#judul").css("font-size","24px");
-            //         $("#searchButton").css("display","none");
-            //         $("#inputSearch").css("width", "75%");
-            //         $("#inputSearch").css("height", "2em");
-            //         $("#inputSearch").css("background-color","#fff");
-            //         $(".containerInput").css("margin-left","0em");
-            //         $(".keranjang").css("display", "inline");
-            //         $(".user").css("display", "inline");
-            //         $(".kanan").css("display", "inline");
-            //     }
-            //     if (width < 550 && width > 350){
-            //         $("#keranjang").css("width", "1.2em");
-            //         $("#keranjang").css("height", "1.2em");
-            //         $("#userImg").css("width", "1.5em");
-            //         $("#userImg").css("height", "1.5em");
-            //         $("#searchImg").css("width", "1.5em");
-            //         $("#searchImg").css("height", "1.5em");
-            //         $("#judul").css("font-size","12px");
-            //     }
-            //     if(width < 350){
-            //         $("#judul").css("font-size","6px");
-            //     }
-            //     if (width < 850 && width >= 551){
-            //         $("#keranjang").css("width", "2em");
-            //         $("#keranjang").css("height", "2em");
-            //         $("#userImg").css("width", "2em");
-            //         $("#userImg").css("height", "2em");
-            //         $("#searchImg").css("width", "2em");
-            //         $("#searchImg").css("height", "2em");
-            //         $("#judul").css("font-size","20px");
-            //     }
-            //     if(width < 750){
-            //         $("#searchButton").css("display","inline");
-            //         $(".kiri").css("display", "none");
-            //         $("#inputSearch").css("background-color","#212529");
-            //         $("#inputSearch").css("width","0.000001px");
-            //         $("#inputSearch").css("height","0.000001px");
-            //     }
-
-            // $(window).resize(function() {
-            //     var width = $(window).width();
-            //     if (width<576){
-                    
-            //         $("#viewItem").addClass("mx-4");
-            //     }
-            //     if (width>=576){
-            //         $("#viewItem").removeClass("mx-4");
-            //     }
-            //     if (width >= 850){
-            //         $(".kiri").css("display", "inline");
-            //         $("#inputSearch").css("display","inline");
-            //         $("#judul").css("font-size","24px");
-            //         $("#searchButton").css("display","none");
-            //         $("#inputSearch").css("width", "75%");
-            //         $("#inputSearch").css("height", "2em");
-            //         $("#inputSearch").css("background-color","#fff");
-            //         $(".containerInput").css("margin-left","0em");
-            //         $(".keranjang").css("display", "inline");
-            //         $(".user").css("display", "inline");
-            //         $(".kanan").css("display", "inline");
-            //     }
-            //     if (width < 550 && width > 350){
-            //         $("#keranjang").css("width", "1.5em");
-            //         $("#keranjang").css("height", "1.5em");
-            //         $("#userImg").css("width", "1.5em");
-            //         $("#userImg").css("height", "1.5em");
-            //         $("#searchImg").css("width", "1.5em");
-            //         $("#searchImg").css("height", "1.5em");
-            //         $("#judul").css("font-size","12px");
-            //     }
-            //     if(width < 350){
-            //         $("#judul").css("font-size","6px");
-            //     }
-            //     if (width < 850 && width >= 551){
-            //         $("#keranjang").css("width", "2em");
-            //         $("#keranjang").css("height", "2em");
-            //         $("#userImg").css("width", "2em");
-            //         $("#userImg").css("height", "2em");
-            //         $("#searchImg").css("width", "2em");
-            //         $("#searchImg").css("height", "2em");
-            //         $("#judul").css("font-size","20px");
-            //     }
-            //     if(width < 750){
-            //         $("#searchButton").css("display","inline");
-            //         $(".kiri").css("display", "none");
-            //         $("#inputSearch").css("background-color","#212529");
-            //         $("#inputSearch").css("width","0.000001px");
-            //         $("#inputSearch").css("height","0.000001px");
-            //     }
-            // });
 
             $("#searchButton").click(function(){
 
