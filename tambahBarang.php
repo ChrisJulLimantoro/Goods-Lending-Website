@@ -36,8 +36,6 @@
         @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
 
         body {
-            /* font-family: 'League Spartan', sans-serif;
-            font-weight: 700; */
             background: url('assets/gedungQ2.jpg') fixed no-repeat;
             background-size: cover;
             margin: 0;

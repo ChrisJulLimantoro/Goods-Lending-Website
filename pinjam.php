@@ -160,6 +160,8 @@ include "user_authen.php";
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="sweetalert2.min.css">
 
+    <?php include "navbarUser.php" ?>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
 
@@ -173,34 +175,6 @@ include "user_authen.php";
         }
 
         /* Navbar style */
-        .navbar {
-            background-color: rgba(0, 0, 0, .5);
-            color: #fff;
-        }
-
-        .fa-cart-shopping, .fa-clock-rotate-left {
-            color: #fff;
-        }
-
-        #inputSearch {
-            border: transparent;
-            width: 75%;
-            height: 3em;
-            border-radius: 20pt;
-        }
-
-        .header {
-            width: 100%;
-            top: 0;
-            z-index: 1;
-        }
-
-        #userImg {
-            height: 2em;
-            aspect-ratio: 1 / 1;
-            border-radius: 40%;
-        }
-
         .dropdown-menu {
             z-index: 1;
         }
@@ -226,24 +200,18 @@ include "user_authen.php";
             border: none;
         }
 
-        /* #showDetail {
-            width: 100%;
-        }
-
-        #showDetail img {
-            width: 25px;
-        } */
-
         th {
             background-color: #ffc107 !important;
         }
 
         tr:nth-child(odd) {
             background-color: #fff;
+            font-weight: 300;
         }
 
         tr:nth-child(even) {
             background-color: #ffc107;
+            font-weight: 300;
         }
 
         @media screen and (max-width:576px) {
@@ -255,22 +223,6 @@ include "user_authen.php";
 
     <script>
         $(document).ready(function() {
-            // // Animasi tombol
-            // $(document.body).on("click", "#showDetail", function() {
-            //     $(this).find("img").css("transition", "all .5s ease");
-
-            //     if ($(this).find("img").css("transform") != "none")
-            //         $(this).find("img").css("transform", "none");
-            //     else
-            //         $(this).find("img").css("transform", "rotate(180deg)");
-            // });
-
-            // // Button state
-            // $(document.body).on("click", "#tambahBarang", function() {
-            //     $(this).attr("disabled",true)
-            //     $(this).text("MENUNGGU KONFIRMASI...");
-            // });
-
             var bucket = '<?php 
                 if(isset($_SESSION['bucket'])){
                     echo 0;
@@ -314,7 +266,7 @@ include "user_authen.php";
                             if(bucket == 0){
                                 swalWithBootstrapButtons.fire({
                                     title: 'Are you sure?',
-                                    text: "Do you really want to add item with code "+barang+" to your bucket?",
+                                    text: "Add item "+barang+" to your cart?",
                                     icon: 'warning',
                                     showCancelButton: true,
                                     confirmButtonText: 'Yes, i do!',
@@ -350,7 +302,7 @@ include "user_authen.php";
                                             })
                                             swalWithBootstrapButtons.fire(
                                                 'Success',
-                                                'Added 1 item to the bucket!',
+                                                'Added 1 item to the cart!',
                                                 'success'
                                             )
                                         }else{
@@ -365,22 +317,22 @@ include "user_authen.php";
                                 if(status == 1){
                                 swalWithBootstrapButtons.fire(
                                     'Error!',
-                                    'You can\'t create another bucket if you have already had one or you need to return your item first before set another request!',
+                                    'You can\'t create another cart if you have already had one or you need to return your item first before set another request!',
                                     'error'
                                 )
                                 }else{
                                     swalWithBootstrapButtons.fire({
                                     title: 'Are you sure?',
-                                    text: "Your bucket is still empty do you want to create a new bucket!",
+                                    text: "Your cart is still empty, do you want to create a new cart?",
                                     icon: 'warning',
                                     showCancelButton: true,
-                                    confirmButtonText: 'Yes, make new bucket!',
+                                    confirmButtonText: 'Yes, make new cart!',
                                     cancelButtonText: 'No, cancel!',
                                     reverseButtons: true
                                     }).then((result) => {
                                         if (result.isConfirmed) {
                                             swalWithBootstrapButtons.fire({
-                                            title: 'Creating Borrow Bucket : ',
+                                            title: 'Creating Cart : ',
                                             html: `<label for="start_date" class="form-label my-2">Start Borrow Date : </label>
                                                 <input type="date" id="start_date" class="swal2_input form-control" placeholder="Borrow Date">
                                                 <label for="expired_date" class="form-label my-2">End Borrow Date : </label>
@@ -428,7 +380,7 @@ include "user_authen.php";
 
                                                 swalWithBootstrapButtons.fire(
                                                     'Success',
-                                                    'Success creating new Borrow Bucket and added 1 item!',
+                                                    'Success creating new Cart and added 1 item!',
                                                     'success'
                                                 ).then(function(){
                                                     location.reload(true);
@@ -436,7 +388,7 @@ include "user_authen.php";
                                             }else{
                                                 swalWithBootstrapButtons.fire(
                                                     'Failed',
-                                                    'Failed creating new Borrow Bucket, input date invalid!',
+                                                    'Failed creating new Cart, input date invalid!',
                                                     'error'
                                                 )
                                             }
@@ -514,93 +466,46 @@ include "user_authen.php";
         $jum = $stmt_count2->fetchColumn();
     ?>
 
-    <nav class="navbar sticky-top navbar-expand-lg navbar-dark px-3 px-md-5 py-md-3">
-            <a class="navbar-brand" href="homeUser.php">UPPK UK. PETRA</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto mb-2 me-3 mb-lg-0">
-                    <li class="nav-item me-3">
-                        <a href='status.php' class="nav-link">
-                            <i class="fa-solid fa-clock-rotate-left fa-2xl"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item me-3">
-                        <a href="keranjang.php" class='nav-link'>
-                            <i class="fa-solid fa-cart-shopping fa-2xl"></i>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div style="width: 5em; display:!important inline, position:!important absolute" class="user">
-                <div class="dropdown" style="list-style: none; width: 3em;">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="<?php echo $_SESSION['profile'] ?>" alt="" style="width: 3em; height: 3em; border-radius: 50%" id='imgItem'>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end bg-warning text-white mt-3 px-3" aria-labelledby="navbarDropdown" style=" width: 15em;">
-                        <h6 class="card-title mb-1">User ID:</h6>
-                        <h6 class="card-title mb-2">
-                            <?php
-                            echo $_SESSION['user']
-                            ?>
-                        </h6>
-                        <h6 class="card-title mb-1">Nama:</h6>
-                        <h6 class="card-title mb-2">
-                            <?php
-                            $sqlName = "SELECT CONCAT(first_name,' ',last_name) AS name FROM `user` WHERE `username` = :user";
-                            $stmtName = $conn->prepare($sqlName);
-                            $stmtName->execute(['user' => $_SESSION['user']]);
-                            $rowName = $stmtName->fetchcolumn();
-                            echo $rowName;
-                            ?>
-                        </h6>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <a href="login.php"><button type="button" class="btn btn-light">LOGOUT</button></a>
-                    </ul>
-                </li>
-            </div>
-        </div>
-    </nav>
-
-    <h1 class='text-light mt-5 px-5'>PEMINJAMAN BARANG</h1>
-    <div class='container-fluid py-4' style='background-color:#d3d3d3; min-height: 73vh'>
-    
-    <div class = "container">
-        <a type="button" class="btn btn-warning" href = "homeUser.php">KEMBALI</a>
+    <div class='container d-flex align-items-end' style='min-height:25vh'>
+        <h1 class='text-light'>PEMINJAMAN BARANG</h1>
     </div>
 
-    <div class = "container" style = "background-color:#D3D3D3">
-        <div class="row mt-4 px-5 py-5 bg-light" id=''>
-            <div class = "col-md-3">
-                <div class = "row justify-content-center">
-                    <div class="col-md-11">
-                        <div class = "card img">
-                            <img src="<?php echo $img ?>" alt="" style="width: 100%; height: 100%;">
+    <div class='container-fluid py-4' style='background-color:#d3d3d3; min-height: 75vh'>
+    
+        <div class = "container">
+            <a type="button" class="btn btn-warning w-100" href = "homeUser.php">KEMBALI</a>
+        </div>
+
+        <div class = "container" style = "background-color:#D3D3D3">
+            <div class="row mt-4 px-5 py-5 bg-light" id=''>
+                <div class = "col-md-3">
+                    <div class = "row justify-content-center">
+                        <div class="col-md-11">
+                            <div class = "card img">
+                                <img src="<?php echo $img ?>" alt="" style="width: 100%; height: 100%;">
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class = "col-md-9">
-                <div class = "d-flex flex-column">
-                    <div class = "p-2">NAMA BARANG : <?php echo $_SESSION['nama_brg']?></div>
+                <div class = "col-md-9">
+                    <div class = "d-flex flex-column">
+                        <div class = "p-2">NAMA BARANG : <?php echo $_SESSION['nama_brg']?></div>
+                    </div>
+                    <div class = "d-flex flex-column">
+                        <div class = "p-2"><?php echo $desc ?></div>
+                    </div>
+                    <div class = "d-flex flex-column">
+                        <div class = "p-2">STOCK : <?php echo $jum?></div>
+                    </div>
+                    
                 </div>
-                <div class = "d-flex flex-column">
-                    <div class = "p-2"><?php echo $desc ?></div>
-                </div>
-                <div class = "d-flex flex-column">
-                    <div class = "p-2">STOCK : <?php echo $jum?></div>
-                </div>
-                
-            </div>
 
-            <div class="row mt-3 justify-content-center text-center" id="view">
+                <div class="row mt-3 justify-content-center text-center" id="view">
 
+                </div>
             </div>
-        </div>
+    </div>
     </div>
 </body>
 </html>

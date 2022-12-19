@@ -154,12 +154,11 @@
     <script src="//cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
 
     <?php include "navbarAdmin.php"; ?>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
 
         body {
-            /* font-family: 'League Spartan', sans-serif;
-            font-weight: 700; */
             background: url('assets/gedungQ2.jpg') fixed no-repeat;
             background-size: cover;
             margin: 0;
@@ -487,31 +486,7 @@
                         </tr>
                     </thead>
                     <tbody class="table-light">
-                        <?php
-                            // $sql = "SELECT * FROM item";
-                            // $stmt = $conn->prepare($sql);
-                            // $stmt->execute();
-                            // $res = $stmt->fetchAll();
-                            // $row_count = 1;
-                            // foreach($res as $hasil) {
-                            //     echo "<tr>";
-                            //     echo "<td>" . $row_count . "</td>";
-                            //     echo "<td id='kode'>" . $hasil['Id'] . "</td>";
-                            //     echo "<td>" . $hasil['Nama_Barang'] . "</td>";
-                            //     echo "<td>" . $hasil['Location'] . "</td>";
-                            //     echo "<td>" . $hasil['Deskripsi'] . "</td>";
-                            //     echo "<td><button class='btn btn-warning me-lg-3' id='btn-edit' data-bs-toggle='modal' data-bs-target='#exampleModal'><i class='fa-solid fa-pen-to-square'></i></button>";
-                            //     echo "<button class='btn btn-danger' id='btn-del'><i class='fa-solid fa-trash'></i></button></td>";
-                            //     if ($hasil['Status'] == 1) {
-                            //         echo "<td class='text-success'>Tersedia</td>";
-                            //     }
-                            //     else {
-                            //         echo "<td><button class='btn btn-primary' id='btn-return'>Konfirmasi Pengembalian</button></td>";
-                            //     }
-                            //     echo "</tr>";
-                            //     $row_count++;
-                            // }
-                        ?>
+                        
                     </tbody>
                 </table>
             </div>
