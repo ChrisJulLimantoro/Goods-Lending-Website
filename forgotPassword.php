@@ -15,7 +15,7 @@
             $sql_up = "UPDATE user SET password = PASSWORD(:ps) WHERE username = :usr";
             $stmt_up = $conn->prepare($sql_up);
             $stmt_up->execute(array(
-                ":ps" => $_POST['usr'],
+                ":ps" => $_POST['pass'],
                 ":usr" => $_POST['usr']
             ));
         }
