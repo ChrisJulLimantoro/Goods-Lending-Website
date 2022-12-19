@@ -140,30 +140,97 @@ include "user_authen.php";
 ?>
 <?php
     if(isset($_POST['qty'])){
-        $sql_get_bnyk = "SELECT * FROM item WHERE Nama_Barang = :nm and Status = 1 ORDER BY Location LIMIT :lim";
-        $stmt_get_bnyk = $conn->prepare($sql_get_bnyk);
-        $stmt_get_bnyk->execute(array(
-            ":nm" => $_SESSION['nama_brg'],
-            ":lim" => $_POST['qty']
-        ));
-        $row_get = $stmt_get_bnyk->fetchAll();
+        if(isset($_SESSION['filter'])){
+            $sql_get_bnyk = "SELECT * FROM item WHERE Nama_Barang = :nm and Status = 1 and Location = :filt";
+            $stmt_get_bnyk = $conn->prepare($sql_get_bnyk);
+            $stmt_get_bnyk->execute(array(
+                ":nm" => $_SESSION['nama_brg'],
+                ":filt" => $_SESSION['filter']
+            ));
+            $row_get = $stmt_get_bnyk->fetchAll();
+        }else{
+            $sql_get_bnyk = "SELECT * FROM item WHERE Nama_Barang = :nm and Status = 1 ORDER BY Location";
+            $stmt_get_bnyk = $conn->prepare($sql_get_bnyk);
+            $stmt_get_bnyk->execute(array(
+                ":nm" => $_SESSION['nama_brg']
+            ));
+            $row_get = $stmt_get_bnyk->fetchAll();
+        }
+        $count = 0;
         foreach($row_get as $hsl){
-            try {
+            if($count == $_POST['qty']){
+                break;
+            }
+            $count += 1;
             $sql_insert_bnyk = "INSERT INTO borrow_detail VALUES (:bor,:item,0)";
             $stmt_insert_bnyk = $conn->prepare($sql_insert_bnyk);
             $stmt_insert_bnyk->execute(array(
                 ":bor" => $_SESSION['bucket'],
                 ":item" => $hsl['Id']
             ));
-            }
-            catch(Exception $e) {
-                echo $e;
-            }
+
         }
         exit();
     }
 ?>
-
+<?php
+    if(isset($_POST['start']) && isset($_POST['end']) && isset($_POST['qty_up'])){
+        $sql_count = "SELECT id_borrow FROM borrow ORDER BY id_borrow DESC LIMIT 1";
+        $stmt_count = $conn->prepare($sql_count);
+        $stmt_count->execute();
+        $count = $stmt_count->fetchColumn();
+        $count = (int)(substr($count,1));
+        echo $count;
+        if($count >= 999){
+            $code = "B".($count+1);
+        }else if($count >= 99){
+            $code = "B0".($count+1);
+        }else if($count >= 9){
+            $code = "B00".($count+1);
+        }else{
+            $code = "B000".($count+1);
+        }
+        $sql_borrow = "INSERT INTO borrow(id_borrow,id_user,start_date,expired_date) VALUES(:bor,:usr,:start,:end)";
+        $stmt_borrow = $conn->prepare($sql_borrow);
+        $stmt_borrow->execute(array(
+            ":bor" => $code,
+            ":usr" => $_SESSION['user'],
+            ":start" => $_POST['start'],
+            ":end" => $_POST['end']
+        ));
+        $_SESSION['bucket'] = $code;
+        if(isset($_SESSION['filter'])){
+            $sql_get_bnyk = "SELECT * FROM item WHERE Nama_Barang = :nm and Status = 1 and Location = :filt";
+            $stmt_get_bnyk = $conn->prepare($sql_get_bnyk);
+            $stmt_get_bnyk->execute(array(
+                ":nm" => $_SESSION['nama_brg'],
+                ":filt" => $_SESSION['filter']
+            ));
+            $row_get = $stmt_get_bnyk->fetchAll();
+        }else{
+            $sql_get_bnyk = "SELECT * FROM item WHERE Nama_Barang = :nm and Status = 1 ORDER BY Location";
+            $stmt_get_bnyk = $conn->prepare($sql_get_bnyk);
+            $stmt_get_bnyk->execute(array(
+                ":nm" => $_SESSION['nama_brg']
+            ));
+            $row_get = $stmt_get_bnyk->fetchAll();
+        }
+        $count = 0;
+        foreach($row_get as $hsl){
+            if($count == $_POST['qty_up']){
+                break;
+            }
+            $count += 1;
+            $sql_insert_bnyk = "INSERT INTO borrow_detail VALUES (:bor,:item,0)";
+            $stmt_insert_bnyk = $conn->prepare($sql_insert_bnyk);
+            $stmt_insert_bnyk->execute(array(
+                ":bor" => $_SESSION['bucket'],
+                ":item" => $hsl['Id']
+            ));
+        }
+        exit();
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -474,7 +541,9 @@ include "user_authen.php";
                 },
                 buttonsStyling: false
                 })
-                swalWithBootstrapButtons.fire({
+                if (bucket == 0){
+                    console.log('bucket ada');
+                    swalWithBootstrapButtons.fire({
                     title: 'Are you sure?',
                     text: "Do you really want to add "+$("#qty").val()+" item to your bucket?",
                     icon: 'warning',
@@ -487,10 +556,9 @@ include "user_authen.php";
                         $.ajax({
                         type : "post",
                         data : {
-                            qty : $("#qty").val()
+                            qty : parseInt($("#qty").val())
                         },
                         success:function(e){
-                            console.log(e);
                             swalWithBootstrapButtons.fire(
                                 "Success!",
                                 "Successfully added "+$("#qty").val()+" item",
@@ -498,92 +566,78 @@ include "user_authen.php";
                             ).then(function(){
                                 location.reload(true);
                             })
-                            
                         }
-                    })}
-                    else{
+                        })    
+                    }else{
                         swalWithBootstrapButtons.fire(
-                                "Cancelled!",
-                                "Cancel adding item",
-                                "error"
-                            )
+                            "Cancelled!",
+                            "Cancel adding process!",
+                            "error"
+                        )
                     }
-                    swalWithBootstrapButtons.fire({
-                                    title: 'Are you sure?',
-                                    text: "Your cart is still empty, do you want to create a new cart?",
-                                    icon: 'warning',
-                                    showCancelButton: true,
-                                    confirmButtonText: 'Yes, make new cart!',
-                                    cancelButtonText: 'No, cancel!',
-                                    reverseButtons: true
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            swalWithBootstrapButtons.fire({
-                                            title: 'Creating Cart : ',
-                                            html: `<label for="start_date" class="form-label my-2">Start Borrow Date : </label>
-                                                <input type="date" id="start_date" class="swal2_input form-control" placeholder="Borrow Date">
-                                                <label for="expired_date" class="form-label my-2">End Borrow Date : </label>
-                                                <input type="date" id="expired_date" class="swal2_input form-control" placeholder="Expiration Date">`,
-                                            showCancelButton: true,
-                                            confirmButtonText: 'Next',
-                                            showLoaderOnConfirm: true,
-                                            preConfirm: () => {
-                                                const sd = $("#start_date").val();
-                                                const ed = $("#expired_date").val();
-                                                if (!sd || ! ed) {
-                                                Swal.showValidationMessage(`Please enter Start Date and Expired Date`)
-                                                }
-                                                return { sd: sd, ed: ed }
-                                            }
-                                        }).then((result2) => {
-                                            if(`${result2.value.ed}` >= `${result2.value.sd}`){
-                                                $.ajax({
-                                                    type : "post",
-                                                    data : {
-                                                        start : `${result2.value.sd}`,
-                                                        end : `${result2.value.ed}`,
-                                                        barang : barang
-                                                    },
-                                                    success:function(e){
-                                                        $.ajax({
-                                                            type : "post",
-                                                            data : {
-                                                                ajax : 1
-                                                            },
-                                                            success : function(response){
-                                                                $("#qty").text(parseInt($("#qty").text())-1);
-                                                                $("#view").html(response);
-                                                                status = '<?php echo $_SESSION['status'] ?>';
-                                                                bucket = '<?php 
-                                                                        if(isset($_SESSION['bucket'])){
-                                                                            echo 0;
-                                                                        }else{
-                                                                            echo 1;
-                                                                            }?>';
-                                                            }
-                                                        });
-                                                    }
-                                                })
-
-                                                swalWithBootstrapButtons.fire(
-                                                    'Success',
-                                                    'Success creating new Cart and added 1 item!',
-                                                    'success'
-                                                ).then(function(){
-                                                    location.reload(true);
-                                                })
-                                            }else{
-                                                swalWithBootstrapButtons.fire(
-                                                    'Failed',
-                                                    'Failed creating new Cart, input date invalid!',
-                                                    'error'
-                                                )
-                                            }
                 })
+            }else{
+                swalWithBootstrapButtons.fire({
+                    title: 'Are you sure?',
+                    text: "Your cart is still empty, do you want to create a new cart?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, make new cart!',
+                    cancelButtonText: 'No, cancel!',
+                    reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            swalWithBootstrapButtons.fire({
+                            title: 'Creating Cart : ',
+                            html: `<label for="start_date" class="form-label my-2">Start Borrow Date : </label>
+                                <input type="date" id="start_date" class="swal2_input form-control" placeholder="Borrow Date">
+                                <label for="expired_date" class="form-label my-2">End Borrow Date : </label>
+                                <input type="date" id="expired_date" class="swal2_input form-control" placeholder="Expiration Date">`,
+                            showCancelButton: true,
+                            confirmButtonText: 'Next',
+                            showLoaderOnConfirm: true,
+                            preConfirm: () => {
+                                const sd = $("#start_date").val();
+                                const ed = $("#expired_date").val();
+                                if (!sd || ! ed) {
+                                Swal.showValidationMessage(`Please enter Start Date and Expired Date`)
+                                }
+                                return { sd: sd, ed: ed }
+                            }
+                        }).then((result2) => {
+                            if(`${result2.value.ed}` >= `${result2.value.sd}`){
+                                $.ajax({
+                                    type : "post",
+                                    data : {
+                                        start : `${result2.value.sd}`,
+                                        end : `${result2.value.ed}`,
+                                        qty_up : parseInt($("#qty").val())
+                                    },
+                                    success:function(e){
+                                        swalWithBootstrapButtons.fire(
+                                            'Success',
+                                            'Success creating new Cart and added '+parseInt($("#qty").val())+' item!',
+                                            'success'
+                                        ).then(function(){
+                                            location.reload(true);
+                                        })
+                                    }
+                                })
+                            }else{
+                                swalWithBootstrapButtons.fire(
+                                    'Failed',
+                                    'Failed creating new Cart, input date invalid!',
+                                    'error'
+                                )
+                            }
+                        })
+                    }
+                })
+            }
             })
 
             $("#minBtn").on("click", function() {
-                let qty = $("#qty").val()
+                let qty = parseInt($("#qty").val())
                 if (qty - 1 >= 0)
                     $("#qty").val(qty - 1);
             })
