@@ -37,7 +37,7 @@ include "user_authen.php";
                                 <img src="assets/more.png">
                             </button>
                         </div>
-                        <div id="collapse'.$ct.'" class="accordion-collapse collapse px-lg-4" aria-labelledby="heading'.$ct.'" data-bs-parent="#detail">
+                        <div id="collapse'.$ct.'" class="accordion-collapse collapse px-4" aria-labelledby="heading'.$ct.'" data-bs-parent="#detail">
                             <div class="table-responsive">
                             <table class="table table-bordered mt-3 text-center align-middle" id="tabelDetail">
                                 <thead>
@@ -116,6 +116,8 @@ include "user_authen.php";
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="sweetalert2.min.css">
 
+    <?php include "navbarUser.php" ?>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
 
@@ -129,39 +131,6 @@ include "user_authen.php";
         }
 
         /* Navbar style */
-        .navbar {
-            background-color: rgba(0, 0, 0, .5);
-            color: #fff;
-        }
-
-        .fa-cart-shopping, .fa-clock-rotate-left {
-            color: #fff;
-        }
-
-        #inputSearch {
-            border: transparent;
-            width: 75%;
-            height: 3em;
-            border-radius: 20pt;
-        }
-
-        .header {
-            width: 100%;
-            top: 0;
-            z-index: 1;
-        }
-
-        #notifImg,
-        #keranjang,
-        #userImg {
-            height: 2em;
-            aspect-ratio: 1 / 1;
-        }
-
-        #userImg {
-            border-radius: 40%;
-        }
-
         .dropdown-menu {
             z-index: 1;
         }
@@ -189,7 +158,7 @@ include "user_authen.php";
         }
 
         .accordion-header, .detail-item-button {
-            background-color: #ffc107;
+            background-color: #e9ab59;
             border: none;
             height: 40px;
             width: 100%;
@@ -204,15 +173,17 @@ include "user_authen.php";
         }
 
         th {
-            background-color: #ffc107 !important;
+            background-color: #e9ab59 !important;
         }
 
         tr:nth-child(odd) {
             background-color: #d3d3d3;
+            font-weight: 300;
         }
 
         tr:nth-child(even) {
-            background-color: #ffc107;
+            background-color: #e9ab59;
+            font-weight: 300;
         }
 
         @media screen and (max-width:576px) {
@@ -224,16 +195,6 @@ include "user_authen.php";
 
     <script>
         $(document).ready(function() {
-            // // Animasi tombol
-            // $(document.body).on("click", "#showDetail", function() {
-            //     $(this).find("img").css("transition", "all .5s ease");
-
-            //     if ($(this).find("img").css("transform") != "none")
-            //         $(this).find("img").css("transform", "none");
-            //     else
-            //         $(this).find("img").css("transform", "rotate(180deg)");
-            // });
-
             $.ajax({
                 type : "post",
                 data : {
@@ -258,118 +219,17 @@ include "user_authen.php";
 </head>
 
 <body>
-    <nav class="navbar sticky-top navbar-expand-lg navbar-dark px-3 px-md-5 py-md-3">
-        <a class="navbar-brand" href="homeUser.php">UPPK UK. PETRA</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto mb-2 me-3 mb-lg-0">
-                <li class="nav-item me-3">
-                    <a href='status.php' class="nav-link">
-                        <i class="fa-solid fa-clock-rotate-left fa-2xl"></i>
-                    </a>
-                </li>
-                <li class="nav-item me-3">
-                    <a href="keranjang.php" class='nav-link'>
-                        <i class="fa-solid fa-cart-shopping fa-2xl"></i>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <div style="width: 5em; display:!important inline, position:!important absolute" class="user">
-            <div class="dropdown" style="list-style: none; width: 3em;">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="<?php echo $_SESSION['profile'] ?>" alt="" style="width: 3em; height: 3em; border-radius: 50%" id='imgItem'>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end bg-warning text-white mt-3 px-3" aria-labelledby="navbarDropdown" style=" width: 15em;">
-                    <h6 class="card-title mb-1">User ID:</h6>
-                    <h6 class="card-title mb-2">
-                        <?php
-                        echo $_SESSION['user']
-                        ?>
-                    </h6>
-                    <h6 class="card-title mb-1">Nama:</h6>
-                    <h6 class="card-title mb-2">
-                        <?php
-                        $sqlName = "SELECT CONCAT(first_name,' ',last_name) AS name FROM `user` WHERE `username` = :user";
-                        $stmtName = $conn->prepare($sqlName);
-                        $stmtName->execute(['user' => $_SESSION['user']]);
-                        $rowName = $stmtName->fetchcolumn();
-                        echo $rowName;
-                        ?>
-                    </h6>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <a href="login.php"><button type="button" class="btn btn-light">LOGOUT</button></a>
-                </ul>
-            </li>
-        </div>
-    </nav>
-
-
-    <h1 class='text-light mt-5 px-5'>STATUS PEMINJAMAN</h1>
-    <div class='container-fluid py-4' style='background-color:#d3d3d3; min-height: 73vh'>
-    
-    <div class = "container">
-        <a type="button" class="btn btn-warning" href = "homeUser.php">KEMBALI</a>
+    <div class='container d-flex align-items-end' style='min-height:25vh'>
+        <h1 class='text-light'>STATUS PEMINJAMAN</h1>
     </div>
 
-    <div class="container container-custom justify-content-center" id='view'>
-        <!-- <div class="row mt-4 px-2 py-3">
-            <div class="col-md-3">
-                <div class="row justify-content-center">
-                    <div class="col-md-11">
-                        <div class="p-2">
-                            ID PEMINJAMAN
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="d-flex flex-column text-center">
-                    <div class="p-2">22-07-2022 / 28-07-2022</div>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="p-2">
-                    <button type="button" style="float:right;" id="showDetail" class="collapsed detail-item-button bg-light" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
-                        <img src="assets/more.png">
-                    </button>
-                </div>
-            </div>
+    <div class='container-fluid py-4' style='background-color:#d3d3d3; min-height: 75vh'>
+        <div class = "container">
+            <a type="button" class="btn w-100" href = "homeUser.php" style='background-color: #e9ab59'>KEMBALI</a>
         </div>
-        <div id="collapse1" class="accordion-collapse collapse row mt-1 mx-2" aria-labelledby="heading1" data-bs-parent="#detail">
-            <div>
-                <div class="px-1 py-1">
-                    <table class="table table-sm table-bordered border-dark mt-2 px-1 py-1 text-center align-middle" id="tabelDetail">
-                        <trn>
-                            <th>ID</th>
-                            <th>NAMA</th>
-                            <th>LOKASI</th>
-                        </trn>
-                        <tr>
-                            <td>P001</td>
-                            <td>MIC</td>
-                            <td>P</td>
-                        </tr>
-                        <tr>
-                            <td>W001</td>
-                            <td>HT</td>
-                            <td>W</td>
-                        </tr>
-                        <tr>
-                            <td>T002</td>
-                            <td>MEJA</td>
-                            <td>T</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div> -->
+
+        <div class="container container-custom justify-content-center" id='view'>
+        </div>
     </div>
 </body>
 
