@@ -133,7 +133,6 @@
                 $(".user").css("display", "none");
                 $(".kanan").css("display", "none");
                 $(".containerInput").css("margin-left", "4em");
-                $("#inputSearch").val("")
 
             });
 
@@ -141,12 +140,9 @@
                 $(".containerInput").css("margin-left", "0em");
                 $("#searchButton").css("display","inline");
                 $("#inputSearch").css("background-color","#212529");
-                $("#inputSearch").css("width","0.000001px");
-                $("#inputSearch").css("height","0.000001px");
                 $(".keranjang").css("display", "inline");
                 $(".user").css("display", "inline");
                 $(".kanan").css("display", "inline");
-                $("#inputSearch").val("");
             })
             let count = 0;
             let status = false;
