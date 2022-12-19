@@ -56,12 +56,6 @@ include "user_authen.php";
             ));
             $row_det = $stmt_det->fetchAll();
             foreach($row_det as $rd){
-                $sql_brg = "SELECT * FROM item WHERE Id = :item";
-                $stmt_brg = $conn->prepare($sql_brg);
-                $stmt_brg->execute(array(
-                    ":item" => $rd['id_item']
-                ));
-                $row_brg = $stmt_brg->fetchAll();
                 if($rd['status'] == 0){
                     $status_brg = 'Menunggu Verifikasi';
                 }else if($rd['status'] == 1){
@@ -73,12 +67,27 @@ include "user_authen.php";
                 }else if($rd['status'] == 4){
                     $status_brg = 'Telah Dikembalikan';
                 }
-                echo    '<tr>
-                            <td class="kodeBrg">'.$rd['id_item'].'</td>
-                            <td class="namaBrg">'.$row_brg[0]['Nama_Barang'].'</td>
-                            <td class="lokasiBrg">'.$row_brg[0]['Location'].'</td>
-                            <td class="statusBrg">'.$status_brg.'</td>
-                        </tr>';
+                if($rd['id_item'] != null){
+                    $sql_brg = "SELECT * FROM item WHERE Id = :item";
+                    $stmt_brg = $conn->prepare($sql_brg);
+                    $stmt_brg->execute(array(
+                        ":item" => $rd['id_item']
+                    ));
+                    $row_brg = $stmt_brg->fetchAll();
+                    echo    '<tr>
+                                <td class="kodeBrg">'.$rd['id_item'].'</td>
+                                <td class="namaBrg">'.$row_brg[0]['Nama_Barang'].'</td>
+                                <td class="lokasiBrg">'.$row_brg[0]['Location'].'</td>
+                                <td class="statusBrg">'.$status_brg.'</td>
+                            </tr>';
+                }else{
+                    echo    '<tr>
+                                <td class="kodeBrg">XXXXX</td>
+                                <td class="namaBrg">Barang telah dihapus</td>
+                                <td class="lokasiBrg">X</td>
+                                <td class="statusBrg">'.$status_brg.'</td>
+                            </tr>';
+                }
             } 
             echo '</tbody></table></div></div></div></div></div>';
             $ct += 1;

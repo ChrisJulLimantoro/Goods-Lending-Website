@@ -3,18 +3,30 @@
 ?>
 <?php 
     if(isset($_POST['ajax'])){
-        $sql = "SELECT i.Id AS IdBarang, i.Nama_Barang AS namaBarang, CONCAT(u.first_name, ' ', u.last_name) AS namaPeminjam, b.start_date, b.return_date, d.status AS status FROM borrow_detail d JOIN borrow b ON d.id_borrow = b.id_borrow JOIN item i on d.id_item = i.Id JOIN user u on b.id_user = u.username WHERE d.status <> 0 ORDER BY b.start_date DESC";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $res = $stmt->fetchAll();
+        $sql_slct = "SELECT a.id_item as idItem,CONCAT(c.first_name,' ',c.last_name) as peminjam,b.start_date as start_date,b.return_date as return_date,a.status as status FROM borrow_detail a JOIN borrow b ON a.id_borrow = b.id_borrow JOIN user c ON b.id_user = c.username WHERE a.status <> 0 ORDER BY b.start_date DESC";
+        $stmt_slct = $conn->prepare($sql_slct);
+        $stmt_slct->execute();
+        $row_slct = $stmt_slct->fetchAll();
         $row_count = 1;
         $arr = array();
-        foreach($res as $hasil) {
+        foreach($row_slct as $hasil){
             $temp = array();
             array_push($temp,$row_count);
-            array_push($temp,$hasil['IdBarang']);
-            array_push($temp,$hasil['namaBarang']);
-            array_push($temp,$hasil['namaPeminjam']);
+            if($hasil['idItem'] != NULL){
+                $sql_nm = "SELECT Nama_Barang FROM item WHERE Id = :id";
+                $stmt_nm = $conn->prepare($sql_nm);
+                $stmt_nm->execute(array(
+                    ":id" => $hasil['idItem']
+                ));
+                $res = $stmt_nm->fetchColumn();
+                array_push($temp,$hasil['idItem']);
+                array_push($temp,$res);
+            }
+            else{
+                array_push($temp,'XXXXX');
+                array_push($temp,'Barang telah dihapus');
+            }
+            array_push($temp,$hasil['peminjam']);
             array_push($temp,$hasil['start_date']);
             array_push($temp,$hasil['return_date']);
             array_push($temp,$hasil['status']);
@@ -26,6 +38,7 @@
         exit();
     }
 ?>
+
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
@@ -131,7 +144,7 @@
                         }
                         else if(row[6] == 4){
                             if(row[5] == null){
-                                return '<i class="text-primary">Barang lainnya belum kembali</i>';
+                                return '<i class="text-secondary">Barang lainnya belum kembali</i>';
                             }else{
                                 return '<i class="text-success">'+row[5]+'</i>';
                             }

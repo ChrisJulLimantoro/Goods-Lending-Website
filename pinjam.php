@@ -310,7 +310,6 @@ include "user_authen.php";
                         id_brg :  barang
                     },
                     success : function(e){
-                        console.log(e);
                         if(e == 1){
                             if(bucket == 0){
                                 swalWithBootstrapButtons.fire({
@@ -322,7 +321,6 @@ include "user_authen.php";
                                     cancelButtonText: 'No, cancel!',
                                     reverseButtons: true
                                     }).then((result) => {
-                                        // console.log(result);
                                         if(result.isConfirmed){
                                             $.ajax({
                                                 type : "post",
@@ -336,7 +334,6 @@ include "user_authen.php";
                                                             ajax : 1
                                                         },
                                                         success : function(response){
-                                                            console.log(parseInt($("#qty").text()));
                                                             $("#qty").text(parseInt($("#qty").text())-1);
                                                             $("#view").html(response);
                                                             status = '<?php echo $_SESSION['status'] ?>';
@@ -365,7 +362,6 @@ include "user_authen.php";
                                         }
                                     })
                             }else if(bucket == 1){
-                                console.log(status);
                                 if(status == 1){
                                 swalWithBootstrapButtons.fire(
                                     'Error!',
@@ -416,7 +412,6 @@ include "user_authen.php";
                                                                 ajax : 1
                                                             },
                                                             success : function(response){
-                                                                // console.log(parseInt($("#qty").text()));
                                                                 $("#qty").text(parseInt($("#qty").text())-1);
                                                                 $("#view").html(response);
                                                                 status = '<?php echo $_SESSION['status'] ?>';
@@ -470,7 +465,6 @@ include "user_authen.php";
                                 ajax : 1
                             },
                             success : function(response){
-                                console.log(parseInt($("#qty").text()));
                                 $("#qty").text(parseInt($("#qty").text())-1);
                                 $("#view").html(response);
                                 status = '<?php echo $_SESSION['status'] ?>';

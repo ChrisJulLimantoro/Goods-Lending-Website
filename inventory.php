@@ -77,11 +77,20 @@
 ?>
 <?php
     if (isset($_POST['delID'])) {
-        $sql_delBrg = "DELETE FROM item WHERE Id = :ni";
-        $stmt_delBrg = $conn->prepare($sql_delBrg);
-        $stmt_delBrg->execute(array(
+        $sql_cek = "SELECT STATUS FROM item WHERE Id = :ni";
+        $stmt_cek = $conn->prepare($sql_cek);
+        $stmt_cek->execute(array(
             ":ni" => $_POST['delID']
         ));
+        $row = $stmt_cek->fetchColumn();
+        if($row == 1){
+            $sql_delBrg = "DELETE FROM item WHERE Id = :ni";
+            $stmt_delBrg = $conn->prepare($sql_delBrg);
+            $stmt_delBrg->execute(array(
+                ":ni" => $_POST['delID']
+            ));
+        }
+        echo $row;
         exit();
     }
 ?>
@@ -255,7 +264,6 @@
             $(document.body).on("click", "#btn-return", function() {
                 let kode = $(this).parent().parent().children().eq(1).text();
                 let kode_bor = $(this).closest('table').DataTable().row($(this).closest('tr')).data()['6'];
-                console.log(kode);
                 const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                     confirmButton: 'btn btn-success',
@@ -286,10 +294,6 @@
                         aksi : 1
                     },
                     success : function(e) {
-                        console.log(kode);
-                        console.log(kode_bor);
-                        console.log(`${result.value.user}`);
-                        console.log(e);
                         if (e == 1) {
                             swalWithBootstrapButtons.fire ({
                                     icon : "success",
@@ -313,7 +317,6 @@
             $(document.body).on("click", "#btn-ambil", function() {
                 let kode = $(this).parent().parent().children().eq(1).text();
                 let kode_bor = $(this).closest('table').DataTable().row($(this).closest('tr')).data()['6'];
-                // console.log(kode);
                 const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                     confirmButton: 'btn btn-success',
@@ -344,10 +347,6 @@
                         aksi : 2
                     },
                     success : function(e) {
-                        console.log(kode);
-                        console.log(kode_bor);
-                        console.log(`${result.value.user}`);
-                        console.log(e);
                         if (e == 1) {
                             swalWithBootstrapButtons.fire ({
                                     icon : "success",
@@ -389,7 +388,6 @@
                         newDesc : $("#newDesc").val()
                     },
                     success : function(e) {
-                        console.log();
                         showResult(e);
                         $("#table").DataTable().ajax.reload(null,false);
                         $("#exampleModal").modal('toggle');
@@ -415,33 +413,47 @@
                     confirmButtonText: 'Continue',
                     cancelButtonText: 'Cancel',
                 }).then((result) => {
-                    if (result.isConfirmed) {
+
+                    if(result.isConfirmed){
+
                         $.ajax({
                             type : "post",
                             data : {
                                 delID : id
                             },
                             success : function(e){
-                                console.log(e);
-                                swalWithBootstrapButtons.fire({
-                                    icon : "success",
-                                    title : "Success!",
-                                    text : "Data Deleted!"
-                                });
+
+                                if(e == 1){
+                                    swalWithBootstrapButtons.fire({
+                                        icon : "success",
+                                        title : "Success!",
+                                        text : "Data Deleted!"
+                                    });
+                                }else{
+                                    swalWithBootstrapButtons.fire({
+                                        icon : "error",
+                                        title : "Failed!",
+                                        text : "Item can't be deleted because there's still an ongoing progress!"
+                                    });
+                                }
                                 $("#table").DataTable().ajax.reload();
                             }
                         })
+                    }else{
+                        swalWithBootstrapButtons.fire({
+                            icon : "error",
+                            title : "Cancelled!",
+                            text : "Cancel delete item!"
+                        });
                     }
                 })
             });
 
             function showResult(data) {
                 if (data == 1) {
-                    // console.log("1");
                     $("#modalBody").prepend('<div class="col-12 alert alert-success" role="alert">Data berhasil diupdate!</div>');
                 }
                 else {
-                    // console.log("0");
                     $("#modalBody").prepend('<div class="col-12 alert alert-danger" role="alert">Kesalahan dalam mengubah data, silahkan coba lagi</div>');
                 }    
             }

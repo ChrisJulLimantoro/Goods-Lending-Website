@@ -229,7 +229,6 @@
             $(document.body).on("click", "#changeStats", function() {
                 let status = $(this).val();
                 let username = $(this).parent().parent().children().eq(1).text();
-                console.log(status);
                 const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                     confirmButton: 'btn btn-success',
@@ -322,7 +321,6 @@
             let userStatus = false;
             $("#inputUsername").on("change",function(){
                 $("#inputUsername").removeClass("shaking");
-                // console.log( $("#inputUsername").val());
                 if($("#inputUsername").val().length != 0){
                 $.ajax({
                     type: "post",

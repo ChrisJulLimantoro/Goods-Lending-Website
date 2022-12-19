@@ -128,7 +128,6 @@
             // delete foto
             $(document.body).on("click", ".deleteFoto", function(e) {
                 e.preventDefault();
-                console.log("bisa del");
                 $(this).parent().find('input').val("");
                 $(this).parent().find("img").attr("src", "");
                 $(this).parent().find("label").removeClass("hidden");
@@ -142,7 +141,6 @@
             
             $(document.body).on("change","#lokasi",function(e){
                 $loc = $("#lokasi :selected").val();
-                // console.log($loc);
                 generateId($loc);
             });
 
@@ -176,7 +174,6 @@
                         }else{
                             $("#kodeBarang").val($loc + "000" + (parseInt(response)+1));
                         }
-                        console.log($("#kodeBarang").val());
                     }
                 });
             }

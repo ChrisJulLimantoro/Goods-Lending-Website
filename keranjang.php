@@ -345,7 +345,6 @@
                         hapusAll : name
                     },
                     success : function(response){
-                        console.log("sukses");
                         $.ajax({
                             type : "post",
                             data : {
@@ -369,7 +368,6 @@
                         hapus : idOne
                     },
                     success : function(response){
-                        console.log("sukses");
                         $.ajax({
                             type : "post",
                             data : {
@@ -445,7 +443,6 @@
                                             end : `${result2.value.ed}`,
                                         },
                                         success:function(e){
-                                            console.log(e);
                                             $.ajax({
                                                 type : "post",
                                                 data : {
@@ -521,7 +518,6 @@
                                         pinjam : 1
                                     },
                                     success : function(e){
-                                        // console.log('sukses');
                                         $("#view").html(e);
                                     }
                                 });
