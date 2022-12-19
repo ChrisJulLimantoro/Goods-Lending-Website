@@ -27,7 +27,6 @@
 
                 reader.onload = function(e){
                     $("#profile").attr("src",e.target.result);
-                    console.log(e.target.result);
                 }
                 reader.readAsDataURL(input.files[0]);
             }
@@ -40,7 +39,6 @@
                 e.preventDefault();
                 $("#profile").attr("src","profile/profileDefault.jpg");
                 $("#submitFile").val("");
-                console.log("kepencet");
             })
 
             $("#submitFile").on("change",function(){
@@ -48,13 +46,11 @@
             })
 
             $("#profile").on("click",function(){
-                console.log($("#submitFile").val());
                 $("#submitFile").click();
             })
 
             $("#inputUsername").on("change",function(){
                 $("#inputUsername").removeClass("shaking");
-                // console.log( $("#inputUsername").val());
                 if($("#inputUsername").val().length != 0){
                 $.ajax({
                     type: "post",

@@ -196,9 +196,6 @@
     <script>
         $(document).ready(function(){
             $("#signIn").on("click",function(){
-                console.log($('input[name="acc"]:checked').val());
-                console.log($("#inputPassword").val());
-                console.log($("#inputUsername").val());
                 $("#inputPassword").removeClass("shaking");
                 $("#inputUsername").removeClass("shaking");
                 $.ajax({
@@ -209,7 +206,6 @@
                             acc  : $('input[name="acc"]:checked').val()
                         },
                         success : function(response){
-                            console.log(response);
                             if(response == 0){
                                 $("#statusUser").removeAttr("hidden");
                                 $("#statusUser img").attr("src","assets/wrong.png");

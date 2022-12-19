@@ -244,7 +244,6 @@
                 });
             });
             $(document.body).on("click",".card-button",function(){
-                console.log($(this).parent().attr("id"));
                 let nama_brang = $(this).parent().attr("id");
                 $.ajax({
                     type : "post",

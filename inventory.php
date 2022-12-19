@@ -271,7 +271,6 @@
             $(document.body).on("click", "#btn-return", function() {
                 let kode = $(this).parent().parent().children().eq(1).text();
                 let kode_bor = $(this).closest('table').DataTable().row($(this).closest('tr')).data()['6'];
-                console.log(kode);
                 const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                     confirmButton: 'btn btn-success',
@@ -325,7 +324,6 @@
             $(document.body).on("click", "#btn-ambil", function() {
                 let kode = $(this).parent().parent().children().eq(1).text();
                 let kode_bor = $(this).closest('table').DataTable().row($(this).closest('tr')).data()['6'];
-                // console.log(kode);
                 const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                     confirmButton: 'btn btn-success',
@@ -356,10 +354,6 @@
                         aksi : 2
                     },
                     success : function(e) {
-                        console.log(kode);
-                        console.log(kode_bor);
-                        console.log(`${result.value.user}`);
-                        console.log(e);
                         if (e == 1) {
                             swalWithBootstrapButtons.fire ({
                                     icon : "success",
@@ -461,11 +455,9 @@
 
             function showResult(data) {
                 if (data == 1) {
-                    // console.log("1");
                     $("#modalBody").prepend('<div class="col-12 alert alert-success" role="alert">Data berhasil diupdate!</div>');
                 }
                 else {
-                    // console.log("0");
                     $("#modalBody").prepend('<div class="col-12 alert alert-danger" role="alert">Kesalahan dalam mengubah data, silahkan coba lagi</div>');
                 }    
             }
