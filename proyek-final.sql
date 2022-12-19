@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 19, 2022 at 04:44 PM
--- Server version: 10.4.27-MariaDB
--- PHP Version: 7.4.33
+-- Generation Time: Dec 19, 2022 at 07:25 PM
+-- Server version: 10.4.22-MariaDB
+-- PHP Version: 8.1.2
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `tekweb`
+-- Database: `proyek-final`
 --
 
 -- --------------------------------------------------------
@@ -32,7 +32,7 @@ CREATE TABLE `admin` (
   `Password` varchar(50) NOT NULL,
   `profile` varchar(100) DEFAULT NULL,
   `status` int(1) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `admin`
@@ -55,14 +55,14 @@ CREATE TABLE `borrow` (
   `expired_date` date NOT NULL,
   `return_date` date DEFAULT NULL,
   `status_pinjam` int(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `borrow`
 --
 
 INSERT INTO `borrow` (`id_borrow`, `id_user`, `start_date`, `expired_date`, `return_date`, `status_pinjam`) VALUES
-('B0001', 'ChrisJul02', '2022-12-19', '2022-12-23', NULL, 0);
+('B0001', 'ChrisJul02', '2022-12-18', '2022-12-21', '2022-12-19', 2);
 
 --
 -- Triggers `borrow`
@@ -88,48 +88,28 @@ CREATE TABLE `borrow_detail` (
   `id_borrow` varchar(10) NOT NULL,
   `id_item` varchar(10) DEFAULT NULL,
   `status` int(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `borrow_detail`
 --
 
 INSERT INTO `borrow_detail` (`id_borrow`, `id_item`, `status`) VALUES
-('B0001', 'C0076', 0),
-('B0001', 'C0077', 0),
-('B0001', 'C0078', 0),
-('B0001', 'C0079', 0),
-('B0001', 'C0080', 0),
-('B0001', 'C0081', 0),
-('B0001', 'C0082', 0),
-('B0001', 'C0083', 0),
-('B0001', 'C0084', 0),
-('B0001', 'C0085', 0),
-('B0001', 'C0086', 0),
-('B0001', 'C0087', 0),
-('B0001', 'C0088', 0),
-('B0001', 'C0089', 0),
-('B0001', 'C0090', 0),
-('B0001', 'C0091', 0),
-('B0001', 'C0092', 0),
-('B0001', 'C0093', 0),
-('B0001', 'C0094', 0),
-('B0001', 'C0095', 0),
-('B0001', 'C0096', 0),
-('B0001', 'C0097', 0),
-('B0001', 'C0098', 0),
-('B0001', 'C0099', 0),
-('B0001', 'C0100', 0),
-('B0001', 'C0001', 0),
-('B0001', 'C0002', 0),
-('B0001', 'C0003', 0),
-('B0001', 'C0004', 0),
-('B0001', 'C0005', 0),
-('B0001', 'C0006', 0),
-('B0001', 'C0007', 0),
-('B0001', 'C0008', 0),
-('B0001', 'C0009', 0),
-('B0001', 'C0010', 0);
+('B0001', 'T0061', 4),
+('B0001', 'T0062', 4),
+('B0001', 'T0063', 4),
+('B0001', 'T0064', 4),
+('B0001', 'T0065', 4),
+('B0001', 'T0066', 4),
+('B0001', 'T0067', 4),
+('B0001', 'T0068', 2),
+('B0001', 'T0069', 2),
+('B0001', 'T0070', 4),
+('B0001', 'T0071', 2),
+('B0001', 'T0072', 2),
+('B0001', 'T0073', 4),
+('B0001', 'T0074', 4),
+('B0001', 'T0075', 2);
 
 --
 -- Triggers `borrow_detail`
@@ -155,23 +135,23 @@ CREATE TABLE `item` (
   `image2` varchar(250) NOT NULL DEFAULT 'assets/no-image.png',
   `image3` varchar(250) NOT NULL DEFAULT 'assets/no-image.png',
   `image4` varchar(250) NOT NULL DEFAULT 'assets/no-image.png'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `item`
 --
 
 INSERT INTO `item` (`Id`, `Nama_Barang`, `Deskripsi`, `Status`, `Location`, `image`, `image2`, `image3`, `image4`) VALUES
-('C0001', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 0, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
-('C0002', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 0, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
-('C0003', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 0, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
-('C0004', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 0, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
-('C0005', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 0, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
-('C0006', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 0, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
-('C0007', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 0, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
-('C0008', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 0, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
-('C0009', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 0, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
-('C0010', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 0, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
+('C0001', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 1, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
+('C0002', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 1, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
+('C0003', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 1, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
+('C0004', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 1, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
+('C0005', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 1, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
+('C0006', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 1, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
+('C0007', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 1, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
+('C0008', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 1, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
+('C0009', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 1, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
+('C0010', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 1, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
 ('C0011', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 1, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
 ('C0012', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 1, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
 ('C0013', 'Walkie Talkie', 'Alat komunikasi jarak jauh', 1, 'C', 'item/ht.jpg', 'item/ht 2.jpg', 'item/ht 3.jpg', ''),
@@ -237,31 +217,31 @@ INSERT INTO `item` (`Id`, `Nama_Barang`, `Deskripsi`, `Status`, `Location`, `ima
 ('C0073', 'Kabel Rol 10 M', 'Kabel rol 10 meter', 1, 'C', 'item/kabel-rol-3.jpg', '', '', ''),
 ('C0074', 'Kabel Rol 10 M', 'Kabel rol 10 meter', 1, 'C', 'item/kabel-rol-3.jpg', '', '', ''),
 ('C0075', 'Kabel Rol 10 M', 'Kabel rol 10 meter', 1, 'C', 'item/kabel-rol-3.jpg', '', '', ''),
-('C0076', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0077', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0078', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0079', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0080', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0081', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0082', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0083', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0084', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0085', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0086', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0087', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0088', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0089', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0090', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0091', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0092', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0093', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0094', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0095', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0096', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0097', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0098', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0099', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
-('C0100', 'Kursi', 'Kursi lipat', 0, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0076', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0077', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0078', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0079', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0080', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0081', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0082', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0083', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0084', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0085', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0086', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0087', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0088', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0089', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0090', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0091', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0092', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0093', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0094', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0095', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0096', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0097', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0098', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0099', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
+('C0100', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
 ('C0101', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
 ('C0102', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
 ('C0103', 'Kursi', 'Kursi lipat', 1, 'C', 'item/kursi-1.jpg', 'item/kursi-2.jpg', '', ''),
@@ -1030,14 +1010,15 @@ CREATE TABLE `user` (
   `join_date` date NOT NULL DEFAULT current_timestamp(),
   `profile` varchar(100) NOT NULL,
   `status` int(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `user`
 --
 
 INSERT INTO `user` (`Username`, `Password`, `first_name`, `last_name`, `phone_number`, `email`, `join_date`, `profile`, `status`) VALUES
-('ChrisJul02', '*0602F59A0C4745C3EE610B9179F5565BD00CAE85', 'CHRISTOPHER', 'JULIUS', '08123948321', 'ChrisJul02@gmail.com', '2022-11-18', 'profile/GALAXY.png', 1),
+('Ballen01', '*F848634F64E7EE66E2ABD3DDCD9F48EBAA01F9CF', 'BARRY', 'ALLEN', '081345263749', 'BAllen@gmail.com', '2022-12-20', 'profile/IMG_9203.JPG', 0),
+('ChrisJul02', '*0602F59A0C4745C3EE610B9179F5565BD00CAE85', 'CHRISTOPHER', 'JULIUS', '08123948321', 'ChrisJul02@gmail.com', '2022-11-18', 'profile/GALAXY.png', 0),
 ('hallo', '*84AAC12F54AB666ECFC2A83C676908C8BBC381B1', 'HALLO', 'BYEE', '08133294935', 'halloBye@gmail.com', '2022-12-01', 'profile/profileDefault.jpg', 0),
 ('leoNick01', '*199C1DB1D0EC353830F17988643384A565BD48AC', 'LEONARDO', 'NICKHOLAS', '08192749234', 'leoNick01@gmail.com', '2022-11-22', 'profile/actor-pubg.png', 0),
 ('sidiP01', '*72639C0B8E1D0740964DD2CE1B34E4580845CA1B', 'SIDI', 'PRAPTAMA', '08299491724', 'SidiP01@gmail.com', '2022-11-23', 'profile/bisndo1.png', 0);
