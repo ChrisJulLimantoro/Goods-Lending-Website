@@ -82,7 +82,7 @@ include "user_authen.php";
                             </tr>';
                 }else{
                     echo    '<tr>
-                                <td class="kodeBrg">XXXX</td>
+                                <td class="kodeBrg">XXXXX</td>
                                 <td class="namaBrg">Barang telah dihapus</td>
                                 <td class="lokasiBrg">X</td>
                                 <td class="statusBrg">'.$status_brg.'</td>

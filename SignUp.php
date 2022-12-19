@@ -5,7 +5,7 @@
         $user = $_REQUEST['user'];
         $stmt = $conn->prepare($sql);
         $stmt->execute(['username' => $user]);
-        $row = $stmt->fetchcolumn();
+        $row = $stmt->fetchColumn();
         echo $row;
         exit;
     }
