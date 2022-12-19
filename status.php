@@ -158,7 +158,7 @@ include "user_authen.php";
         }
 
         .accordion-header, .detail-item-button {
-            background-color: #ffc107;
+            background-color: #e9ab59;
             border: none;
             height: 40px;
             width: 100%;
@@ -173,7 +173,7 @@ include "user_authen.php";
         }
 
         th {
-            background-color: #ffc107 !important;
+            background-color: #e9ab59 !important;
         }
 
         tr:nth-child(odd) {
@@ -182,7 +182,7 @@ include "user_authen.php";
         }
 
         tr:nth-child(even) {
-            background-color: #ffc107;
+            background-color: #e9ab59;
             font-weight: 300;
         }
 
@@ -225,7 +225,7 @@ include "user_authen.php";
 
     <div class='container-fluid py-4' style='background-color:#d3d3d3; min-height: 75vh'>
         <div class = "container">
-            <a type="button" class="btn btn-warning w-100" href = "homeUser.php">KEMBALI</a>
+            <a type="button" class="btn w-100" href = "homeUser.php" style='background-color: #e9ab59'>KEMBALI</a>
         </div>
 
         <div class="container container-custom justify-content-center" id='view'>

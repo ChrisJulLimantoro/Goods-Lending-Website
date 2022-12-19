@@ -243,7 +243,7 @@
         }
 
         .accordion-header, .detail-item-button {
-            background-color: #ffc107;
+            background-color: #e9ab59;
             border: none;
             height: 40px;
             width: 100%;
@@ -258,7 +258,7 @@
         }
 
         th {
-            background-color: #ffc107 !important;
+            background-color: #e9ab59 !important;
         }
 
         tr:nth-child(odd) {
@@ -267,7 +267,7 @@
         }
 
         tr:nth-child(even) {
-            background-color: #ffc107;
+            background-color: #e9ab59;
             /* font-weight: 300; */
         }
 
@@ -502,7 +502,7 @@
 
     <div class='container-fluid py-4' style='background-color:#d3d3d3; min-height: 75vh'>
         <div class = "container">
-            <a type="button" class="btn btn-warning w-100" href = "homeUser.php">KEMBALI</a>
+            <a type="button" class="btn w-100" href = "homeUser.php" style='background-color: #e9ab59'>KEMBALI</a>
         </div>
 
         <div class="container container-custom justify-content-center" id='view'>

@@ -124,7 +124,6 @@
             });
 
             $("#searchButton").click(function(){
-
                 $("#inputSearch").css("background-color","#fff");
                 $("#searchButton").css("display", "none");
                 $("#inputSearch").css("width", "100%");
@@ -133,7 +132,6 @@
                 $(".user").css("display", "none");
                 $(".kanan").css("display", "none");
                 $(".containerInput").css("margin-left", "4em");
-
             });
 
             $("#inputSearch").on("change", function(){

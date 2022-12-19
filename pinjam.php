@@ -71,7 +71,7 @@ include "user_authen.php";
                     echo '<div class="col-12 accordion mt-3" id="accordionExample">';
                     echo '<div class="accordion-item">';
                     echo '<h2 class="accordion-header" id="heading'.$i.'">';
-                    echo '<button class="accordion-button bg-warning" type="button" data-bs-toggle="collapse" data-bs-target="#acor'.$i.'" aria-expanded="true" aria-controls="panelsStayOpen-collapse'.$i.'">';
+                    echo '<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#acor'.$i.'" aria-expanded="true" aria-controls="panelsStayOpen-collapse'.$i.'" style="background-color: #e9ab59">';
                     echo $s['Id'].'</button></h2>';
                     echo '<div id="acor'.$i.'" class="accordion-collapse collapse" aria-labelledby="heading'.$i.'"  data-bs-parent="#accordionExample">';
                     echo '<div class="accordion-body" style="overflow: auto; background-color: #d3d3d3">';
@@ -138,10 +138,34 @@ include "user_authen.php";
         exit();
     }
 ?>
+<?php
+    if(isset($_POST['qty'])){
+        $sql_get_bnyk = "SELECT * FROM item WHERE Nama_Barang = :nm and Status = 1 ORDER BY Location LIMIT :lim";
+        $stmt_get_bnyk = $conn->prepare($sql_get_bnyk);
+        $stmt_get_bnyk->execute(array(
+            ":nm" => $_SESSION['nama_brg'],
+            ":lim" => $_POST['qty']
+        ));
+        $row_get = $stmt_get_bnyk->fetchAll();
+        foreach($row_get as $hsl){
+            try {
+            $sql_insert_bnyk = "INSERT INTO borrow_detail VALUES (:bor,:item,0)";
+            $stmt_insert_bnyk = $conn->prepare($sql_insert_bnyk);
+            $stmt_insert_bnyk->execute(array(
+                ":bor" => $_SESSION['bucket'],
+                ":item" => $hsl['Id']
+            ));
+            }
+            catch(Exception $e) {
+                echo $e;
+            }
+        }
+        exit();
+    }
+?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -201,7 +225,7 @@ include "user_authen.php";
         }
 
         th {
-            background-color: #ffc107 !important;
+            background-color: #e9ab59 !important;
         }
 
         tr:nth-child(odd) {
@@ -210,7 +234,7 @@ include "user_authen.php";
         }
 
         tr:nth-child(even) {
-            background-color: #ffc107;
+            background-color: #e9ab59;
             font-weight: 300;
         }
 
@@ -218,6 +242,10 @@ include "user_authen.php";
             .table {
                 font-size: .75em;
             }
+        }
+
+        #minBtn, #plusBtn {
+            background-color: #e9ab59;
         }
     </style>
 
@@ -304,7 +332,9 @@ include "user_authen.php";
                                                 'Success',
                                                 'Added 1 item to the cart!',
                                                 'success'
-                                            )
+                                            ).then(function(){
+                                                    location.reload(true);
+                                            })
                                         }else{
                                             swalWithBootstrapButtons.fire(
                                                 'Cancelled',
@@ -435,6 +465,142 @@ include "user_authen.php";
             $(document.body).on("click","#toHome",function(){
                 $(window).attr("location","backToUser.php")
             })
+
+            $(document.body).on("click",".btn-minjam-langsung",function(){
+                const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: false
+                })
+                swalWithBootstrapButtons.fire({
+                    title: 'Are you sure?',
+                    text: "Do you really want to add "+$("#qty").val()+" item to your bucket?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, i do!',
+                    cancelButtonText: 'No, cancel!',
+                    reverseButtons: true
+                }).then((result) => {
+                    if(result.isConfirmed){
+                        $.ajax({
+                        type : "post",
+                        data : {
+                            qty : $("#qty").val()
+                        },
+                        success:function(e){
+                            console.log(e);
+                            swalWithBootstrapButtons.fire(
+                                "Success!",
+                                "Successfully added "+$("#qty").val()+" item",
+                                "success"
+                            ).then(function(){
+                                location.reload(true);
+                            })
+                            
+                        }
+                    })}
+                    else{
+                        swalWithBootstrapButtons.fire(
+                                "Cancelled!",
+                                "Cancel adding item",
+                                "error"
+                            )
+                    }
+                    swalWithBootstrapButtons.fire({
+                                    title: 'Are you sure?',
+                                    text: "Your cart is still empty, do you want to create a new cart?",
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Yes, make new cart!',
+                                    cancelButtonText: 'No, cancel!',
+                                    reverseButtons: true
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            swalWithBootstrapButtons.fire({
+                                            title: 'Creating Cart : ',
+                                            html: `<label for="start_date" class="form-label my-2">Start Borrow Date : </label>
+                                                <input type="date" id="start_date" class="swal2_input form-control" placeholder="Borrow Date">
+                                                <label for="expired_date" class="form-label my-2">End Borrow Date : </label>
+                                                <input type="date" id="expired_date" class="swal2_input form-control" placeholder="Expiration Date">`,
+                                            showCancelButton: true,
+                                            confirmButtonText: 'Next',
+                                            showLoaderOnConfirm: true,
+                                            preConfirm: () => {
+                                                const sd = $("#start_date").val();
+                                                const ed = $("#expired_date").val();
+                                                if (!sd || ! ed) {
+                                                Swal.showValidationMessage(`Please enter Start Date and Expired Date`)
+                                                }
+                                                return { sd: sd, ed: ed }
+                                            }
+                                        }).then((result2) => {
+                                            if(`${result2.value.ed}` >= `${result2.value.sd}`){
+                                                $.ajax({
+                                                    type : "post",
+                                                    data : {
+                                                        start : `${result2.value.sd}`,
+                                                        end : `${result2.value.ed}`,
+                                                        barang : barang
+                                                    },
+                                                    success:function(e){
+                                                        $.ajax({
+                                                            type : "post",
+                                                            data : {
+                                                                ajax : 1
+                                                            },
+                                                            success : function(response){
+                                                                $("#qty").text(parseInt($("#qty").text())-1);
+                                                                $("#view").html(response);
+                                                                status = '<?php echo $_SESSION['status'] ?>';
+                                                                bucket = '<?php 
+                                                                        if(isset($_SESSION['bucket'])){
+                                                                            echo 0;
+                                                                        }else{
+                                                                            echo 1;
+                                                                            }?>';
+                                                            }
+                                                        });
+                                                    }
+                                                })
+
+                                                swalWithBootstrapButtons.fire(
+                                                    'Success',
+                                                    'Success creating new Cart and added 1 item!',
+                                                    'success'
+                                                ).then(function(){
+                                                    location.reload(true);
+                                                })
+                                            }else{
+                                                swalWithBootstrapButtons.fire(
+                                                    'Failed',
+                                                    'Failed creating new Cart, input date invalid!',
+                                                    'error'
+                                                )
+                                            }
+                })
+            })
+
+            $("#minBtn").on("click", function() {
+                let qty = $("#qty").val()
+                if (qty - 1 >= 0)
+                    $("#qty").val(qty - 1);
+            })
+
+            $("#plusBtn").on("click", function() {
+                let qty = parseInt($("#qty").val());
+                let maxQty = $("#plusBtn").val();
+                if (qty < maxQty)
+                    $("#qty").val(qty + 1);
+            })
+
+            $("#qty").on("keyup", function() {
+                let qty = parseInt($("#qty").val());
+                let maxQty = $("#plusBtn").val();
+                if (qty > maxQty)
+                    $("#qty").val(maxQty);
+            })
         });
     </script>
 </head>
@@ -473,7 +639,7 @@ include "user_authen.php";
     <div class='container-fluid py-4' style='background-color:#d3d3d3; min-height: 75vh'>
     
         <div class = "container">
-            <a type="button" class="btn btn-warning w-100" href = "homeUser.php">KEMBALI</a>
+            <a type="button" class="btn w-100" href = "homeUser.php" style='background-color: #e9ab59'>KEMBALI</a>
         </div>
 
         <div class = "container" style = "background-color:#D3D3D3">
@@ -496,9 +662,17 @@ include "user_authen.php";
                         <div class = "p-2"><?php echo $desc ?></div>
                     </div>
                     <div class = "d-flex flex-column">
-                        <div class = "p-2">STOCK : <?php echo $jum?></div>
+                        <div class = "p-2">STOCK : <?php echo $jum ?></div>
                     </div>
-                    
+                    <br>
+                    <div class='d-flex flex-row'>
+                        <button type='button' class='btn' style='border-radius:0' id='minBtn'>-</button>
+                        <input type='number' name='qty' id='qty' class='text-center border-secondary form-control' value='0' style='border:none; width:25%'>
+                        <button type='button' class='btn' style='border-radius:0' id='plusBtn' value='<?php echo $jum ?>'>+</button>
+                    </div>
+                    <div class='d-flex mt-3'>
+                        <button type="button" class="btn btn-primary btn-minjam-langsung" style="border-radius: 3em; width: 25%;">PINJAM</button>
+                    </div>
                 </div>
 
                 <div class="row mt-3 justify-content-center text-center" id="view">
