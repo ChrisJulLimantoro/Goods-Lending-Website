@@ -2,6 +2,7 @@
     include "connection.php";
 ?>
 <?php
+    // cek apakah user dan email benar
     if(isset($_POST['usr']) && isset($_POST['pass']) && isset($_POST['email'])){
         $sql = "SELECT COUNT(*) FROM user WHERE username = :usr and email = :em";
         $stmt = $conn->prepare($sql);
@@ -11,6 +12,7 @@
         ));
         $res = $stmt->fetchColumn();
         echo $res;
+        // kalau benar, maka update password
         if($res == 1){
             $sql_up = "UPDATE user SET password = PASSWORD(:ps) WHERE username = :usr";
             $stmt_up = $conn->prepare($sql_up);
@@ -300,6 +302,8 @@
         $(document).ready(function(){
             let passStatus = false;
             let reStatus = false;
+
+            // pengecekan regex utk password (harus 8-20 huruf, dll)
             $("#inputPass").on("keyup",function(){
                 let pass = $("#inputPass").val();
                 $("#statusPass").removeAttr("hidden");
@@ -351,6 +355,8 @@
                     $("#btn-check").attr("disabled","true");
                 }
             });
+
+            // mencocokkan retype password dengan password
             $("#rePass").on("keyup",function(){
                 let rePass = $("#rePass").val();
                 $("#statusRe").removeAttr("hidden");
@@ -385,17 +391,22 @@
                     $("#btn-check").attr("disabled","true");
                 }
             });
+
+            // kalau pass tidak lulus ketentuan minimum
             $("#inputPass").on("change",function(){
                 if (passStatus == false && $("#inputPass").val() != ''){
                     $("#inputPass").addClass("shaking");
                 }
             });
 
+            // kalau retype pass tidak sama
             $("#rePass").on("change",function(){
                 if (reStatus == false && $("#rePass").val() != ''){
                     $("#rePass").addClass("shaking");
                 }
             });
+
+            // tombol utama buat forgot pass
             $("#btn-check").on("click",function(){
                 const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {

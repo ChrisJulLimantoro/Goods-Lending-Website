@@ -1,6 +1,8 @@
 <?php
     include "connection.php";
     include "uploadItem.php";
+
+    // utk tambah barang
     if(isset($_POST['nama']) && isset($_POST['lokasi']) && isset($_POST['kodeBarang']) && isset($_POST['keterangan'])){
         $sql = 'INSERT INTO item (id,nama_barang,deskripsi,status,location)
                 VALUES (:id,:nama,:deskripsi,1,:location)';

@@ -13,6 +13,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
     <script>
+        // change navbar style on scroll
         $(document).ready(function(){
             $(window).resize(function(){
                 var width= $(window).width();

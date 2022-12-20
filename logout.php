@@ -1,6 +1,8 @@
 <?php
     include "connection.php";
     session_start();
+
+    // kosongi cart waktu logout
     if(isset($_SESSION['bucket'])){
         $sql_up = "UPDATE `item` SET `Status` = 1 WHERE `Id` = ANY (SELECT `id_item` FROM `borrow_detail` WHERE id_borrow = :bor)";
         $stmt_up = $conn->prepare($sql_up);

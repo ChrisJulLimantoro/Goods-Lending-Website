@@ -1,6 +1,9 @@
 <?php
     include "connection.php";
+
+    // login
     if(isset($_POST['user']) && isset($_POST['pass']) && isset($_POST['acc'])){
+        // login utk user
         if($_POST['acc'] == 'user'){
             $sql = "SELECT count(*) as total FROM `user` WHERE `username` = :username and `password` = PASSWORD( :password )";
             $user = $_POST['user'];
@@ -9,18 +12,22 @@
             $stmt->execute(array(':username' => $user,
                                 ':password' => $pass));
             $row = $stmt->fetch();
-            if($row['total'] == 0){
+
+            // jika username valid tp password salah
+            if($row['total'] == 0) {
                 $sql2 = "SELECT count(*) AS total FROM `user` WHERE `username` = :username";
                 $stmt2 = $conn->prepare($sql2);
                 $stmt2->execute(array(':username' => $user));
                 $row2 = $stmt2->fetch();
-                if ($row2['total'] == 1){
+                if ($row2['total'] == 1) {
                     echo "5";
                 }
-                else{
+                // username tidak valid
+                else {
                     echo "0";
                 }
-            }else{
+            }
+            else {
                 echo "1";
                 session_start();
                 $_SESSION['user'] = $user;
@@ -33,7 +40,9 @@
                 $_SESSION['status'] = $row5[0]['status'];
             }
             exit();
-        }else{
+        }
+        // login utk admin
+        else {
             $sql3 = "SELECT count(*) as total FROM `admin` WHERE `username` = :username and `password` = PASSWORD( :password ) and `status` <> 0";
             $admin = $_POST['user'];
             $pass = $_POST['pass'];
@@ -41,26 +50,31 @@
             $stmt3->execute(array(':username' => $admin,
                                 ':password' => $pass));
             $row3 = $stmt3->fetch();
-            if($row3['total'] == 0){
+            
+            // jika username valid tp password salah
+            if($row3['total'] == 0) {
                 $sql4 = "SELECT count(*) AS total FROM `admin` WHERE `username` = :username";
                 $stmt4 = $conn->prepare($sql4);
                 $stmt4->execute([':username' => $admin]);
                 $row4 = $stmt4->fetch();
-                if ($row4['total'] == 1){
+                if ($row4['total'] == 1) {
                     $sql5 = "SELECT status FROM admin WHERE username = :usr";
                     $stmt5 = $conn->prepare($sql5);
                     $stmt5->execute([':username' => $admin]);
                     $row5 = $stmt5->fetch();
-                    if ($row5 == 1){
+                    if ($row5 == 1) {
                         echo"5";
-                    }else{
+                    }
+                    // username tidak valid
+                    else {
                         echo"6";
                     }
                 }
-                else{
+                else {
                     echo "0";
                 }
-            }else{
+            }
+            else {
                 echo "2";
                 session_start();
                 $_SESSION['admin'] = $admin;

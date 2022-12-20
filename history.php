@@ -2,6 +2,7 @@
     include "admin_authen.php";
 ?>
 <?php 
+    // tampilkan data untuk tabel
     if(isset($_POST['ajax'])){
         $sql_slct = "SELECT a.id_item as idItem,CONCAT(c.first_name,' ',c.last_name) as peminjam,b.start_date as start_date,b.return_date as return_date,a.status as status FROM borrow_detail a JOIN borrow b ON a.id_borrow = b.id_borrow JOIN user c ON b.id_user = c.username WHERE a.status <> 0 ORDER BY b.start_date DESC";
         $stmt_slct = $conn->prepare($sql_slct);
@@ -12,6 +13,7 @@
         foreach($row_slct as $hasil){
             $temp = array();
             array_push($temp,$row_count);
+            // kalau barang ada
             if($hasil['idItem'] != NULL){
                 $sql_nm = "SELECT Nama_Barang FROM item WHERE Id = :id";
                 $stmt_nm = $conn->prepare($sql_nm);
@@ -22,6 +24,7 @@
                 array_push($temp,$hasil['idItem']);
                 array_push($temp,$res);
             }
+            // kalau barang sdh dihapus
             else{
                 array_push($temp,'XXXXX');
                 array_push($temp,'Barang telah dihapus');
@@ -109,6 +112,7 @@
 
     <script>
         $(document).ready(function() {
+            // styling & ajax table
             $("#item-list").DataTable({
                 "language": {
                     "paginate": {
@@ -205,6 +209,7 @@
     </div>
 
     <script>
+        // change navbar style on scroll
         var nav= document.querySelector('nav');
         window.addEventListener('scroll', function(){
           if (window.pageYOffset > 100){

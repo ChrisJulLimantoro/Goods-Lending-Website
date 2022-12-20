@@ -2,23 +2,30 @@
     include "user_authen.php";    
 ?>
 <?php 
+    // generate cart
     if(isset($_POST['start']) && isset($_POST['end'])){
         $sql_count = "SELECT id_borrow FROM borrow ORDER BY id_borrow DESC LIMIT 1";
         $stmt_count = $conn->prepare($sql_count);
         $stmt_count->execute();
         $count = $stmt_count->fetchColumn();
         $count = (int)(substr($count,1));
-            echo $count;
-        if($count >= 999){
+        echo $count;
+
+        // generate ID peminjaman
+        if($count >= 999) {
             $code = "B".($count+1);
-        }else if($count >= 99){
+        }
+        else if($count >= 99) {
             $code = "B0".($count+1);
-        }else if($count >= 9){
+        }
+        else if($count >= 9) {
             $code = "B00".($count+1);
-        }else{
+        }
+        else {
             $code = "B000".($count+1);
         }
-            echo $code;
+        echo $code;
+
         $sql_borrow = "INSERT INTO borrow(id_borrow,id_user,start_date,expired_date) VALUES(:bor,:usr,:start,:end)";
         $stmt_borrow = $conn->prepare($sql_borrow);
         $stmt_borrow->execute(array(
@@ -32,6 +39,7 @@
         }
 ?>
 <?php
+    // update status peminjaman
     if(isset($_POST['pinjam'])){
         $sql_change = "UPDATE borrow SET status_pinjam = 1 WHERE id_borrow = :bor";
         $stmt_change = $conn->prepare($sql_change);
@@ -45,6 +53,7 @@
     }
 ?>
 <?php
+    // verifikasi password sblm pengajuan peminjaman
     if(isset($_POST['verif'])) {
         $sql_verif = "SELECT count(*) as total FROM `user` WHERE `username` = :username and `password` = PASSWORD( :password )";
         $user = $_SESSION['user'];
@@ -64,6 +73,7 @@
    
 ?>
 <?php
+    // tampilin barang di keranjang
     if(isset($_POST['ajax'])){
         if(isset($_SESSION['bucket'])){
             $sql_tgl = "SELECT * FROM `borrow` WHERE `id_borrow` = :bor";
@@ -79,6 +89,7 @@
             echo '<div class="row bg-light d-flex justify-content-center align-items-center p-4 mt-4">';
             echo '<p> START : '.$tgl_start.'</p>';
             echo '<p> EXPIRED : '.$tgl_end.'</p></div>';
+
             $sql_brg = "SELECT `Nama_Barang`,COUNT(*) as 'count',`Deskripsi`,`image` FROM `borrow_detail` JOIN `item` ON `id_item` = `Id` WHERE `id_borrow` = :bor GROUP BY `Nama_Barang`";
             $stmt_brg = $conn->prepare($sql_brg);
             $stmt_brg->execute(array(
@@ -86,6 +97,7 @@
             ));
             $row_brg = $stmt_brg->fetchAll();
             $row_count = 0;
+
             foreach($row_brg as $r){
                 echo '<div class="row mt-5 px-3 py-4 bg-light text-dark">';
                 echo '<div class="col-lg-3 col-5">';
@@ -104,6 +116,7 @@
                 echo '<div id="collapse'.($row_count+1).'" class="accordion-collapse collapse" aria-labelledby="heading'.($row_count+1).'" data-bs-parent="#detail">';
                 echo '<div class="table-responsive px-4"><table class="table table-bordered my-4 text-center align-middle" id="tabelDetail">';
                 echo '<thead><tr><th>Kode</th><th>Lokasi</th><th>Aksi</th></tr></thead>';
+
                 for($i=0;$i<$r['count'];$i++){
                     $sql_temp = "SELECT * FROM `borrow_detail` JOIN `item` ON `id_item` = `Id` WHERE `id_item` = ANY (SELECT `Id` FROM `item` WHERE `Nama_Barang` = :nm)";
                     $stmt_temp = $conn->prepare($sql_temp);
@@ -119,26 +132,30 @@
                 echo '</table></div></div></div></div>';
                 $row_count += 1;
             }
-            if($row_count > 0){
+
+            if($row_count > 0) {
                 echo '<button id="pinjamBarang" class="btn btn-dark my-4 w-100" type="button">Ajukan Peminjaman</button>';
-            }else{
+            }
+            else {
                 echo '<a href="homeUser.php" ><button class="btn btn-dark my-4 w-100" type="button">Lihat Barang</button></a>';
             }
-        }else{
-            if($_SESSION['status'] == 1){
+        }
+        else {
+            if($_SESSION['status'] == 1) {
                 echo '<h1 class="text-center mt-5">Barang Pinjaman belum dikembalikan!</h1>';
                 echo '<h2 class="text-center">Harap Kembalikan Barang pinjaman terlebih dahulu baru anda dapat membuat keranjang baru!</h2>';
                 echo '<a href="homeUser.php"><button class="btn btn-dark my-4 px-5 w-100" type="button">Back to Home</button></a>';
-            }else{
+            }
+            else {
                 echo '<h1 class="text-center mt-5">Keranjang Masih Kosong!</h1>';
                 echo '<button id="createBucket" class="btn btn-dark my-4 px-5 w-100" type="button">Buat Keranjang Baru</button>';
             }
         }
-        // echo var_dump($_SESSION);
         exit();
     }
 ?>
 <?php
+    // hapus per nama item
     if(isset($_POST['hapusAll'])){
         $sql_up = "UPDATE `item` SET `Status` = 1 WHERE `Id` = ANY (SELECT `id_item` FROM `borrow_detail` WHERE id_borrow = :bor and id_item = ANY (SELECT Id FROM `item` WHERE nama_barang = :nama))";
         $stmt_up = $conn->prepare($sql_up);
@@ -146,6 +163,7 @@
             ":bor" => $_SESSION['bucket'],
             ":nama" => $_POST['hapusAll']
         ));
+
         $sql_del_all = "DELETE FROM `borrow_detail` WHERE id_borrow = :bor and id_item = ANY (SELECT Id FROM `item` WHERE nama_barang = :nama)";
         $stmt_del_all = $conn->prepare($sql_del_all);
         $stmt_del_all->execute(array(
@@ -156,12 +174,14 @@
     }
 ?>
 <?php
+    // hapus per SATU item
     if(isset($_POST['hapus'])){
         $sql_up2 = "UPDATE `item` SET `Status` = 1 WHERE `Id` = :id";
         $stmt_up2 = $conn->prepare($sql_up2);
         $stmt_up2->execute(array(
             ":id" => $_POST['hapus']
         ));
+
         $sql_del_all2 = "DELETE FROM `borrow_detail` WHERE id_borrow = :bor and id_item = :id";
         $stmt_del_all2 = $conn->prepare($sql_del_all2);
         $stmt_del_all2->execute(array(
@@ -287,6 +307,7 @@
 
     <script>
         $(document).ready(function() {
+            // tampilin keranjang
             $.ajax({
                 type : "post",
                 data : {
@@ -296,6 +317,7 @@
                     $("#view").html(response);
                 }
             })
+
             // Delete per JENIS item
             $(document.body).on("click", ".btn-delete-all", function() {
                 let name = $(this).parent().parent().find('.col-lg-8').find('#namaItem').text().substring(13);
@@ -350,15 +372,16 @@
                 else
                     $(this).find("img").css("transform", "rotate(180deg)");
             });
+
             // ajax create new bucket
             var status = '<?php echo $_SESSION['status']?>'
             $(document.body).on("click","#createBucket",function(){
                 const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-success',
-                    cancelButton: 'btn btn-danger'
-                },
-                buttonsStyling: false
+                    customClass: {
+                        confirmButton: 'btn btn-success',
+                        cancelButton: 'btn btn-danger'
+                    },
+                    buttonsStyling: false
                 })
                 if(status == 1){
                     swalWithBootstrapButtons.fire(
@@ -420,7 +443,8 @@
                                         'Success creating new Cart!',
                                         'success'
                                     )
-                                }else{
+                                }
+                                else{
                                     swalWithBootstrapButtons.fire(
                                         'Failed',
                                         'Failed creating new Cart, input date invalid!',
@@ -428,27 +452,26 @@
                                     )
                                 }
                             })
-                        } else if (
-                            /* Read more about handling dismissals below */
-                            result.dismiss === Swal.DismissReason.cancel
-                        ) {
+                        } 
+                        else if (result.dismiss === Swal.DismissReason.cancel) {
                             swalWithBootstrapButtons.fire(
-                            'Cancelled',
-                            'Your action has been cancelled',
-                            'error'
+                                'Cancelled',
+                                'Your action has been cancelled',
+                                'error'
                             )
                         }
                     })
                 }
             });
+
             // ajax ajukan pinjaman
             $(document.body).on("click","#pinjamBarang",function(){
                 const swalWithBootstrapButtons = Swal.mixin({
-                customClass: {
-                    confirmButton: 'btn btn-success',
-                    cancelButton: 'btn btn-danger'
-                },
-                buttonsStyling: false
+                    customClass: {
+                        confirmButton: 'btn btn-success',
+                        cancelButton: 'btn btn-danger'
+                    },
+                    buttonsStyling: false
                 })
                 swalWithBootstrapButtons.fire({
                     title : "Enter your password",

@@ -2,6 +2,7 @@
     include "user_authen.php";
 ?>
 <?php
+    // buat ngefilter barang
     if(isset($_POST['nama']) && isset($_POST['filter'])){
         $_SESSION['nama_brg'] = $_POST['nama'];
         $_SESSION['filter'] = $_POST['filter'];
@@ -12,6 +13,7 @@
 <?php
     if(isset($_POST['loc'])){
         $i = 1;
+        // kalau tdk menggunakan filter lokasi
         if($_POST['loc'] == ''){
             $sql = 'SELECT DISTINCT Nama_Barang FROM item WHERE status = 1 and Nama_Barang LIKE :filt';
             $stmt = $conn->prepare($sql);
@@ -53,7 +55,9 @@
                     </div>';
                 }
             }
-        }else{
+        }
+        // kalau ada filter lokasi
+        else{
             $sql = 'SELECT DISTINCT Nama_Barang FROM item WHERE status = 1 and location = :loc and Nama_barang LIKE :filt';
             $stmt = $conn->prepare($sql);
             $stmt->execute(array(
@@ -145,6 +149,8 @@
             let count = 0;
             let status = false;
             let filter = "";
+
+            // ajax utk nentuin filter & lokasi
             $.ajax({
                     type : "post",
                     data : {
@@ -155,6 +161,7 @@
                         $("#viewItem").html(response);
                     }
                 });
+
             $("#buttonUser").click(function(){
                 now= $(".peopleCard").css("display");
 
@@ -164,9 +171,8 @@
                     $(".peopleCard").css("display", "none");
                 }
             })
-            // $("#profile").on("click",function(){
-                
-            // })
+            
+            // tombol filter lokasi
             $("#filter").on("click",function(){
                     if (count==0){
                         $("#No").css("top","-40px");
@@ -225,6 +231,7 @@
                     }
                 });
             })
+
             $("#inputSearch").on("keyup",function(){
                 $.ajax({
                     type : "post",
@@ -237,6 +244,7 @@
                     }
                 });
             });
+            
             $(document.body).on("click",".card-button",function(){
                 let nama_brang = $(this).parent().attr("id");
                 $.ajax({
