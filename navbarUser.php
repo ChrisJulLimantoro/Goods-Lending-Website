@@ -104,11 +104,16 @@
                 background-color: white;
                 margin-bottom: 10px;
             }
+
         }
 
         @media screen and (min-width: 300px) {
             .containerInput {
                 width: 300px;
+            }
+            
+            #judul {
+                font-size: 0.8em;
             }
         }
 
@@ -116,25 +121,41 @@
             .containerInput {
                 width: 550px;
             }
+
+            
+            #judul {
+                font-size: 1.2em;
+            }
         }
 
         @media screen and (min-width: 768px) {
             .containerInput {
                 width: 720px;
             }
+            
+            #judul {
+                font-size: 1.5em;
+            }
         }
 
         @media screen and (min-width: 991px) {
             .containerInput {
+                width: 500px;
+            }
+        }
+
+        @media screen and (min-width: 1200px) {
+            .containerInput {
                 width: 600px;
             }
         }
+
     </style>
 </head>
 <body>
     <!-- NAVBAR -->
 <nav class="navbar fixed-top navbar-expand-lg header px-lg-5 px-md-3 px-sm-1">
-  <div class="container-fluid">
+  <div class="container-fluid" style="max-width:100% !important">
     <!-- drop down -->
     <div class="col-auto user mx-3">
         <li class="nav-item dropdown mt-1" style="list-style: none">
@@ -187,12 +208,12 @@
     </a>
 
     <!-- tombol responsive -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" id ="search-btn"type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="mt-1">
             <i class="fa-solid fa-inverse fa-lg fa-magnifying-glass" style="margin-top: 12px;"></i>
         </span>
     </button>
-    <div class="collapse navbar-collapse justify-content-end mb-3" id="navbarSupportedContent">
+    <div class="collapse navbar-collapse mb-3 justify-content-end" id="navbarSupportedContent">
         <ul class="navbar-nav">
             <!-- TOMBOL SEARCH -->
             <li class="nav-item">

@@ -140,7 +140,7 @@ include "user_authen.php";
 ?>
 <?php
     if(isset($_POST['qty'])){
-        if(isset($_SESSION['filter'])){
+        if($_SESSION['filter'] != ''){
             $sql_get_bnyk = "SELECT * FROM item WHERE Nama_Barang = :nm and Status = 1 and Location = :filt";
             $stmt_get_bnyk = $conn->prepare($sql_get_bnyk);
             $stmt_get_bnyk->execute(array(
@@ -199,7 +199,7 @@ include "user_authen.php";
             ":end" => $_POST['end']
         ));
         $_SESSION['bucket'] = $code;
-        if(isset($_SESSION['filter'])){
+        if($_SESSION['filter'] != ''){
             $sql_get_bnyk = "SELECT * FROM item WHERE Nama_Barang = :nm and Status = 1 and Location = :filt";
             $stmt_get_bnyk = $conn->prepare($sql_get_bnyk);
             $stmt_get_bnyk->execute(array(
@@ -313,6 +313,24 @@ include "user_authen.php";
 
         #minBtn, #plusBtn {
             background-color: #e9ab59;
+        }
+
+        .carousel-control-prev-icon {
+            background-image: url(assets/backward.png) !important;
+            opacity: 1;
+        }
+
+        .carousel-control-next-icon {
+            background-image: url(assets/forward.png) !important;
+            opacity: 1;
+        }
+
+        #inputSearch {
+            display: none;
+        }
+        
+        #search-btn{
+            display: none;
         }
     </style>
 
@@ -655,6 +673,26 @@ include "user_authen.php";
                 if (qty > maxQty)
                     $("#qty").val(maxQty);
             })
+            $(document.body).on("click", "#start_date", function() {
+                var today = new Date();
+                var max = new Date(new Date().getTime() + (7 * 24 * 60 * 60 * 1000));
+                var ddMin = today.getDate();
+                var mmMin = today.getMonth();
+                var yyyyMin = today.getFullYear();
+                var ddMax = max.getDate();
+                var mmMax = max.getMonth();
+                var yyyyMax = max.getFullYear();
+                $("#start_date").attr("min", yyyyMin + '-' + (mmMin+1) + '-' + ddMin);
+                $("#start_date").attr("max", yyyyMax + '-' + (mmMax+1) + '-' + ddMax);
+            })
+
+            $(document.body).on("click","#expired_date",function() {
+                var today = new Date();
+                var ddMin = today.getDate();
+                var mmMin = today.getMonth();
+                var yyyyMin = today.getFullYear();
+                $("#expired_date").attr("min", yyyyMin + '-' + (mmMin+1) + '-' + ddMin);
+            })
         });
     </script>
 </head>
@@ -668,6 +706,9 @@ include "user_authen.php";
         ));
         $row = $stmt_brg2->fetchAll();
         $img = $row[0]['image'];
+        $img2 = $row[0]['image2'];
+        $img3 = $row[0]['image3'];
+        $img4 = $row[0]['image4'];
         $desc = $row[0]['Deskripsi'];
         if($_SESSION['filter'] == ''){
             $sql_count2 = "SELECT COUNT(*) FROM `item` where `Nama_Barang`= :nama and `status`= 1";
@@ -700,9 +741,42 @@ include "user_authen.php";
             <div class="row mt-4 px-5 py-5 bg-light" id=''>
                 <div class = "col-md-3">
                     <div class = "row justify-content-center">
-                        <div class="col-md-11">
-                            <div class = "card img">
-                                <img src="<?php echo $img ?>" alt="" style="width: 100%; height: 100%;">
+                        <div class="col-md-11 mb-2">
+                            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner">
+                                    <?php
+                                        echo '<div class="carousel-item active">
+                                        <img src="'.$img .'" class="d-block w-100" alt="...">
+                                        </div>';
+
+                                        if ($img2) {
+                                            echo '<div class="carousel-item">
+                                            <img src="'.$img2 .'" class="d-block w-100" alt="...">
+                                            </div>';
+                                        }
+
+                                        if ($img3) {
+                                            echo `<div class="carousel-item">
+                                            <img src="`.$img3 .`" class="d-block w-100" alt="...">
+                                            </div>` ;
+                                        }
+
+                                        if ($img4) {
+                                            echo `<div class="carousel-item">
+                                            <img src="`.$img4 .`" class="d-block w-100" alt="...">
+                                            </div>`;
+                                        }
+                                    ?>
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+
+                                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -721,7 +795,7 @@ include "user_authen.php";
                     <br>
                     <div class='d-flex flex-row'>
                         <button type='button' class='btn' style='border-radius:0' id='minBtn'>-</button>
-                        <input type='number' name='qty' id='qty' class='text-center border-secondary form-control' value='0' style='border:none; width:25%'>
+                        <input type='number' name='qty' id='qty' class='text-center border-secondary form-control' value='0' min='0' max='<?php echo $jum?>' style='border:none; width:25%'>
                         <button type='button' class='btn' style='border-radius:0' id='plusBtn' value='<?php echo $jum ?>'>+</button>
                     </div>
                     <div class='d-flex mt-3'>

@@ -186,6 +186,13 @@ include "user_authen.php";
             font-weight: 300;
         }
 
+        #inputSearch {
+            display: none;
+        }
+
+        #search-btn{
+            display: none;
+        }
         @media screen and (max-width:576px) {
             .table, #namaItem, #keteranganItem, #qtyItem {
                 font-size: .75em;

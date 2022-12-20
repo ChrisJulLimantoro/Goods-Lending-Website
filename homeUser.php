@@ -261,7 +261,8 @@
         @import url('https://fonts.googleapis.com/css2?family=Secular+One&display=swap');
         body {
             font-family: 'Secular One', sans-serif !important;
-            min-width: 425px;
+            /* min-width: 425px; */
+            max-width: 100%;
             top: 0;
             left: 0;
         }
@@ -331,7 +332,13 @@
             cursor: pointer;
             text-decoration: none;
             background-color: #e9ab59;
+            transition: all .2s ease-in-out;
         }
+
+        .card-img .overlay .overlay-content button:hover {
+            transform: scale(1.1);
+        }
+
         
         .card-img .overlay .overlay-content a:hover, .card-img .overlay .overlay-content a.hover {
             background: #e9ab59;

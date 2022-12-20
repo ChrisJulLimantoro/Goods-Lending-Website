@@ -2,42 +2,82 @@
     include "admin_authen.php";
 ?>
 <?php
+    // if(isset($_POST['ajax'])){
+    //     $sql_ajax = "SELECT * FROM borrow_detail a JOIN borrow b on a.id_borrow = b.id_borrow WHERE status_pinjam <> 0 and status = 0 ORDER BY a.id_borrow";
+    //     $stmt_ajax = $conn->prepare($sql_ajax);
+    //     $stmt_ajax->execute();
+    //     $row_ajax = $stmt_ajax->fetchAll();
+    //     $count = 1;
+    //     if($row_ajax){
+    //         foreach($row_ajax as $r){
+    //             echo '<tr><td class="count">'.$count.'</td>';
+    //             echo '<td class="kode_brg">'.$r['id_item'].'</td>';
+    //             echo '<td class="kode_bor" style="display:none">'.$r['id_borrow'].'</td>';
+    //             echo '<td class="kode_org" style="display:none">'.$r['id_user'].'</td>';
+    //             $sql_brg = "SELECT Nama_Barang FROM item WHERE Id = :id";
+    //             $stmt_brg = $conn->prepare($sql_brg);
+    //             $stmt_brg->execute(array(
+    //                 ":id" => $r['id_item']
+    //             ));
+    //             $nm_brg = $stmt_brg->fetchcolumn();
+    //             echo '<td class="namaBrg">'.$nm_brg.'</td>';
+    //             $sql_org = "SELECT CONCAT(first_name,' ',last_name) AS 'name',email FROM user WHERE username = :id";
+    //             $stmt_org = $conn->prepare($sql_org);
+    //             $stmt_org->execute(array(
+    //                 ":id" => $r['id_user']
+    //             ));
+    //             $nm_org = $stmt_org->fetchAll();
+    //             echo '<td class="peminjam">'.$nm_org[0]['name'].'</td>';
+    //             echo '<td class="email" style="display:none">'.$nm_org[0]['email'].'</td>';
+    //             echo '<td class="tglPinjam">'.$r['start_date'].'</td>';
+    //             echo '<td class="tglKembali">'.$r['expired_date'].'</td>';
+    //             echo '<td> <button type="button" class="btn btn-success btn-acc" style="width:70px">Terima</button>
+    //                         <button type="button" class="btn btn-danger btn-cnc" style="width:70px">Tolak</button>
+    //                 </td></tr>';
+    //                 $count++;
+    //         }
+    //     }else{
+    //         echo '<tr><td colspan="7" class ="text-center"><strong>Tidak ada pending request</strong></td></tr>';
+    //     }
+    //     exit();
+    // }
+?>
+<?php
     if(isset($_POST['ajax'])){
         $sql_ajax = "SELECT * FROM borrow_detail a JOIN borrow b on a.id_borrow = b.id_borrow WHERE status_pinjam <> 0 and status = 0 ORDER BY a.id_borrow";
         $stmt_ajax = $conn->prepare($sql_ajax);
         $stmt_ajax->execute();
         $row_ajax = $stmt_ajax->fetchAll();
         $count = 1;
+        $arr = array();
         if($row_ajax){
             foreach($row_ajax as $r){
-                echo '<tr><td class="count">'.$count.'</td>';
-                echo '<td class="kode_brg">'.$r['id_item'].'</td>';
-                echo '<td class="kode_bor" style="display:none">'.$r['id_borrow'].'</td>';
-                echo '<td class="kode_org" style="display:none">'.$r['id_user'].'</td>';
+                $temp = array();
+                array_push($temp,$count);
+                array_push($temp,$r['id_item']);
+                array_push($temp,$r['id_borrow']);
+                array_push($temp,$r['id_user']);
                 $sql_brg = "SELECT Nama_Barang FROM item WHERE Id = :id";
                 $stmt_brg = $conn->prepare($sql_brg);
                 $stmt_brg->execute(array(
                     ":id" => $r['id_item']
                 ));
                 $nm_brg = $stmt_brg->fetchcolumn();
-                echo '<td class="namaBrg">'.$nm_brg.'</td>';
-                $sql_org = "SELECT CONCAT(first_name,' ',last_name) AS 'name',email FROM user WHERE username = :id";
+                array_push($temp,$nm_brg);
+                $sql_org = "SELECT CONCAT(first_name,' ',last_name) AS 'name' FROM user WHERE username = :id";
                 $stmt_org = $conn->prepare($sql_org);
                 $stmt_org->execute(array(
                     ":id" => $r['id_user']
                 ));
                 $nm_org = $stmt_org->fetchAll();
-                echo '<td class="peminjam">'.$nm_org[0]['name'].'</td>';
-                echo '<td class="email" style="display:none">'.$nm_org[0]['email'].'</td>';
-                echo '<td class="tglPinjam">'.$r['start_date'].'</td>';
-                echo '<td class="tglKembali">'.$r['expired_date'].'</td>';
-                echo '<td> <button type="button" class="btn btn-success btn-acc" style="width:70px">Terima</button>
-                            <button type="button" class="btn btn-danger btn-cnc" style="width:70px">Tolak</button>
-                    </td></tr>';
-                    $count++;
+                array_push($temp,$nm_org[0]['name']);
+                array_push($temp,$r['start_date']);
+                array_push($temp,$r['expired_date']);
+                array_push($arr,$temp);
+                $count += 1;
             }
-        }else{
-            echo '<tr><td colspan="7" class ="text-center"><strong>Tidak ada pending request</strong></td></tr>';
+            $json = json_encode($arr);
+            echo $json;
         }
         exit();
     }
@@ -173,27 +213,64 @@
                         "previous": "<span class='text-light'>Previous</span>"
                     }
                 },
-                columnDefs : [
-                    { width : "4%" , targets : 0},
-                    { width : "16%" , targets : 1},
-                    { width : "16%" , targets : 2},
-                    { width : "16%" , targets : 3},
-                    { width : "16%" , targets : 4},
-                    { width : "16%" , targets : 5},
-                    { width : "16%" , targets : 6}
+                ajax : {
+                    processing: true,
+                    serverSide: true,
+                    url : "terimaPeminjaman.php",
+                    dataSrc : "",
+                    type : "post",
+                    data : {
+                        ajax : 1
+                    }
+                },
+                columns : [
+                    {data : 0},
+                    {data : 1},
+                    {data : 2},
+                    {data : 3},
+                    {data : 4},
+                    {data : 5},
+                    {data : 6},
+                    {data : 7},
+                    {data : null,
+                    "render" : function(data,type,row){
+                        return '<button type="button" class="btn btn-success btn-acc" style="width:70px">Terima</button>' +
+                        '<button type="button" class="btn btn-danger btn-cnc" style="width:70px">Tolak</button>'
+                    }}
                 ],
-                fixedColumns : true
+                columnDefs: [
+                    {
+                        target: 2,
+                        visible: false,
+                        searchable: false,
+                        width : "0"
+                    },
+                    {
+                        target: 3,
+                        visible: false,
+                        searchable: false,
+                        width : "0"
+                    },
+                    { width : "5%" , targets : 0},
+                    { width : "10%" , targets : 1},
+                    { width : "15%" , targets : 4},
+                    { width : "15%" , targets : 5},
+                    { width : "15%" , targets : 6},
+                    { width : "15%" , targets : 7},
+                    { width : "25%" , targets : 8}
+                ],
+                    fixedColumns : true
             });
             
-            $.ajax({
-                type : "post",
-                data : {
-                    ajax : 1
-                },
-                success : function(e){
-                    $("#requests").html(e);
-                }
-            })
+            // $.ajax({
+            //     type : "post",
+            //     data : {
+            //         ajax : 1
+            //     },
+            //     success : function(e){
+            //         $("#requests").html(e);
+            //     }
+            // })
             $(document.body).on("click", ".btn-acc", function() {
                 $.ajax ({
                     type : "post",
@@ -204,15 +281,7 @@
                         org : $(this).parent().parent().find(".kode_org").text()
                     },
                     success : function(){
-                        $.ajax({
-                            type : "post",
-                            data : {
-                                ajax : 1
-                            },
-                            success : function(e){
-                                $("#requests").html(e);
-                            }
-                        })
+                        $("#request-list").DataTable().ajax.reload(null,false);
                     }
                 });
             });
@@ -233,7 +302,7 @@
                                 ajax : 1
                             },
                             success : function(e){
-                                $("#requests").html(e);
+                                $("#request-list").DataTable().ajax.reload(null,false);
                             }
                         })
                     }
@@ -257,11 +326,13 @@
             <hr style="color: #fff">
             
             <div class="col-12 table-responsive">
-                <table class="table table-striped text-center align-middle" id="request-list">
+                <table class="table table-striped text-center align-middle" id="request-list" style="max-width:100%">
                     <thead class="table-dark">
                         <tr>
                             <th class="text-center align-middle">#</th>
                             <th class="text-center align-middle">Kode Barang</th>
+                            <th class="text-center align-middle">Kode Borrow</th>
+                            <th class="text-center align-middle">Kode user</th>
                             <th class="text-center align-middle">Nama Barang</th>
                             <th class="text-center align-middle">Nama Peminjam</th>
                             <th class="text-center align-middle">Tanggal Pinjam</th>

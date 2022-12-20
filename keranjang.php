@@ -271,6 +271,13 @@
             /* font-weight: 300; */
         }
 
+        #inputSearch {
+            display: none;
+        }
+        
+        #search-btn{
+            display: none;
+        }
         @media screen and (max-width:576px) {
             .table, #namaItem, #keteranganItem, #qtyItem, p {
                 font-size: .75em;

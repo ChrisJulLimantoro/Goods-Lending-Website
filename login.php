@@ -255,6 +255,7 @@
                                     $("#inputPassword").css("background-color","#FF9494");
                                     $("#inputPassword").addClass("shaking");
                                 }else{
+                                    // console.log(response);
                                     $("#statusUser").removeAttr("hidden");
                                     $("#statusUser img").attr("src","assets/wrong.png");
                                     $("#statusPass").removeAttr("hidden");

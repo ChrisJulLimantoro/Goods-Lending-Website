@@ -396,7 +396,7 @@
                     </div>
                     <div class= "row mt-4">
                         <div class="col-12">
-                            <button type="submit" class="btn btn-primary" style="width: 100%;border-radius: 2px;" id="signUp" disabled>SIGN UP</button>
+                            <button type="button" class="btn btn-primary" style="width: 100%;border-radius: 2px;" id="signUp" disabled>SIGN UP</button>
                         </div>
                     </div>
                 </form>
