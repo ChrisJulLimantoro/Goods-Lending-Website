@@ -26,9 +26,11 @@
         exit();
     }
     if(isset($_POST['ajax'])) {
-        $sql = "SELECT * FROM `admin` ORDER BY status DESC";
+        $sql = "SELECT * FROM `admin` WHERE Username <> :user ORDER BY status DESC";
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->execute(array(
+            ":user" => $_SESSION['admin']
+        ));
         $res = $stmt->fetchAll();
         $row_count = 1;
         $arr = array();
