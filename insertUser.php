@@ -1,6 +1,8 @@
 <?php
     include "connection.php";
     include "uploadProfile.php";
+
+    // untuk buat akun baru (sign up)
     if(isset($_POST['inputFirstName']) && isset($_POST['inputLastName']) && isset($_POST['inputPhoneNumber']) && isset($_POST['inputEmail']) && isset($_POST['inputUsername']) && isset($_POST['inputPassword'])){
             $sql = "INSERT INTO `user`(`username`,`password`,`first_name`,`last_name`,`phone_number`,`email`,`profile`)
                         VALUES (:username, PASSWORD(:password), UPPER(:fname), UPPER(:lname), :phone, :email, 'profile/profileDefault.jpg')";

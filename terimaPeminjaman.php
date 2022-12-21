@@ -2,42 +2,82 @@
     include "admin_authen.php";
 ?>
 <?php
+    // if(isset($_POST['ajax'])){
+    //     $sql_ajax = "SELECT * FROM borrow_detail a JOIN borrow b on a.id_borrow = b.id_borrow WHERE status_pinjam <> 0 and status = 0 ORDER BY a.id_borrow";
+    //     $stmt_ajax = $conn->prepare($sql_ajax);
+    //     $stmt_ajax->execute();
+    //     $row_ajax = $stmt_ajax->fetchAll();
+    //     $count = 1;
+    //     if($row_ajax){
+    //         foreach($row_ajax as $r){
+    //             echo '<tr><td class="count">'.$count.'</td>';
+    //             echo '<td class="kode_brg">'.$r['id_item'].'</td>';
+    //             echo '<td class="kode_bor" style="display:none">'.$r['id_borrow'].'</td>';
+    //             echo '<td class="kode_org" style="display:none">'.$r['id_user'].'</td>';
+    //             $sql_brg = "SELECT Nama_Barang FROM item WHERE Id = :id";
+    //             $stmt_brg = $conn->prepare($sql_brg);
+    //             $stmt_brg->execute(array(
+    //                 ":id" => $r['id_item']
+    //             ));
+    //             $nm_brg = $stmt_brg->fetchcolumn();
+    //             echo '<td class="namaBrg">'.$nm_brg.'</td>';
+    //             $sql_org = "SELECT CONCAT(first_name,' ',last_name) AS 'name',email FROM user WHERE username = :id";
+    //             $stmt_org = $conn->prepare($sql_org);
+    //             $stmt_org->execute(array(
+    //                 ":id" => $r['id_user']
+    //             ));
+    //             $nm_org = $stmt_org->fetchAll();
+    //             echo '<td class="peminjam">'.$nm_org[0]['name'].'</td>';
+    //             echo '<td class="email" style="display:none">'.$nm_org[0]['email'].'</td>';
+    //             echo '<td class="tglPinjam">'.$r['start_date'].'</td>';
+    //             echo '<td class="tglKembali">'.$r['expired_date'].'</td>';
+    //             echo '<td> <button type="button" class="btn btn-success btn-acc" style="width:70px">Terima</button>
+    //                         <button type="button" class="btn btn-danger btn-cnc" style="width:70px">Tolak</button>
+    //                 </td></tr>';
+    //                 $count++;
+    //         }
+    //     }else{
+    //         echo '<tr><td colspan="7" class ="text-center"><strong>Tidak ada pending request</strong></td></tr>';
+    //     }
+    //     exit();
+    // }
+?>
+<?php
     if(isset($_POST['ajax'])){
         $sql_ajax = "SELECT * FROM borrow_detail a JOIN borrow b on a.id_borrow = b.id_borrow WHERE status_pinjam <> 0 and status = 0 ORDER BY a.id_borrow";
         $stmt_ajax = $conn->prepare($sql_ajax);
         $stmt_ajax->execute();
         $row_ajax = $stmt_ajax->fetchAll();
         $count = 1;
+        $arr = array();
         if($row_ajax){
             foreach($row_ajax as $r){
-                echo '<tr><td class="count">'.$count.'</td>';
-                echo '<td class="kode_brg">'.$r['id_item'].'</td>';
-                echo '<td class="kode_bor" style="display:none">'.$r['id_borrow'].'</td>';
-                echo '<td class="kode_org" style="display:none">'.$r['id_user'].'</td>';
+                $temp = array();
+                array_push($temp,$count);
+                array_push($temp,$r['id_item']);
+                array_push($temp,$r['id_borrow']);
+                array_push($temp,$r['id_user']);
                 $sql_brg = "SELECT Nama_Barang FROM item WHERE Id = :id";
                 $stmt_brg = $conn->prepare($sql_brg);
                 $stmt_brg->execute(array(
                     ":id" => $r['id_item']
                 ));
                 $nm_brg = $stmt_brg->fetchcolumn();
-                echo '<td class="namaBrg">'.$nm_brg.'</td>';
-                $sql_org = "SELECT CONCAT(first_name,' ',last_name) AS 'name',email FROM user WHERE username = :id";
+                array_push($temp,$nm_brg);
+                $sql_org = "SELECT CONCAT(first_name,' ',last_name) AS 'name' FROM user WHERE username = :id";
                 $stmt_org = $conn->prepare($sql_org);
                 $stmt_org->execute(array(
                     ":id" => $r['id_user']
                 ));
                 $nm_org = $stmt_org->fetchAll();
-                echo '<td class="peminjam">'.$nm_org[0]['name'].'</td>';
-                echo '<td class="email" style="display:none">'.$nm_org[0]['email'].'</td>';
-                echo '<td class="tglPinjam">'.$r['start_date'].'</td>';
-                echo '<td class="tglKembali">'.$r['expired_date'].'</td>';
-                echo '<td> <button type="button" class="btn btn-success btn-acc" style="width:70px">Terima</button>
-                            <button type="button" class="btn btn-danger btn-cnc" style="width:70px">Tolak</button>
-                    </td></tr>';
-                    $count++;
+                array_push($temp,$nm_org[0]['name']);
+                array_push($temp,$r['start_date']);
+                array_push($temp,$r['expired_date']);
+                array_push($arr,$temp);
+                $count += 1;
             }
-        }else{
-            echo '<tr><td colspan="7" class ="text-center"><strong>Tidak ada pending request</strong></td></tr>';
+            $json = json_encode($arr);
+            echo $json;
         }
         exit();
     }
@@ -105,66 +145,132 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- DataTable -->
+    <link rel="stylesheet" href="//cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
+    <script src="//cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+
+    <?php include "navbarAdmin.php"; ?>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
 
         body {
-            font-family: 'League Spartan', sans-serif;
-            font-weight: 700;
-        }
-
-        /* Navbar */
-        #inputSearch{
-            border: transparent;
-            width: 75%;
-            height: 3em;
-            border-radius: 20pt;
-        }
-
-        .header {
-            width: 100%;
-            top: 0;
-            z-index: 1;
-        }
-    
-        #notifImg, #keranjang, #userImg {
-            height: 2em;
-            aspect-ratio: 1 / 1;
-        }
-
-        #userImg {
-            border-radius: 40%;
-        }
-
-        .dropdown-menu {
-            z-index: 1;
-        }
-
-        @media only screen and (max-width: 576px) {
-            .navbar-brand {
-                font-size: .75em;
-            }
+            background: url('assets/gedungQ2.jpg') fixed no-repeat;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
         }
 
         /* Main */
         #requests {
             font-weight: 400;
         }
+
+        .fa-angle-left {
+            color: #fff;
+            height: 30px;
+            transition: all .3s ease;
+        }
+
+        .fa-angle-left:hover {
+            transform: scale(1.15);
+        }
+
+        /* DataTable */
+        div.dataTables_filter > label > input, .dataTables_length select, .dataTables_wrapper, .paginate_button {
+            color: #fff;
+        }
+
+        div.dataTables_filter > label > input:focus, .dataTables_length select:focus {
+            outline: 1px solid #fff;
+        }
+
+        div.dataTables_filter > label  {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .dataTables_length select > option { 
+            color: #000;
+        }
+
+        .dt-head-center {text-align: center;}
+
+        @media screen and (max-width: 576px) {
+            #request-list th, #request-list td, #request-list button {
+                font-size: .75em;
+            }
+        }
     </style>
 
     <script>
         $(document).ready(function() {
-            
-            $.ajax({
-                type : "post",
-                data : {
-                    ajax : 1
+            $("#request-list").removeAttr("width").DataTable({
+                "language": {
+                    "paginate": {
+                        "next": "<span class='text-light'>Next</span>",
+                        "previous": "<span class='text-light'>Previous</span>"
+                    }
                 },
-                success : function(e){
-                    $("#requests").html(e);
-                }
-            })
+                ajax : {
+                    processing: true,
+                    serverSide: true,
+                    url : "terimaPeminjaman.php",
+                    dataSrc : "",
+                    type : "post",
+                    data : {
+                        ajax : 1
+                    }
+                },
+                columns : [
+                    {data : 0},
+                    {data : 1},
+                    {data : 2},
+                    {data : 3},
+                    {data : 4},
+                    {data : 5},
+                    {data : 6},
+                    {data : 7},
+                    {data : null,
+                    "render" : function(data,type,row){
+                        return '<button type="button" class="btn btn-success btn-acc" style="width:70px">Terima</button>' +
+                        '<button type="button" class="btn btn-danger btn-cnc" style="width:70px">Tolak</button>'
+                    }}
+                ],
+                columnDefs: [
+                    {
+                        target: 2,
+                        visible: false,
+                        searchable: false,
+                        width : "0"
+                    },
+                    {
+                        target: 3,
+                        visible: false,
+                        searchable: false,
+                        width : "0"
+                    },
+                    { width : "5%" , targets : 0},
+                    { width : "10%" , targets : 1},
+                    { width : "15%" , targets : 4},
+                    { width : "15%" , targets : 5},
+                    { width : "15%" , targets : 6},
+                    { width : "15%" , targets : 7},
+                    { width : "25%" , targets : 8}
+                ],
+                    fixedColumns : true
+            });
+            
+            // $.ajax({
+            //     type : "post",
+            //     data : {
+            //         ajax : 1
+            //     },
+            //     success : function(e){
+            //         $("#requests").html(e);
+            //     }
+            // })
             $(document.body).on("click", ".btn-acc", function() {
                 $.ajax ({
                     type : "post",
@@ -175,15 +281,7 @@
                         org : $(this).parent().parent().find(".kode_org").text()
                     },
                     success : function(){
-                        $.ajax({
-                            type : "post",
-                            data : {
-                                ajax : 1
-                            },
-                            success : function(e){
-                                $("#requests").html(e);
-                            }
-                        })
+                        $("#request-list").DataTable().ajax.reload(null,false);
                     }
                 });
             });
@@ -204,7 +302,7 @@
                                 ajax : 1
                             },
                             success : function(e){
-                                $("#requests").html(e);
+                                $("#request-list").DataTable().ajax.reload(null,false);
                             }
                         })
                     }
@@ -214,87 +312,50 @@
     </script>
 </head>
 <body>
-    <!-- Navbar -->
-    <div class="container-fluid bg-dark text-white header sticky-top">
-        <div class="row px-lg-3" style="margin: 0">
-            <nav class="navbar navbar-dark navbar-expand-lg">
-                <div class="col-lg-2 col-3 d-flex justify-content-start text-center">   
-                    <a class="navbar-brand" href="homeAdmin.php">KERANJANG</a>
-                </div>
-                
-                <div class="col-lg-8 col-5 d-flex justify-content-center">
-                    <input type="text" class="form-control px-4" id="inputSearch" placeholder="Search Product">
-                </div>
-
-                <div class="col-lg-2 col-4 d-flex justify-content-center">
-                    <div class="col-4 d-flex justify-content-center align-items-center">
-                        <button type="button" class="btn btn-dark">
-                            <img src="assets/notif.png" alt=""  id="notifImg">
-                            <span class="position-absolute badge rounded-pill bg-danger">
-                            99+
-                            </span>
-                        </button>
-                    </div>
-                    
-                    <div class="col-4 d-flex justify-content-center align-items-center">
-                        <a href="keranjang.php">
-                            <button type="button" class="btn btn-dark">
-                                <img src="assets/keranjang.png" alt=""  id="keranjang">
-                            </button>
-                        </a>
-                    </div>
-
-                    <div class="col-4 d-flex justify-content-center align-items-center">
-                        <li class="nav-item dropdown mt-2" style="list-style: none">
-                            <a class="nav-link dropdown-toggle mb-2 position-relative dropdown-menu-end" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="<?php echo $_SESSION['profile'] ?>" alt=""  id="userImg">
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end bg-dark text-white mt-3 px-3" aria-labelledby="navbarDropdown" style=" width: 15em;">
-                                <h6 class="card-title mb-2">User ID:</h6>
-                                <h6 class="card-title mb-1">
-                                    <?php
-                                         echo $_SESSION['admin'] 
-                                    ?>
-                                </h6>
-                                <h6 class="card-title mb-2">Nama:</h6>
-                                <h6 class="card-title mb-1">
-                                    <?php 
-                                    $sqlName = "SELECT CONCAT(first_name,' ',last_name) AS name FROM `user` WHERE `username` = :user";
-                                        $stmtName = $conn->prepare($sqlName);
-                                        $stmtName->execute(['user' => $_SESSION['admin']]);
-                                        $rowName = $stmtName->fetchcolumn(); 
-                                        echo $rowName;
-                                    ?>
-                                </h6>
-                                <li><hr class="dropdown-divider"></li>
-                                <a href="login.php"><button type="button" class="btn btn-light">LOGOUT</button></a>
-                            </ul>
-                        </li>
-                    </div>
-                </div>
-            </nav>
-        </div>
-    </div>
-    
     <!-- Main content -->
-    <div class="container-fluid request-list p-5">
-        <h2 class="text-center mb-5">PEMINJAMAN PENDING</h2>
-        <div class="col-12 table-responsive">
-            <table class="table table-hover text-center align-middle">
-                <tr class="table-light">
-                    <th>#</th>
-                    <th>Kode Barang</th>
-                    <th>Nama Barang</th>
-                    <th>Nama Peminjam</th>
-                    <th>Tanggal Pinjam</th>
-                    <th>Tanggal kembali</th>
-                    <th>Aksi</th>
-                </tr>
-                <tbody class="table-group-divider" id="requests">
+    <div class="container-fluid request-list p-5" style='margin-top: 100px;'>
+        <div class="row p-lg-5 p-3 rounded" style="backdrop-filter:blur(20px)">
+            <div class="col-1 pt-1">
+                <a href="homeAdmin.php"><i class="fa-solid fa-2xl fa-angle-left"></i></a>
+            </div>
+            <div class="col-10">
+                <h2 class="text-center text-light mb-lg-5 mb-3">PEMINJAMAN PENDING</h2>
+            </div>
+            <div class="col-1"></div>
 
-                </tbody>
-            </table>
+            <hr style="color: #fff">
+            
+            <div class="col-12 table-responsive">
+                <table class="table table-striped text-center align-middle" id="request-list" style="max-width:100%">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="text-center align-middle">#</th>
+                            <th class="text-center align-middle">Kode Barang</th>
+                            <th class="text-center align-middle">Kode Borrow</th>
+                            <th class="text-center align-middle">Kode user</th>
+                            <th class="text-center align-middle">Nama Barang</th>
+                            <th class="text-center align-middle">Nama Peminjam</th>
+                            <th class="text-center align-middle">Tanggal Pinjam</th>
+                            <th class="text-center align-middle">Tanggal kembali</th>
+                            <th class="text-center align-middle">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-light" id="requests">
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+
+    <script>
+        var nav= document.querySelector('nav');
+        window.addEventListener('scroll', function(){
+          if (window.pageYOffset > 50){
+            nav.classList.add('bg-dark', 'shadow');
+          }else{
+            nav.classList.remove('bg-dark','shadow');
+          }
+        });
+    </script>
 </body>
 </html>

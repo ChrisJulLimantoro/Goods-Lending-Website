@@ -1,6 +1,9 @@
 <?php
     include "connection.php";
+
+    // login
     if(isset($_POST['user']) && isset($_POST['pass']) && isset($_POST['acc'])){
+        // login utk user
         if($_POST['acc'] == 'user'){
             $sql = "SELECT count(*) as total FROM `user` WHERE `username` = :username and `password` = PASSWORD( :password )";
             $user = $_POST['user'];
@@ -9,18 +12,22 @@
             $stmt->execute(array(':username' => $user,
                                 ':password' => $pass));
             $row = $stmt->fetch();
-            if($row['total'] == 0){
+
+            // jika username valid tp password salah
+            if($row['total'] == 0) {
                 $sql2 = "SELECT count(*) AS total FROM `user` WHERE `username` = :username";
                 $stmt2 = $conn->prepare($sql2);
                 $stmt2->execute(array(':username' => $user));
                 $row2 = $stmt2->fetch();
-                if ($row2['total'] == 1){
+                if ($row2['total'] == 1) {
                     echo "5";
                 }
-                else{
+                // username tidak valid
+                else {
                     echo "0";
                 }
-            }else{
+            }
+            else {
                 echo "1";
                 session_start();
                 $_SESSION['user'] = $user;
@@ -33,26 +40,41 @@
                 $_SESSION['status'] = $row5[0]['status'];
             }
             exit();
-        }else{
-            $sql3 = "SELECT count(*) as total FROM `admin` WHERE `username` = :username and `password` = PASSWORD( :password )";
+        }
+        // login utk admin
+        else {
+            $sql3 = "SELECT count(*) as total FROM `admin` WHERE `username` = :username and `password` = PASSWORD( :password ) and `status` <> 0";
             $admin = $_POST['user'];
             $pass = $_POST['pass'];
             $stmt3 = $conn->prepare($sql3);
             $stmt3->execute(array(':username' => $admin,
                                 ':password' => $pass));
             $row3 = $stmt3->fetch();
-            if($row3['total'] == 0){
+            
+            // jika username valid tp password salah
+            if($row3['total'] == 0) {
                 $sql4 = "SELECT count(*) AS total FROM `admin` WHERE `username` = :username";
                 $stmt4 = $conn->prepare($sql4);
                 $stmt4->execute([':username' => $admin]);
                 $row4 = $stmt4->fetch();
-                if ($row4['total'] == 1){
-                    echo "6";
+                if ($row4['total'] == 1) {
+                    $sql5 = "SELECT status FROM admin WHERE username = :usr";
+                    $stmt5 = $conn->prepare($sql5);
+                    $stmt5->execute([':username' => $admin]);
+                    $row5 = $stmt5->fetch();
+                    if ($row5 == 1) {
+                        echo"5";
+                    }
+                    // username tidak valid
+                    else {
+                        echo"6";
+                    }
                 }
-                else{
+                else {
                     echo "0";
                 }
-            }else{
+            }
+            else {
                 echo "2";
                 session_start();
                 $_SESSION['admin'] = $admin;
@@ -83,6 +105,7 @@
         }
         .box{
             padding: 45px;
+            background-color:rgba(255,255,255,.95);
             box-shadow: 1px 0px 17px -5px rgba(0,0,0,0.75);
             border-radius:10px;
         }
@@ -137,14 +160,56 @@
                 transform : translate(1px,-2px) rotate(-1deg); 
             }
         }
+        .header {
+            position:relative;
+            background: linear-gradient(60deg, rgba(84,58,183,1) 0%, rgba(0,172,193,1) 100%);
+        }
+        .waves {
+            position:relative;
+            width: 100%;
+            height:20vh;
+            margin-bottom:-7px; /*Fix for safari gap*/
+            min-height:100px;
+            max-height:150px;
+        }
+        .parallax > use {
+            animation: move-forever 25s cubic-bezier(.55,.5,.45,.5)     infinite;
+        }
+        .parallax > use:nth-child(1) {
+            animation-delay: -2s;
+            animation-duration: 7s;
+        }
+        .parallax > use:nth-child(2) {
+            animation-delay: -3s;
+            animation-duration: 10s;
+        }
+        .parallax > use:nth-child(3) {
+            animation-delay: -4s;
+            animation-duration: 13s;
+        }
+        .parallax > use:nth-child(4) {
+            animation-delay: -5s;
+            animation-duration: 20s;
+        }
+        @keyframes move-forever {
+            0% {
+            transform: translate3d(-90px,0,0);
+            }
+            100% { 
+                transform: translate3d(85px,0,0);
+            }
+        }
+        .flex { /*Flexbox for containers*/
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
     </style>
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script>
         $(document).ready(function(){
             $("#signIn").on("click",function(){
-                console.log($('input[name="acc"]:checked').val());
-                console.log($("#inputPassword").val());
-                console.log($("#inputUsername").val());
                 $("#inputPassword").removeClass("shaking");
                 $("#inputUsername").removeClass("shaking");
                 $.ajax({
@@ -155,7 +220,6 @@
                             acc  : $('input[name="acc"]:checked').val()
                         },
                         success : function(response){
-                            console.log(response);
                             if(response == 0){
                                 $("#statusUser").removeAttr("hidden");
                                 $("#statusUser img").attr("src","assets/wrong.png");
@@ -166,8 +230,6 @@
                                 $("#inputUsername").addClass("shaking");
                                 $("#inputPassword").addClass("shaking");
                             }else{
-                                $("#statusUser").removeAttr("hidden");
-                                $("#statusUser img").attr("src","assets/check.png");
                                 $("#userHelp").html("Username valid!!");
                                 $("#userHelp").removeClass("text-danger");
                                 $("#userHelp").addClass("text-success");
@@ -175,6 +237,8 @@
                                 if(response == 1){
                                     $("#statusPass").removeAttr("hidden");
                                     $("#statusPass img").attr("src","assets/check.png");
+                                    $("#statusUser").removeAttr("hidden");
+                                    $("#statusUser img").attr("src","assets/check.png");
                                     $("#passHelp").html("Password Correct!!");
                                     $("#passHelp").removeClass("text-danger");
                                     $("#passHelp").addClass("text-success");
@@ -185,6 +249,8 @@
                                 }else if(response == 2){
                                     $("#statusPass").removeAttr("hidden");
                                     $("#statusPass img").attr("src","assets/check.png");
+                                    $("#statusUser").removeAttr("hidden");
+                                    $("#statusUser img").attr("src","assets/check.png");
                                     $("#passHelp").html("Password Correct!!");
                                     $("#passHelp").removeClass("text-danger");
                                     $("#passHelp").addClass("text-success");
@@ -192,37 +258,51 @@
                                     setTimeout(() => {
                                         $(window).attr("location","homeAdmin.php");
                                     }, 1000);
-                                }else{
+                                }else if(response == 5){
+                                    $("#statusUser").removeAttr("hidden");
+                                    $("#statusUser img").attr("src","assets/check.png");
                                     $("#statusPass").removeAttr("hidden");
                                     $("#statusPass img").attr("src","assets/wrong.png");
-                                    $("#passHelp").html("Password incorrect!!");
+                                    $("#passHelp").html("Password incorrect!!  <a href='forgotPassword.php'>Forgot your password?</a>");
                                     $("#passHelp").removeClass("text-success");
                                     $("#passHelp").addClass("text-danger");
                                     $("#inputPassword").css("background-color","#FF9494");
                                     $("#inputPassword").addClass("shaking");
+                                }else{
+                                    // console.log(response);
+                                    $("#statusUser").removeAttr("hidden");
+                                    $("#statusUser img").attr("src","assets/wrong.png");
+                                    $("#statusPass").removeAttr("hidden");
+                                    $("#statusPass img").attr("src","assets/wrong.png");
+                                    $("#passHelp").html("Akun sedang Nonaktif!! Hubungi supervisor anda untuk diaktifkan!!");
+                                    $("#passHelp").removeClass("text-success");
+                                    $("#passHelp").addClass("text-danger");
+                                    $("#inputPassword").css("background-color","#FF9494");
+                                    $("#inputPassword").addClass("shaking");
+                                    $("#inputUsername").css("background-color","#FF9494");
+                                    $("#inputUsername").addClass("shaking");
+                                    $("#inputPassword").addClass("shaking");  
                                 }
                             }
                         }});
                 });
-                // $("#inputPassword").on("keyup",function(){
-                //     $("#inputPassword")
-                // })
             })
     </script>
 
 
 </head>
 <body>
-    <div class="container-fluid d-flex align-items-center justify-content-center" style="min-height: 100vh">
+    <div class="header pt-5">
+    <!--Waves Container-->
+    <div class="container-fluid d-flex align-items-center justify-content-center pt-3">
         <div class="row" style="width: 100%">
             <div class="col-lg-4 col-md-3 col-sm-2 col-1"></div>
             <div class="col-lg-4 col-md-6 col-sm-8 col-10 box">
-                <h1 class="text-center">JUDUL</h1>
-                <h4 class="subtitle-login text-center" style="color:red; border-bottom:1px solid black;line-height:0.1em;"><span style="background-color:white; padding:0px 6px">Login</span></h4>
+                <h1 class="text-center">LOG IN</h1>
+                <h4 class="subtitle-login text-center" style="border-bottom:1px solid black;line-height:0.1em;"></h4>
                 <form action="login.php" method="post">
                     <div class="mb-3">
                         <br>
-                        <label for="inputUserName" class="form-label">User Name:</label>
                         <div class="container-fluid position-relative p-0">
                             <input type="text" class="form-control text-center" id="inputUsername" aria-describedby="userHelp" name="user" placeholder="username">
                             <span id="statusUser" hidden="hidden"><img src="assets/check.png" width="24px" height="24px" style="position:absolute;top:5.4pt;right:10.2pt;"></span>
@@ -245,7 +325,6 @@
                         <br>
                     </div>
                     <div class="mb-3">
-                        <label for="inputUserName" class="form-label">Password:</label>
                         <div class="container-fluid position-relative p-0">
                             <input type="password" class="form-control text-center" id="inputPassword" aria-describedby="passHelp" name="pass" placeholder="password">
                             <span id="statusPass" hidden="hidden"><img src="assets/check.png" width="24px" height="24px" style="position:absolute;top:5.4pt;right:10.2pt;"></span>
@@ -265,5 +344,23 @@
             </div>
         </div>
     </div>
+    <div>
+        <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+        <defs>
+        <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+        </defs>
+        <g class="parallax">
+        <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7)" />
+        <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
+        <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
+        <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
+        </g>
+        </svg>
+    </div>
+    <!--Waves end-->
+
+    </div>
+    
 </body>
 </html>
