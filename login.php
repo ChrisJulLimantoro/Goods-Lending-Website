@@ -5,7 +5,7 @@
     if(isset($_POST['user']) && isset($_POST['pass']) && isset($_POST['acc'])){
         // login utk user
         if($_POST['acc'] == 'user'){
-            $sql = "SELECT count(*) as total FROM `user` WHERE `username` = :username and `password` = PASSWORD( :password )";
+            $sql = "SELECT count(*) as total FROM `user` WHERE `Username` = :username and `Password` = PASSWORD( :password )";
             $user = $_POST['user'];
             $pass = $_POST['pass'];
             $stmt = $conn->prepare($sql);
@@ -15,7 +15,7 @@
 
             // jika username valid tp password salah
             if($row['total'] == 0) {
-                $sql2 = "SELECT count(*) AS total FROM `user` WHERE `username` = :username";
+                $sql2 = "SELECT count(*) AS total FROM `user` WHERE `Username` = :username";
                 $stmt2 = $conn->prepare($sql2);
                 $stmt2->execute(array(':username' => $user));
                 $row2 = $stmt2->fetch();
@@ -32,7 +32,7 @@
                 session_start();
                 $_SESSION['user'] = $user;
                 $_SESSION['timeout'] = time();
-                $sql5 = "SELECT profile,status FROM `user` WHERE `username` = :username";
+                $sql5 = "SELECT profile,status FROM `user` WHERE `Username` = :username";
                 $stmt5 = $conn->prepare($sql5);
                 $stmt5->execute(array(':username' => $_POST['user']));
                 $row5 = $stmt5->fetchAll();
@@ -43,7 +43,7 @@
         }
         // login utk admin
         else {
-            $sql3 = "SELECT count(*) as total FROM `admin` WHERE `username` = :username and `password` = PASSWORD( :password ) and `status` <> 0";
+            $sql3 = "SELECT count(*) as total FROM `admin` WHERE `Username` = :username and `Password` = PASSWORD( :password ) and `status` <> 0";
             $admin = $_POST['user'];
             $pass = $_POST['pass'];
             $stmt3 = $conn->prepare($sql3);
@@ -53,12 +53,12 @@
             
             // jika username valid tp password salah
             if($row3['total'] == 0) {
-                $sql4 = "SELECT count(*) AS total FROM `admin` WHERE `username` = :username";
+                $sql4 = "SELECT count(*) AS total FROM `admin` WHERE `Username` = :username";
                 $stmt4 = $conn->prepare($sql4);
                 $stmt4->execute([':username' => $admin]);
                 $row4 = $stmt4->fetch();
                 if ($row4['total'] == 1) {
-                    $sql5 = "SELECT status FROM admin WHERE username = :usr";
+                    $sql5 = "SELECT status FROM admin WHERE `Username` = :usr";
                     $stmt5 = $conn->prepare($sql5);
                     $stmt5->execute([':username' => $admin]);
                     $row5 = $stmt5->fetch();
@@ -220,6 +220,7 @@
                             acc  : $('input[name="acc"]:checked').val()
                         },
                         success : function(response){
+                            console.log(response);
                             if(response == 0){
                                 $("#statusUser").removeAttr("hidden");
                                 $("#statusUser img").attr("src","assets/wrong.png");
