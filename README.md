@@ -1,2 +1,3 @@
-# ProyekTekweb
-ini kelompok kita bikin protek Tekweb
+# Simple Website for Goods Lending
+This is a simple website using PHP Native as the based on this Goods Lending business.\
+Documentation on progress...
